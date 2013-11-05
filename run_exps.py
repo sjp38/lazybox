@@ -58,6 +58,8 @@ if __name__ == "__main__":
 
     with open(sys.argv[1]) as f:
         for line in f:
+            if line.startswith('#'):
+                continue
             if line.startswith(START):
                 starts.append(line[len(START):])
             elif line.startswith(MAIN):
