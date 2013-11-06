@@ -64,6 +64,8 @@ if __name__ == "__main__":
         for line in f:
             if line.startswith('#'):
                 continue
+            if line[-1] == '\n':
+                line = line[:-1]
             if line.startswith(START):
                 starts.append(line[len(START):])
             elif line.startswith(MAIN):
