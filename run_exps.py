@@ -76,7 +76,6 @@ if __name__ == "__main__":
                 ends.append(line[len(END):])
             elif len(line.split()) == 0:
                 exps.append(Exp(starts, mains, backs, ends))
-        exps.append(Exp(starts, mains, backs, ends))
 
     for exp in exps:
         print "do exp %s" % exp
