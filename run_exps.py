@@ -74,12 +74,14 @@ if __name__ == "__main__":
                 backs.append(line[len(BACK):])
             elif line.startswith(END):
                 ends.append(line[len(END):])
-            elif len(line.split()) == 0:
+            elif len(line.split()) == 0 and len(mains) > 0:
                 exps.append(Exp(starts, mains, backs, ends))
                 starts = []
                 mains = []
                 backs = []
                 ends = []
+    if len(mains) > 0:
+        exps.append(Exp(starts, mains, backs, ends))
 
     for exp in exps:
         print "do exp %s" % exp
