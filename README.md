@@ -18,13 +18,13 @@ want manually using hand.
 
 ### Type of command
  * start: Commands which should be done before experiment start.
-   e.g., kernel module loading or program build
+   (e.g., kernel module loading or program build)
  * main: Main workload. Experiments will be end after command(s) of this type
    end.
  * back: Background command which should be run while main type commands run.
-   e.g., profiling
+   (e.g., profiling)
  * end: Commands which should be done after experiment end.
-   e.g., kernel modul unloading or meta files cleanup
+   (e.g., kernel modul unloading or meta files cleanup)
 
 ### Example
 Below is an example for *experiments specification file*
