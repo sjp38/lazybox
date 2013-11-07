@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import subprocess
 import sys
 import time
 
@@ -36,6 +37,9 @@ class Exp:
     main_cmds = []
     back_cmds = []
 
+    main_procs = []
+    back_procs = []
+
     def __init__(self, start, main, back, end):
         self.start_cmds = start
         self.end_cmds = end
@@ -43,7 +47,7 @@ class Exp:
         self.back_cmds = back
 
     def __str__(self):
-        return "start: %s\nmain: %s\nback: %s\nend: %s\n" % (
+        return "{EXP: start: %s\nmain: %s\nback: %s\nend: %s\n}" % (
                 self.start_cmds, self.main_cmds, self.back_cmds, self.end_cmds)
 
     def __repr__(self):
@@ -84,22 +88,20 @@ if __name__ == "__main__":
         exps.append(Exp(starts, mains, backs, ends))
 
     for exp in exps:
+        exp.back_procs = []
         print "do exp %s" % exp
         for start in exp.start_cmds:
-            os.system(start)
+            subprocess.call(start, shell=True, executable="/bin/bash")
         for back in exp.back_cmds:
-            os.system("%s &" % back)
+            exp.back_procs.append(subprocess.Popen(back, shell=True,
+                executable="/bin/bash"))
         for main in exp.main_cmds:
-            os.system("%s &" % main)
-        for main in exp.main_cmds:
-            while True:
-                with os.popen("ps -a | grep %s" % main) as f:
-                    psresult = f.read()
-                    if len(psresult) == 0:
-                        break
-                    else:
-                        time.sleep(1)
-        for back in exp.back_cmds:
-            os.system("killall %s" % back.split()[0])
+            exp.main_procs.append(subprocess.Popen(main, shell=True,
+                executable="/bin/bash"))
+        for main_proc in exp.main_procs:
+            main_proc.wait()
+        print "workload done. kill back procs."
+        for back_proc in exp.back_procs:
+            back_proc.kill()
         for end in exp.end_cmds:
-            os.system(end)
+            subprocess.call(end, shell=True, executable="/bin/bash")
