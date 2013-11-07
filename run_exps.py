@@ -53,18 +53,33 @@ class Exp:
     def __repr__(self):
         return self.__str__()
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print "USAGE: %s <path to experiments spec file>" % sys.argv[0]
-        exit(1)
+    def execute(self):
+        self.back_procs = []
+        print "do exp %s" % self
+        for start in self.start_cmds:
+            subprocess.call(start, shell=True, executable="/bin/bash")
+        for back in self.back_cmds:
+            self.back_procs.append(subprocess.Popen(back, shell=True,
+                executable="/bin/bash"))
+        for main in self.main_cmds:
+            self.main_procs.append(subprocess.Popen(main, shell=True,
+                executable="/bin/bash"))
+        for main_proc in self.main_procs:
+            main_proc.wait()
+        print "workload done. kill back procs."
+        for back_proc in self.back_procs:
+            back_proc.kill()
+        for end in self.end_cmds:
+            subprocess.call(end, shell=True, executable="/bin/bash")
 
+def parse_file(filename):
     exps = []
     starts = []
     mains = []
     backs = []
     ends = []
 
-    with open(sys.argv[1]) as f:
+    with open(filename) as f:
         for line in f:
             if line.startswith('#'):
                 continue
@@ -87,21 +102,14 @@ if __name__ == "__main__":
     if len(mains) > 0:
         exps.append(Exp(starts, mains, backs, ends))
 
+    return exps
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print "USAGE: %s <path to experiments spec file>" % sys.argv[0]
+        exit(1)
+
+    exps = parse_file(sys.argv[1])
+
     for exp in exps:
-        exp.back_procs = []
-        print "do exp %s" % exp
-        for start in exp.start_cmds:
-            subprocess.call(start, shell=True, executable="/bin/bash")
-        for back in exp.back_cmds:
-            exp.back_procs.append(subprocess.Popen(back, shell=True,
-                executable="/bin/bash"))
-        for main in exp.main_cmds:
-            exp.main_procs.append(subprocess.Popen(main, shell=True,
-                executable="/bin/bash"))
-        for main_proc in exp.main_procs:
-            main_proc.wait()
-        print "workload done. kill back procs."
-        for back_proc in exp.back_procs:
-            back_proc.kill()
-        for end in exp.end_cmds:
-            subprocess.call(end, shell=True, executable="/bin/bash")
+        exp.execute()
