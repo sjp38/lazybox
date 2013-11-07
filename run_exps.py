@@ -1,30 +1,11 @@
 #!/usr/bin/env python
 
+"Help performance evaluation experiments automation"
+
 import os
 import subprocess
 import sys
 import time
-
-"""Input file format
-Input file format should specify start commands, main commands, background
-commands(maybe profiler), and end comands.
-start command prepare experiment, main command do workload, background command
-may be profiler, end command should clean up experiment environment.
-
-e.g.,
-start insmod abc.ko
-main bench1_config1
-main bench2_config1
-back pcm -ns 1
-end rmmod abc.ko
-
-start insmod abc.ko
-main bench1_config2
-main bench2_config2
-back pcm -ns 1
-end rmmod abc.ko
-
-"""
 
 START = "start"
 MAIN = "main"
