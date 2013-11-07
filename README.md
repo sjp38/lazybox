@@ -2,9 +2,9 @@
 Help performance evaluation experiments automation.
 
 # Usage
-`$ run_exps.py <exps specification file>`
+`$ run_exps.py <experiments specification file>`
 
-## Exps Specification File
+## Experiments Specification File
 Text file which specifies what experiments should be done.
 Consists with zero or more experiments. Each experiments seperated by one or
 more blank line.
@@ -13,8 +13,8 @@ Each experiment consists with zero or more commands which should be done as
 part of experiment. Each command have specific type.
 
 It would be better to make your own script or program which help to write your
-own *exps specification file* rather than write whole experiments you want
-manually using hand.
+own *experiments specification file* rather than write whole experiments you
+want manually using hand.
 
 ### Type of command
  * start: Commands which should be done before experiment start.
@@ -27,7 +27,7 @@ manually using hand.
    e.g., kernel modul unloading or meta files cleanup
 
 ### Example
-Below is example of experiments
+Below is an example for *experiments specification file*
 ```
 start: git checkout v1.0
 start: make -j
