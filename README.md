@@ -1,5 +1,5 @@
 # Introduction
-Help performance evaluation experiments automation.
+Helps performance evaluation experiments automation.
 
 # Usage
 `$ run_exps.py <experiments specification file>`
