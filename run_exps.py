@@ -47,7 +47,7 @@ class Exp:
         self.back_cmds = back
 
     def __str__(self):
-        return "{EXP: start: %s\nmain: %s\nback: %s\nend: %s\n}" % (
+        return "{EXP:\n\tstart: %s\n\tmain: %s\n\tback: %s\n\tend: %s\n}" % (
                 self.start_cmds, self.main_cmds, self.back_cmds, self.end_cmds)
 
     def __repr__(self):
