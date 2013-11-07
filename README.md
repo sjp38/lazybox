@@ -1,5 +1,5 @@
 # Introduction
-Simple program to automate general performance evaluation experiments.
+Help performance evaluation experiments automation.
 
 # Usage
 `$ run_exps.py <exps file>`
