@@ -69,8 +69,7 @@ def parse_file(filename):
         for line in f:
             if line.startswith('#'):
                 continue
-            if line[-1] == '\n':
-                line = line[:-1]
+            line = line.strip('\n')
             if line.startswith(START):
                 starts.append(line[len(START):])
             elif line.startswith(MAIN):
