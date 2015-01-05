@@ -45,7 +45,7 @@ class Exp:
         for start in self.start_cmds:
             subprocess.call(start, shell=True, executable="/bin/bash")
         for back in self.back_cmds:
-            self.back_procs.append(subprocess.Popen(back, shell=True,
+            self.back_procs.append(subprocess.Popen('exec ' + back, shell=True,
                 executable="/bin/bash"))
         for main in self.main_cmds:
             self.main_procs.append(subprocess.Popen(main, shell=True,
@@ -55,6 +55,7 @@ class Exp:
         print "workload done. kill back procs."
         for back_proc in self.back_procs:
             back_proc.kill()
+            back_proc.wait()
         for end in self.end_cmds:
             subprocess.call(end, shell=True, executable="/bin/bash")
 
