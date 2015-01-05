@@ -1,3 +1,4 @@
+# first experiment
 start insmod abc.ko
 main bench1_1
 main bench2_1
@@ -5,9 +6,10 @@ back pcm -ns 1 >> res
 end rmmod abc.ko
 end echo "1 end" >> res
 
+# second experiment
 start insmod abc2.ko
 main bench1_2
 main bench2_2
 back pcm -ns 1 >> res
 end rmmod abc.ko
-end echo "1 end" >> res
+end echo "2 end" >> res
