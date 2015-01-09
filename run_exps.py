@@ -8,6 +8,7 @@ __copyright__ = "Copyright (c) 2013, SeongJae Park"
 __license__ = "GPLv3"
 
 import os
+import signal
 import subprocess
 import sys
 import time
@@ -46,7 +47,7 @@ class Exp:
             subprocess.call(start, shell=True, executable="/bin/bash")
         for back in self.back_cmds:
             self.back_procs.append(subprocess.Popen(back, shell=True,
-                executable="/bin/bash"))
+                executable="/bin/bash", preexec_fn=os.setsid))
         for main in self.main_cmds:
             self.main_procs.append(subprocess.Popen(main, shell=True,
                 executable="/bin/bash"))
@@ -54,10 +55,7 @@ class Exp:
             main_proc.wait()
         print "workload done. kill back procs."
         for back_proc in self.back_procs:
-            cmd = '/usr/bin/pkill -P %d' % back_proc.pid
-            print cmd
-            subprocess.call(cmd, shell=True)
-            back_proc.kill()
+            os.killpg(back_proc.pid, signal.SIGTERM)
         for end in self.end_cmds:
             subprocess.call(end, shell=True, executable="/bin/bash")
 
