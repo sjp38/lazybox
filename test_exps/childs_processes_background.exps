@@ -1,0 +1,5 @@
+# first experiment
+start echo "start"
+main ./test_bins/run_secs.py 6
+back ./test_bins/spawn_process.py 5
+end echo 'end!'
