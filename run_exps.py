@@ -47,7 +47,7 @@ class Exp:
             subprocess.call(start, shell=True, executable="/bin/bash")
         for back in self.back_cmds:
             self.back_procs.append(subprocess.Popen(back, shell=True,
-                executable="/bin/bash", preexec_fn=os.setsid))
+                executable="/bin/bash"))
         for main in self.main_cmds:
             self.main_procs.append(subprocess.Popen(main, shell=True,
                 executable="/bin/bash"))
@@ -55,9 +55,34 @@ class Exp:
             main_proc.wait()
         print "workload done. kill back procs."
         for back_proc in self.back_procs:
-            os.killpg(back_proc.pid, signal.SIGTERM)
+            childs = all_childs(back_proc.pid)
+            for child in reversed(childs):
+                if child == back_proc.pid:
+                    continue
+                print "kill ", child
+                os.kill(child, signal.SIGTERM)
+            print "kill processes with ppid: ", back_proc.pid
+            subprocess.call('pkill -P %d' % back_proc.pid, shell=True)
+            os.kill(back_proc.pid, signal.SIGTERM)
         for end in self.end_cmds:
             subprocess.call(end, shell=True, executable="/bin/bash")
+
+def all_childs(pid):
+    childs = []
+    p = subprocess.Popen('pstree -p %s' % pid, shell=True,
+            stdout=subprocess.PIPE, bufsize=1)
+    while True:
+        line = p.stdout.readline()
+        if line == '' and p.poll() != None:
+            break
+        print line
+        spltd = line.split('(')
+        for entry in spltd:
+            if entry.find(')') != -1:
+                child_id = entry.split(')')[0]
+                if child_id.isdigit():
+                    childs.append(int(child_id))
+    return childs
 
 def parse_file(filename):
     exps = []
