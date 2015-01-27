@@ -59,8 +59,12 @@ class Exp:
             for child in reversed(childs):
                 if child == back_proc.pid:
                     continue
-                print "kill ", child
-                os.kill(child, signal.SIGTERM)
+                try:
+                    print "kill ", child
+                    os.kill(child, signal.SIGTERM)
+                except OSError as e:
+                    print "error %s occurred while killing child %s" % (
+                            e, child)
             print "kill processes with ppid: ", back_proc.pid
             subprocess.call('pkill -P %d' % back_proc.pid, shell=True)
             os.kill(back_proc.pid, signal.SIGTERM)
