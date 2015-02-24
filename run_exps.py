@@ -10,10 +10,10 @@ __license__ = "GPLv3"
 import sys
 from exp import Exp
 
-START = "start"
-MAIN = "main"
-BACK = "back"
-END = "end"
+START = "start "
+MAIN = "main "
+BACK = "back "
+END = "end "
 
 def parse_file(filename):
     exps = []
