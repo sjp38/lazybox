@@ -6,7 +6,7 @@ import exp
 
 exps = []
 
-# Edit below loop to fit on your purpose using Python
+# Edit below loop to fit on your purpose using Python language
 for arg1 in [1, 2, 3, 4, 5]:
     for arg2 in ['a', 'b', 'abc']:
         starts = ["echo hi"]
@@ -14,9 +14,9 @@ for arg1 in [1, 2, 3, 4, 5]:
         backs = ["echo back with %s" % (arg1)]
         ends = ["echo buy"]
 
+        # Do not edit code below
         exps.append(exp.Exp(starts, mains, backs, ends))
 
-# Leave code below
 for exp in exps:
     for start in exp.start_cmds:
         print "start %s" % start
