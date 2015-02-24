@@ -22,11 +22,18 @@ def parse_file(filename):
     backs = []
     ends = []
 
+    prevline = ''
     with open(filename) as f:
         for line in f:
             if line.startswith('#'):
                 continue
-            line = line.strip('\n')
+            line = line.strip('\n').lstrip()
+            if line.endswith('\\'):
+                prevline += line[:-1]
+                continue
+
+            line = prevline + line
+            prevline = ''
             if line.startswith(START):
                 starts.append(line[len(START):])
             elif line.startswith(MAIN):
