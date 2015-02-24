@@ -6,23 +6,27 @@ Helps performance evaluation experiments automation.
 
 ## Experiments Specification File
 Text file which specifies what experiments should be done.
-Consists with zero or more experiments. Each experiments seperated by one or
+Consists with zero or more experiments. Each experiment seperated by one or
 more blank line.
 
-Each experiment consists with zero or more commands which should be done as
-part of experiment. Each command have specific type.
+Experiment consists with zero or more bash commands which should be done as
+part of experiment. Each command have specific type which specifies when and
+how the command should be executed.
 
-It would be better to make your own script or program which help to write your
-own *experiments specification file* rather than write whole experiments you
-want manually using hand.
+If your experiments are too big and repetitive, consider to write your own
+experiments specification file generator rather than write it down manually in
+miserable way. For detail, see below section, [Experiments Specification File
+Generator](#Experiments Specification File Generator).
 
-### Type of command
+### Type of commands
  * start: Commands which should be done before experiment start.
    (e.g., kernel module loading or program build)
  * main: Main workload. Experiments will be end after command(s) of this type
-   end.
+   end. If multiple main workloads exist, they will be executed concurrently
+   and workloads terminated earlier will be executed repeatedly until slowest
+   workload be terminated.
  * back: Background command which should be run while main type commands run.
-   (e.g., profiling)
+   (e.g., profiling or system stressing task)
  * end: Commands which should be done after experiment end.
    (e.g., kernel modul unloading or meta files cleanup)
 
