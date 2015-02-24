@@ -1,0 +1,15 @@
+# first experiment
+start echo '1 sleeps. will fail.'
+main sleep 1
+end echo 'end!'
+check exit 1
+
+start echo '3 sleeps. will success.'
+main for i in `seq 1 3`; \
+     do \
+        echo 'main 3: '$i; \
+        sleep 1; \
+     done
+end echo 'end!'
+check exit 0
+
