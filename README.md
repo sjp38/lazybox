@@ -50,6 +50,24 @@ end: make clean
 end: git checkout master
 ```
 
+# Experiments Specification File Generator
+For simplicity, we recomment to write experiment specification file in linearly
+interpretable way rather than procedural way. Using `loop` or `goto` inside
+specification file would be complex to be read.
+
+However, constraining people to write down repeating big content manually is
+crime against humanity. For the reason, users are recommended to develop and
+use their own experiments specification file generator. To help the process,
+simple stub generator, `generate_exp_conf.py` provided. It contains essential
+code for automated experiments specification file generator.
+
+## Usage of the stub
+1. Copy the stub
+2. Edit main loop of experiments generation as you need
+3. Run modified copy and redirect stdout to appropriate file
+4. Use the file for `run_exps.py`
+
+
 # License
 GPL v3
 
