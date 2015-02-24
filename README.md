@@ -39,6 +39,10 @@ Generator](#Experiments Specification File Generator).
    (e.g., profiling or system stressing task)
  * end: Commands which should be done after experiment end.
    (e.g., kernel modul unloading or meta files cleanup)
+ * check: Check whether experiment was successful. Commands be executed after
+   end commands end and notifies check result using return code. Return code 0
+   means sucess, other values means failure. If any one of check command says
+   failed, the experiment be executed again until success up to 10 times.
 
 ### Example
 Below is an example for *experiments specification file*
@@ -46,12 +50,14 @@ Below is an example for *experiments specification file*
 start: git checkout v1.0
 start: make -j
 start: insmod sjp.ko
-main: ./workload/workload1
-main: ./workload/workloadtogether
+main: ./workload/workload1 > work1.out
+main: ./workload/workloadtogether > work2.out
 back: perf record -o perfout.data -a
 back: vmstat 2 > vmstatout.data
 end: rmmod sjp
 end: make clean
+check: grep success work1.out
+check: grep success work2.out
 
 start: git checkout v1.1
 start: make -j

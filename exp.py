@@ -26,24 +26,28 @@ class Exp:
     end_cmds = []
     main_cmds = []
     back_cmds = []
+    check_cmds = []
 
     main_tasks = []
     back_procs = []
 
-    def __init__(self, start, main, back, end):
+    def __init__(self, start, main, back, end, check):
         self.start_cmds = start
         self.end_cmds = end
         self.main_cmds = main
         self.back_cmds = back
+        self.check_cmds = check
 
     def __str__(self):
-        return "{EXP:\n\tstart: %s\n\tmain: %s\n\tback: %s\n\tend: %s\n}" % (
-                self.start_cmds, self.main_cmds, self.back_cmds, self.end_cmds)
+        return "{EXP:\n\tstart: %s\n\tmain: %s\n\tback: %s\n\tend: %s\n\tcheck: %s\n}" % (
+                self.start_cmds, self.main_cmds, self.back_cmds, self.end_cmds,
+                self.check_cmds)
 
     def __repr__(self):
         return self.__str__()
 
     def execute(self):
+        "Returns True if experiment executed successfully, False if not"
         self.back_procs = []
         self.main_tasks = []
         print "do exp %s" % self
@@ -83,6 +87,14 @@ class Exp:
 
         for end in self.end_cmds:
             subprocess.call(end, shell=True, executable="/bin/bash")
+
+        for check in self.check_cmds:
+            ret = subprocess.call(check, shell=True, executable="/bin/bash")
+            print "check %s return %s" % (check, ret)
+            if ret != 0:
+                print "check %s failed with return code %s" % (check, ret)
+                return False
+        return True
 
 def kill_childs_self(pid):
     childs = all_childs(pid)

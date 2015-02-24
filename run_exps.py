@@ -10,10 +10,13 @@ __license__ = "GPLv3"
 import sys
 from exp import Exp
 
+RETRY_LIMIT = 10
+
 START = "start "
 MAIN = "main "
 BACK = "back "
 END = "end "
+CHECK = "check "
 
 def parse_file(filename):
     exps = []
@@ -21,6 +24,7 @@ def parse_file(filename):
     mains = []
     backs = []
     ends = []
+    checks = []
 
     prevline = ''
     with open(filename) as f:
@@ -42,12 +46,15 @@ def parse_file(filename):
                 backs.append(line[len(BACK):])
             elif line.startswith(END):
                 ends.append(line[len(END):])
+            elif line.startswith(CHECK):
+                checks.append(line[len(CHECK):])
             elif len(line.split()) == 0 and len(mains) > 0:
-                exps.append(Exp(starts, mains, backs, ends))
+                exps.append(Exp(starts, mains, backs, ends, checks))
                 starts = []
                 mains = []
                 backs = []
                 ends = []
+                checks = []
     if len(mains) > 0:
         exps.append(Exp(starts, mains, backs, ends))
 
@@ -61,4 +68,9 @@ if __name__ == "__main__":
     exps = parse_file(sys.argv[1])
 
     for exp in exps:
-        exp.execute()
+        success = False
+        nr_retry = 0
+        while not success and nr_retry < RETRY_LIMIT:
+            success = exp.execute()
+            nr_retry += 1
+

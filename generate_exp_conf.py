@@ -34,15 +34,16 @@ exps = []
 for arg1 in [1, 2, 3, 4, 5]:
     for arg2 in ['a', 'b', 'abc']:
         starts = ["echo hi"]
-        mains = ["echo main with %s %s" % (arg1, arg2)]
+        mains = ["echo main with %s %s > main.out" % (arg1, arg2)]
         # For multiple commands, code could be seems like below
         # mains = ["echo main with %s %s" % (arg1, arg2),
         #           "echo main2 with %s %s" % (arg2, arg1)]
         backs = ["echo back with %s" % (arg1)]
         ends = ["echo buy"]
+        checks = ["grep main main.out"]
 
         # Do not forget to match indentation
-        exps.append(exp.Exp(starts, mains, backs, ends))
+        exps.append(exp.Exp(starts, mains, backs, ends, checks))
 
 # !!! Do not edit code below
 for exp in exps:
@@ -54,4 +55,7 @@ for exp in exps:
         print "back %s" % back
     for end in exp.end_cmds:
         print "end %s" % end
+    for check in exp.check_cmds:
+        print "check %s" % check
+
     print ""
