@@ -1,5 +1,15 @@
-# Introduction
 Helps performance evaluation experiments automation.
+
+# Introduction
+Performance evaluation experiments are hard to be done manually by people. It's
+basically repetitive and time consuming. To be practical, most people automate
+the experiments. Because each experiments have particular characterizations and
+limitations, However, most automation code could not be reused easily.
+
+This project aims to
+
+1. generalize those experiments and
+2. develop reusable, useful tools and structure for automation.
 
 # Usage
 `$ run_exps.py <experiments specification file>`
