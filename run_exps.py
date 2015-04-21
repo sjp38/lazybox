@@ -56,7 +56,7 @@ def parse_file(filename):
                 ends = []
                 checks = []
     if len(mains) > 0:
-        exps.append(Exp(starts, mains, backs, ends))
+        exps.append(Exp(starts, mains, backs, ends, checks))
 
     return exps
 
