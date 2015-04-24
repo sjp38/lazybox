@@ -1,0 +1,12 @@
+Stress memory
+
+Workload
+========
+
+Create a huge file and randomly read / write the file using multiple threads.
+
+
+Usage
+=====
+
+./mem_stress.sh
