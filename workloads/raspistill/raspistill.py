@@ -7,15 +7,19 @@ import time
 repeat = 10
 warmup = 10
 
-if len(sys.argv) > 1:
-    repeat = int(sys.argv[1])
+USAGE = "%s <repeat count> <warmup seconds> <output image path>"
 
-if len(sys.argv) > 2:
-    warmup = float(sys.argv[2])
+if len(sys.argv) < 4:
+    print "Usage: ", USAGE
+
+repeat = int(sys.argv[1])
+warmup = float(sys.argv[2])
+img_path = sys.argv[3]
 
 os.system("uname -a")
 
 for i in range(repeat):
-    cmd = "/usr/bin/time sudo nice -20 raspistill -t 1 -q 1 -o img.jpg 2>&1"
+    cmd = "/usr/bin/time sudo nice -20 "
+    cmd += "raspistill -t 1 -q 1 -o %s 2>&1" % img_path
     os.system(cmd)
     time.sleep(warmup)
