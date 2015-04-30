@@ -3,12 +3,13 @@
 WORKING_DIR=`dirname $0`
 WORK_DIR="blogbenchdir"
 
-pushd $WORKDING_DIR
+pushd $WORKING_DIR
 
 which blogbench
 if [ $? != 0 ]
 then
 	echo "[error] blogbench not installed"
+	popd
 	exit 1
 fi
 
