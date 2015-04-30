@@ -1,5 +1,9 @@
 #!/bin/bash
 
+WORKING_DIR=`dirname $0`
+
+pushd $WORKING_DIR
+
 DATA_FILE="2000MiB_file"
 STRESS_FILE="stress"
 
@@ -11,3 +15,5 @@ fi
 
 make
 ./stress 600
+
+popd
