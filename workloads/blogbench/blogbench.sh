@@ -8,7 +8,7 @@ pushd $WORKDING_DIR
 which blogbench
 if [ $? != 0 ]
 then
-	echo "blogbench not installed"
+	echo "[error] blogbench not installed"
 	exit 1
 fi
 
