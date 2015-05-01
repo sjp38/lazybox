@@ -11,6 +11,7 @@ USAGE = "%s <repeat count> <warmup seconds> <output image path>"
 
 if len(sys.argv) < 4:
     print "Usage: ", USAGE
+    exit(1)
 
 repeat = int(sys.argv[1])
 warmup = float(sys.argv[2])
