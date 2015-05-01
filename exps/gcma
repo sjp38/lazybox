@@ -1,0 +1,1 @@
+main ./workloads/gcma/gcma.sh 2 "1 512 1024 2048 4096 8192 16384 32768 60000" > ./out/gcma
