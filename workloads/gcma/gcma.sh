@@ -12,7 +12,7 @@ WORKING_DIR=`dirname $0`
 DEBUGFS_ROOT="/sys/kernel/debug"
 DEBUGFS=$DEBUGFS"/cma_eval"
 NR_CMA_REQ=$1
-NR_ALLOC_PAGES="${@:2}"
+NR_ALLOC_PAGES=$2
 
 echo "[[ Test Start ]]"
 echo "kernel version: `uname -r`"
