@@ -96,6 +96,7 @@ def set_rasp2_kernel_param(kernel_param):
         f.write(cmdline)
     print "kernel param changed to: "
     os.system("cat /boot/cmdline.txt")
+    print ""
 
 
 if __name__ == "__main__":
