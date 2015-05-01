@@ -1,0 +1,126 @@
+#!/usr/bin/env python
+
+import datetime
+import sys
+import os
+
+GRUBCFG_PATH = "/boot/grub/grub.cfg"
+GRUB_PATH = "/etc/default/grub"
+
+UENV_PATH = "/boot/uEnv.txt"
+
+GRUB = "grub"
+CUBOX = "cubox"
+RASP2 = "rasp2"
+
+bak_ts = datetime.datetime.now().strftime("%y%m%d%H%M%S")
+
+def set_grub_kernel(target_kernel):
+    with open(GRUBCFG_PATH) as f:
+        lines = f.read()
+
+    prev_section = False
+    found = False
+    position = 0
+    for line in lines.split('\n'):
+        if line.find('Previous') != -1 or line.find('Advanced') != -1:
+            prev_section = True
+            print 'previous or advanced line found: %s' % line
+            continue;
+
+        if line.find('initrd') != -1:
+            kernel_position = line.split()[1]
+            kernel_name = kernel_position.lstrip('/boot/initrd.img-')
+            if kernel_name == target_kernel:
+                found = True
+                break
+            else:
+                position += 1
+    if not found:
+        print "failed. kernel %s not found" % target_kernel
+        return
+
+    set_default = '%s' % position
+    if prev_section:
+        set_default = '"1>%s"' % set_default
+
+    cmd = "cp -f %s %s.bak.%s" % (GRUBCFG_PATH, "grub.cfg", bak_ts)
+    print "backup with cmd %s" % cmd
+    os.system(cmd)
+    cmd = "sed -i 's/.*set default.*/set default=%s/' %s" % (
+            set_default, GRUBCFG_PATH)
+    print "set kernel with cmd: ", cmd
+    os.system(cmd)
+
+def set_uenv_kernel(target_kernel):
+    # TODO: relative path based on assumption should be removed in future
+    cmd = "./bin/change_cubox_kernel.sh %s" % target_kernel
+    print "change kernel to %s using cmd: %s\n" % (target_kernel, cmd)
+    os.system(cmd)
+
+def set_rasp2_kernel(target_kernel):
+    cmd = "cp -R /boots/%s/* /" % target_kernel
+    print "change kernel to %s using cmd %s\n" % (target_kernel, cmd)
+    os.system(cmd)
+    cmd = "cp /boots/config.%s.txt /boot/config.txt" % target_kernel
+    print "change config using cmd: %s\n" % cmd
+    os.system(cmd)
+
+def set_grub_kernel_param(kernel_param):
+    cmd = "cp -f %s %s.bak.%s" % (GRUB_PATH, "grub", bak_ts)
+    print "backup with cmd %s" % cmd
+    os.system(cmd)
+
+    kernel_param = kernel_param.replace('/', '\/')
+    cmd = "sed -i 's/%s*/%s\"%s\"/' %s" % ("GRUB_CMDLINE_LINUX_DEFAULT=.",
+            "GRUB_CMDLINE_LINUX_DEFAULT=", kernel_param, GRUB_PATH)
+    print "set kernel param with cmd: ", cmd
+    os.system(cmd)
+
+    cmd = "update-grub"
+    print cmd
+    os.system(cmd)
+
+def set_uenv_kernel_param(kernel_param):
+    uEnv_content = "mmcargs=setenv bootargs " + kernel_param
+    cmd = 'echo "%s" > %s' % (uEnv_content, UENV_PATH)
+    print "set kernel param using cmd: ", cmd
+    os.system(cmd)
+
+def set_rasp2_kernel_param(kernel_param):
+    orig_cmdline = "dwc_otg.lpm_enable=0 console=ttyAMA0,115200 console=tty1"
+    orig_cmdline += " root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline"
+    orig_cmdline += " rootwait"
+    cmdline = orig_cmdline + " " + kernel_param
+    with open('/boot/cmdline.txt', 'w') as f:
+        f.write(cmdline)
+    print "kernel param changed to: "
+    os.system("cat /boot/cmdline.txt")
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 3:
+        print ("USAGE: %s <bootloader> <kernel name> [kernel parameter]\n" %
+                sys.argv[0])
+        print "\tbootloader: (%s|%s|%s)" % (GRUB, CUBOX, RASP2)
+        quit()
+    bootloader = sys.argv[1]
+    kernel_name = sys.argv[2]
+    kernel_param = ""
+    if len(sys.argv) > 3:
+        kernel_param = ' '.join(sys.argv[3:])
+    print "set kernel %s with parameter %s on %s" % (kernel_name, kernel_param, bootloader)
+
+    if bootloader == GRUB:
+        if kernel_param != "":
+            set_grub_kernel_param(kernel_param)
+        set_grub_kernel(kernel_name)
+    elif bootloader == CUBOX:
+        set_uenv_kernel(kernel_name)
+        if kernel_param != "":
+            set_uenv_kernel_param(kernel_param)
+    elif bootloader == RASP2:
+        set_rasp2_kernel(kernel_name)
+        set_rasp2_kernel_param(kernel_param + " ")
+    else:
+        print "Not supported bootloader %s\n" % bootloader
