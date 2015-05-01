@@ -67,3 +67,4 @@ while { $count > 0 } {
 	send_user "$count "
 	set count [expr $count - 1]
 }
+puts ""
