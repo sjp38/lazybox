@@ -1,7 +1,7 @@
 #!/bin/bash
 
 WORKING_DIR=`dirname $0`
-WORK_DIR="blogbenchdir"
+RUN_DIR="run_dir"
 
 pushd $WORKING_DIR
 
@@ -13,6 +13,11 @@ then
 	exit 1
 fi
 
-blogbench -d $WORK_DIR
+if [ ! -d $RUN_DIR ]
+then
+	mkdir $RUN_DIR
+fi
+
+blogbench -d $WORKING_DIR/$RUN_DIR
 
 popd
