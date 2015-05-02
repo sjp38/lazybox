@@ -1,0 +1,1 @@
+main ./workloads/blogbench/blogbench.sh >> ./out/blogbench.blogbench
