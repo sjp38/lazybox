@@ -32,6 +32,7 @@ exps = ["gcma", "gcma-blogbench",
 
 for kernel in kernels:
     for exp in exps:
+        kernel_param = ""
         if kernel in [k_cma, k_gcma]:
             kernel_param = kparam_cma
         if kernel == k_vanilla and (exp == "gcma" or exp == "gcma-blogbench"):
