@@ -1,6 +1,6 @@
 #!/bin/bash
 
-WORKING_DIR=`dirname $0`
+WORKING_DIR=$PWD/`dirname $0`
 RUN_DIR="run_dir"
 
 pushd $WORKING_DIR
