@@ -1,1 +1,1 @@
-main ./workloads/raspistill/raspistill.py 30 5 /run/img.jpg >> still.still
+main ./workloads/raspistill/raspistill.py 30 5 /run/img.jpg >> ./out/still.still
