@@ -1,0 +1,4 @@
+main ./workloads/raspistill/raspistill.py 30 5 /run/img.jpg \
+	>> ./out/still-blogbench.still
+back while true; do ./workloads/blogbench/blogbench.sh >> \
+	./out/still-blogbench.blogbench; done
