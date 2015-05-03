@@ -1,4 +1,4 @@
-main nice -20 ./workloads/raspistill/raspistill.py 30 10 /run/img.jpg \
+main ./workloads/raspistill/raspistill.py 30 10 /run/shm/img.jpg \
 	>> ./out/still-blogbench.still
-back while true; do ./workloads/blogbench/blogbench.sh >> \
-	./out/still-blogbench.blogbench; done
+back ./workloads/blogbench/blogbench.sh >> \
+	./out/still-blogbench.blogbench
