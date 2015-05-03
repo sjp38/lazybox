@@ -1,5 +1,5 @@
 main ./workloads/gcma/gcma.sh 30 \
-	"1 512 1024 2048 4096 8192 16384 32768 60000" >> \
+	"1 512 1024 2048 4096 8192 16384 32768 50000" >> \
 	./out/gcma-blogbench.gcma
 back while true; do \
 	./workloads/blogbench/blogbench.sh >> \
