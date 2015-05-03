@@ -5,6 +5,8 @@ RUN_DIR="run_dir"
 
 pushd $WORKING_DIR
 
+uname -a
+
 which blogbench
 if [ $? != 0 ]
 then
