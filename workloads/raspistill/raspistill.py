@@ -21,10 +21,11 @@ os.system("uname -a")
 
 os.system("dmesg -c > /dev/null")
 for i in range(repeat):
-    cmd = "/usr/bin/time sudo nice -20 "
+    cmd = "/usr/bin/time "
     cmd += "raspistill -t 1 -q 1 -o %s 2>&1" % img_path
     os.system(cmd)
     time.sleep(warmup)
     os.system("dmesg | grep cma")
     os.system("dmesg -c > /dev/null")
+    time.sleep(2)
     print ""
