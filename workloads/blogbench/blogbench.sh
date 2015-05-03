@@ -17,6 +17,7 @@ if [ ! -d $RUN_DIR ]
 then
 	mkdir $RUN_DIR
 fi
+rm -fr $RUN_DIR/*
 
 blogbench -d $WORKING_DIR/$RUN_DIR
 
