@@ -1,0 +1,46 @@
+#!/usr/bin/expect --
+set timeout -1
+
+# Do experiments from remote target machine using run_exps.py
+# lazybox should be installed on remote target machine.
+#
+# Usage:
+# expect remote_set_kernel.exp <username> <target> <ssh port> <password> \
+#				<lazybox path> <bootloader> \
+#				<kernel name> <kernel param>
+
+if { [llength $argv] < 7 } {
+	puts "usage: "
+	puts "expect remote_zram_swap.exp \\"
+	puts "			<username> <target> <ssh port> <password> \\"
+	puts "			<lazybox path> <zram swap size>"
+	exit 1
+}
+
+set username [lindex $argv 0]
+set target [lindex $argv 1]
+set ssh_port [lindex $argv 2]
+set password [lindex $argv 3]
+set lbpath [lindex $argv 4]
+set zram_size [lindex $argv 5]
+
+# login
+spawn ssh -p $ssh_port $username@$target
+expect -re "password"
+send "$password\r"
+expect -re "$target"
+
+# be root
+send "sudo su\r"
+expect -re "password"
+send "$password\r"
+expect -re "$target"
+
+# move to lazybox
+send "pushd $lbpath\r"
+expect -re "$target"
+
+# enable zram
+send "./scripts/zram_swap.sh $zram_size\r"
+expect -re "$target"
+puts ""

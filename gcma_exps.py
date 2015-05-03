@@ -39,5 +39,8 @@ for kernel in kernels:
             continue
         os.system("expect ./remote_set_kernel.exp %s %s %s %s %s %s %s %s" % (
             user, target, port, password, lbpath, bootloader, kernel, kernel_param))
+        if kernel == k_gcma:
+            os.system("expect ./remote_zram_swap.exp %s %s %s %s %s 100M" % (
+                user, target, port, password, lbpath))
         os.system("expect ./remote_exps.exp %s %s %s %s %s %s" % (
             user, target, port, password, lbpath, expspath + exp))
