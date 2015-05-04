@@ -2,52 +2,51 @@
 
 import sys
 
-print_alloc_time = len(sys.argv) > 2
+cma_times_output = []
 
 with open(sys.argv[1], 'r') as f:
     allocs_started = False
-    alloc_times = 0
+    cma_alloc_secs = 0.0
+    cma_chunk_alloc_secs = 0.0
     for line in f:
         if line.find("Linux raspberrypi") != -1:
             if line.find("-gcma-") != -1:
                 print "gcma"
+                cma_times_output.append("gcma")
             elif line.find("-cma-") != -1:
                 print "cma"
+                cma_times_output.append("cma")
             elif line.find("-vanilla-") != -1:
                 print "vanilla"
+                cma_times_output.append("vanilla")
 
-        if not print_alloc_time:
-            if line.find("system") != -1 and line.find("elapsed") != -1:
-                spltd = line.split()
-                user = spltd[0].split("user")[0]
-                system = spltd[1].split("system")[0]
+        if line.find("system") != -1 and line.find("elapsed") != -1:
+            spltd = line.split()
+            user = spltd[0].split("user")[0]
+            system = spltd[1].split("system")[0]
 
-                elapsed = spltd[2].split("elapsed")[0]
-                elap_min = int(elapsed.split(":")[0])
-                elap_sec = float(elapsed.split(":")[1])
-                elapsed = elap_min * 60 + elap_sec
+            elapsed = spltd[2].split("elapsed")[0]
+            elap_min = int(elapsed.split(":")[0])
+            elap_sec = float(elapsed.split(":")[1])
+            elapsed = elap_min * 60 + elap_sec
 
-                cpu = spltd[3].split("%")[0]
-                print ",%s,%s,%s,%s" % (user, system, elapsed,cpu)
+            cpu = spltd[3].split("%")[0]
+            print ",%s,%s,%s,%s" % (user, system, elapsed,cpu)
 
-        if not print_alloc_time:
-            continue
-
-        if line.find("cma_alloc") != -1:
-            timestamp = float(line.split(']')[0][1:])
+        if line.find("cma_alloc()") != -1 and line.find("consumed") != -1:
+            cma_alloc_secs += float(line.split()[-2]) / 1000 / 1000 / 1000
             if not allocs_started:
                 allocs_started = True
-                allocs_start_time = timestamp
-            if line.find("returned") == -1:
-                alloc_start_time = timestamp
-            else:
-                alloc_end_time = timestamp
-                alloc_times += alloc_end_time - alloc_start_time
+        if line.find("vc_cma_alloc_chunks") != -1:
+            cma_chunk_alloc_secs += float(line.split()[-2]) / 1000 / 1000 / 1000
         if line.find("cma_release") != -1:
             if not allocs_started:
                 continue
             allocs_started = False
-            allocs_end_time = timestamp
-            allocs_time = allocs_end_time - allocs_start_time
-            print ",%.6f, %.6f" % (alloc_times, allocs_time)
-            alloc_times = 0
+            cma_times_output.append(",%.6f, %.6f" % (
+                                     cma_alloc_secs, cma_chunk_alloc_secs))
+            cma_alloc_secs = 0.0
+            cma_chunk_alloc_secs = 0.0
+
+for line in cma_times_output:
+    print line
