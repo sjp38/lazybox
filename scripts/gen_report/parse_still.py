@@ -13,6 +13,8 @@ with open(sys.argv[1], 'r') as f:
                 print "gcma"
             elif line.find("-cma-") != -1:
                 print "cma"
+            elif line.find("-vanilla-") != -1:
+                print "vanilla"
 
         if not print_alloc_time:
             if line.find("system") != -1 and line.find("elapsed") != -1:
