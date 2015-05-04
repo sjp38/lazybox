@@ -18,6 +18,9 @@ with open(data_file, 'r') as f:
         data = []
         for target in target_cols:
             target_col = int(target)
+            if len(line.split(',')) < target_col + 1:
+                continue
+
             data.append(float(line.split(',')[target_col]))
         datas.append(data)
 
