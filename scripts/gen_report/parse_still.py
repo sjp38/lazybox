@@ -49,5 +49,5 @@ with open(sys.argv[1], 'r') as f:
             allocs_started = False
             allocs_end_time = timestamp
             allocs_time = allocs_end_time - allocs_start_time
-            print "alloc times: %.6f, allocs time: %.6f" % (alloc_times, allocs_time)
+            print ",%.6f, %.6f" % (alloc_times, allocs_time)
             alloc_times = 0
