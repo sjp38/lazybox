@@ -1,4 +1,4 @@
-main ./workloads/raspistill/raspistill.py 30 10 /run/shm/img.jpg \
+main nice --19 ./workloads/raspistill/raspistill.py 30 10 /run/shm/img.jpg \
 	>> ./out/still-blogbench.still
 back ./workloads/blogbench/blogbench.sh >> \
 	./out/still-blogbench.blogbench
