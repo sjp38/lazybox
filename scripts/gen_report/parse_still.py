@@ -21,11 +21,14 @@ with open(sys.argv[1], 'r') as f:
                 spltd = line.split()
                 user = spltd[0].split("user")[0]
                 system = spltd[1].split("system")[0]
+
                 elapsed = spltd[2].split("elapsed")[0]
                 elap_min = int(elapsed.split(":")[0])
                 elap_sec = float(elapsed.split(":")[1])
                 elapsed = elap_min * 60 + elap_sec
-                print "%s,%s,%s" % (user, system, elapsed)
+
+                cpu = spltd[3].split("%")[0]
+                print ",%s,%s,%s,%s" % (user, system, elapsed,cpu)
 
         if not print_alloc_time:
             continue
