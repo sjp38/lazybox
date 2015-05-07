@@ -9,7 +9,7 @@ set timeout -1
 #				<lazybox path> <bootloader> \
 #				<kernel name> <kernel param>
 
-if { [llength $argv] < 7 } {
+if { [llength $argv] < 6 } {
 	puts "usage: "
 	puts "expect remote_zram_swap.exp \\"
 	puts "			<username> <target> <ssh port> <password> \\"
