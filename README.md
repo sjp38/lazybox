@@ -1,6 +1,8 @@
 Helps performance evaluation experiments automation.
 
-# Introduction
+Introduction
+============
+
 Performance evaluation experiments are hard to be done manually by people. It's
 basically repetitive and time consuming. To be practical, most people automate
 the experiments. Because each experiments have particular characterizations and
@@ -11,7 +13,10 @@ This project aims to
 1. generalize those experiments and
 2. develop reusable, useful tools and structure for automation.
 
-# Main Programs
+
+Main Programs
+=============
+
 This project is consist with two main programs. Each program is for automation
 of local experiments and remote experiments.
 
@@ -32,10 +37,15 @@ to remote target machine via ssh and spawn `run_exps.py` from there. For that,
 `lazybox` should be installed on target machine at first. For detail, refer to
 Section `Remote experiments` below.
 
-# Local Experiments Automation
+
+Local Experiments Automation
+============================
+
 `$ run_exps.py <experiments specification file>`
 
-## Experiments Specification File
+Experiments Specification File
+------------------------------
+
 Text file which specifies what experiments should be done.
 Consists with zero or more experiments. Each experiment seperated by one or
 more blank line.
@@ -91,7 +101,9 @@ end: make clean
 end: git checkout master
 ```
 
-## Experiments Specification File Generator
+Experiments Specification File Generator
+----------------------------------------
+
 For simplicity, we recomment to write experiment specification file in linearly
 interpretable way rather than procedural way. Using `loop` or `goto` inside
 specification file would be complex to be read.
@@ -109,7 +121,9 @@ code for automated experiments specification file generator.
 4. Use the file for `run_exps.py`
 
 
-# Remote Experiments Automation
+Remote Experiments Automation
+=============================
+
 ```
 $ expect remote_exps.exp \
               <username> <target> <ssh port> <password> \
@@ -118,8 +132,12 @@ $ expect remote_exps.exp \
 `expect` should be installed before.
 
 
-# License
+License
+=======
+
 GPL v3
 
-# Author
+Author
+======
+
 SeongJae Park (sj38.park@gmail.com)
