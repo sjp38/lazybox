@@ -1,7 +1,7 @@
 Helps performance evaluation experiments automation.
 
-Introduction
-============
+Abstract
+========
 
 Performance evaluation experiments are hard to be done manually by people. It's
 basically repetitive and time consuming. To be practical, most people automate
@@ -14,8 +14,8 @@ This project aims to
 2. develop reusable, useful tools and structure for automation.
 
 
-Main Programs
-=============
+Introduction
+============
 
 This project is consist with two main programs. Each program is for automation
 of local experiments and remote experiments.
