@@ -55,11 +55,11 @@ class Exp:
             subprocess.call(start, shell=True, executable="/bin/bash")
         for back in self.back_cmds:
             self.back_procs.append(subprocess.Popen(back, shell=True,
-                executable="/bin/bash"))
+                executable="/bin/bash", preexec_fn=os.setsid))
 
         for main in self.main_cmds:
             self.main_tasks.append(Task(main, subprocess.Popen(main,
-                shell=True, executable="/bin/bash")))
+                shell=True, executable="/bin/bash", preexec_fn=os.setsid)))
 
         # If more than one main tasks specified, tasks terminated earlier
         # become infinite background job until slowest main task be terminated.
@@ -78,12 +78,12 @@ class Exp:
         print "whole main workloads done; kill zombie main procs"
         for task in self.main_tasks:
             if task.popn.poll() == None:
-                kill_childs_self(task.popn.pid)
+                kill_groupof(task.popn.pid, True)
 
         print "kill background procs"
         for back_proc in self.back_procs:
             if back_proc.poll() == None:
-                kill_childs_self(back_proc.pid)
+                kill_groupof(back_proc.pid, True)
 
         for end in self.end_cmds:
             subprocess.call(end, shell=True, executable="/bin/bash")
@@ -96,37 +96,20 @@ class Exp:
                 return False
         return True
 
-def kill_childs_self(pid):
-    childs = all_childs(pid)
-    for child in reversed(childs):
-        if child == pid:
-            continue
-        try:
-            print "kill child: ", child
-            os.kill(child, signal.SIGTERM)
-        except OSError as e:
-            print "error %s occurred while killing child %s" % (e, child)
-    print "kill processes with ppid: ", pid
-    subprocess.call('pkill -P %d' % pid, shell=True)
-    try:
-        print "kill self: %s" % pid
-        os.kill(pid, signal.SIGTERM)
-    except OSError as e:
-        print "error %s occurred while killing self %s" % (e, pid)
+def kill_groupof(pid, show_hierarchy=False):
+    print "now kill process group %s" % os.getpgid(pid)
+    if show_hierarchy:
+        cmd = 'ps -aeo "%p %r %P %c %a" | grep ' + "%s" % pid
+        print cmd
+        os.system(cmd)
+        cmd = "pstree -p %s" % pid
+        print cmd
+        p = subprocess.Popen(cmd, shell=True,
+                stdout=subprocess.PIPE, bufsize=1)
+        while True:
+            line = p.stdout.readline()
+            if line == '' and p.poll() != None:
+                break
+            print line
 
-def all_childs(pid):
-    childs = []
-    p = subprocess.Popen('pstree -p %s' % pid, shell=True,
-            stdout=subprocess.PIPE, bufsize=1)
-    while True:
-        line = p.stdout.readline()
-        if line == '' and p.poll() != None:
-            break
-        print line
-        spltd = line.split('(')
-        for entry in spltd:
-            if entry.find(')') != -1:
-                child_id = entry.split(')')[0]
-                if child_id.isdigit():
-                    childs.append(int(child_id))
-    return childs
+    os.killpg(os.getpgid(pid), 15)
