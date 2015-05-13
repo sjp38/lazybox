@@ -135,17 +135,16 @@ def childs_of(pid, stop_childs):
     childs = []
     p = subprocess.Popen('pstree -p %s' % pid, shell=True,
             stdout=subprocess.PIPE, bufsize=1)
-    while True:
-        line = p.stdout.readline()
-        if line == '' and p.poll() != None:
-            break
+    for line in p.stdout:
         print line
         spltd = line.split('(')
         for entry in spltd:
-            if entry.find(')') != -1:
-                child_id = entry.split(')')[0]
-                if child_id.isdigit():
-                    if stop_childs:
-                        os.kill(int(child_id), signal.SIGSTOP)
-                    childs.append(int(child_id))
+            if entry.find(')') == -1:
+                continue
+            child_id = entry.split(')')[0]
+            if not child_id.isdigit():
+                continue
+            if stop_childs:
+                os.kill(int(child_id), signal.SIGSTOP)
+            childs.append(int(child_id))
     return childs
