@@ -74,7 +74,7 @@ class Exp:
                 nr_completed = sum(t.completed for t in self.main_tasks)
                 if nr_completed < len(self.main_tasks):
                     task.popn = subprocess.Popen(task.cmd, shell=True,
-                            executable="/bin/bash")
+                            executable="/bin/bash", preexec_fn=os.setsid)
         print "whole main workloads done; kill zombie main procs"
         for task in self.main_tasks:
             if task.popn.poll() == None:
