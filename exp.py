@@ -110,8 +110,6 @@ def kill_childs_self(pid):
             os.kill(child, signal.SIGKILL)
         except OSError as e:
             print "error %s occurred while killing child %s" % (e, child)
-    print "kill processes with ppid: ", pid
-    subprocess.call('pkill -P %d' % pid, shell=True)
     try:
         print "kill self: %s" % pid
         os.kill(pid, signal.SIGTERM)
