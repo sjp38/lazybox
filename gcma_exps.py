@@ -3,7 +3,7 @@
 import os
 import sys
 
-USAGE="%s <user name> <target> <ssh port> <password>"
+USAGE="%s <user name> <target> <ssh port> <password>" % sys.argv[0]
 
 if len(sys.argv) < 5:
     print "usage: ", USAGE
