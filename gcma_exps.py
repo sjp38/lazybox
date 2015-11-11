@@ -2,18 +2,9 @@
 
 import os
 import sys
+import ssh_args
 
-USAGE="%s <user name> <target> <ssh port> <password>" % sys.argv[0]
-
-if len(sys.argv) < 5:
-    print "usage: ", USAGE
-    print ""
-    exit(1)
-
-user = sys.argv[1]
-target = sys.argv[2]
-port = sys.argv[3]
-password = sys.argv[4]
+user, target, port, password = ssh_args.parse_input()
 
 lbpath = "/home/%s/lazybox" % user
 
