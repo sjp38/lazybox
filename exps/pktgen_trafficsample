@@ -1,0 +1,2 @@
+main /home/sjpark/fpf/protos/pktgen/build/pktgen -c f -n 4 -- \
+	-p /home/sjpark/fpf/protos/pktgen/traffic_sample.pcap
