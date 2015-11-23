@@ -1,2 +1,2 @@
 main /home/sjpark/fpf/protos/pktgen/build/pktgen -c f -n 4 -- \
-	-p /home/sjpark/fpf/protos/pktgen/wireshark.pcap
+	-p /home/sjpark/pcaps/wireshark.pcap

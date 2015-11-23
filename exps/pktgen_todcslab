@@ -1,2 +1,2 @@
 main /home/sjpark/fpf/protos/pktgen/build/pktgen -c f -n 4 -- \
-	-p /home/sjpark/fpf/protos/pktgen/to_dcslab_get.pcap
+	-p /home/sjpark/pcaps/to_dcslab_get.pcap
