@@ -9,14 +9,25 @@ user, target, port, password = ssh_args.parse_input()
 homepath = "/home/%s" % user
 remote_exps_cmd = "expect ./remote_exps.exp"
 lazybox_path = "%s/lazybox" % homepath
-exps_paths = ["exps/pktgen_todcslab", "exps/pktgen_trafficsample",
-                "exps/pktgen_wireshark"]
+#exps_paths = ["exps/pktgen_todcslab", "exps/pktgen_trafficsample",
+#                "exps/pktgen_wireshark"]
+exps_paths = ["exps/pktgen_trafficsample", "exps/pktgen_wireshark"]
+
 fpf_path = "%s/fpf/src/build/fpf" % homepath
 
-fpf_options = ["-p1 -H1 -c1 -m1", "-p1 -H0 -c0 -m0", "-p1 -H1 -c0 -m0",
-                "-p1 -H0 -c0 -m1", "-p1 -H0 -c1 -m0", "-p1 -H0 -c1 -m1",
-                "-p0 -H0 -c1 -m1", "-p0 -H0 -c1 -m0",
-                "-p0 -H0 -c0 -m0"]
+fpf_options = []
+for cpu in ["3", "1f", "1ff"]:
+    for workload in ["-p1 -H1 -m1 -c1 -t1",
+                    "-p0 -H0 -m0 -c0 -t0",
+                    "-p0 -H0 -m0 -c0 -t1",
+                    "-p1 -H1 -m0 -c0 -t1",
+                    "-p0 -H0 -m1 -c1 -t0",
+                    "-p0 -H0 -m1 -c0 -t0",
+                    "-p0 -H0 -m0 -c1 -t0"]:
+        option = "-c %s -n 4 -- %s" % (cpu, workload)
+        option += (" -f /home/sjpark/fpf/data/umd5_10m.fpf " +
+                "-D0 -L 2000000 -F /home/sjpark/fpf/pcaps/single_http.pcap")
+        fpf_options.append(option)
 
 exp = ""
 for option in fpf_options:
@@ -28,12 +39,11 @@ for option in fpf_options:
         back_cmd = "back %s %s %s %s %s %s %s > /dev/null\n" % (
                 remote_exps_cmd,
                 user, target, port, password, lazybox_path, exps_path)
-        back_cmd += "back %s -c 1ffff -n 4 -- -f %s/fpf/data/umd5_10m.fpf %s" % (
-                fpf_path, homepath, option)
+        back_cmd += "back %s %s" % (fpf_path, option)
         exp = "%s\n%s\n%s\n\n" % (start_cmd, main_cmd, back_cmd)
         with open("tmp.exp", 'w') as f:
             f.write(exp)
-        os.system("echo %s >> log" % (option + " " + exps_path))
+        os.system("echo %s >> log" % ("fpf option: " + option + ", exps path: " + exps_path))
         os.system("./run_exps.py tmp.exp")
         time.sleep(5)
 #os.system("rm ./tmp.exp")
