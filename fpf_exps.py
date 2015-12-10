@@ -25,7 +25,7 @@ for cpu in ["3", "1f", "1ff", "1ffff"]:
                     "-p0 -H0 -m1 -c1 -t0",
                     "-p0 -H0 -m1 -c0 -t0",
                     "-p0 -H0 -m0 -c1 -t0"]:
-        option = "-c %s -n 4 -- %s" % (cpu, workload)
+        option = "-c%s -n4 -- %s" % (cpu, workload)
         option += (" -f /home/sjpark/fpf/data/umd5_10m.fpf " +
                 "-D0 -L 2000000 -F /home/sjpark/fpf/pcaps/single_http.pcap")
         fpf_options.append(option)
