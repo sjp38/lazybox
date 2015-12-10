@@ -38,6 +38,11 @@ def pr_logs(logs, index):
 def isnumeric(val):
     return str(val).replace(".", "").replace("-", "").isdigit()
 
+def cmp_cores(a, b):
+    corea = int(float(a.split(",")[1]))
+    coreb = int(float(b.split(",")[1]))
+    return corea - coreb
+
 def pr_avg_logs(exps, index, sitems):
     str_ = ""
 
@@ -46,6 +51,7 @@ def pr_avg_logs(exps, index, sitems):
     print str_
     str_ = ""
 
+    out = []
     for option in exps.keys():
         match = True
         for item in sitems:
@@ -73,8 +79,11 @@ def pr_avg_logs(exps, index, sitems):
             if isnumeric(avgs[key]):
                 avgs[key] /= len(exps[option])
             str_ += "%s" % avgs[key] + ","
-        print str_
+        out.append(str_)
         str_ = ""
+    out.sort(cmp_cores)
+    for line in out:
+        print line
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
