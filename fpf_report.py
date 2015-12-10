@@ -4,7 +4,7 @@ import os
 
 LOGPATH = "log"
 
-for traffic in ["wireshark", "trafficsample"]:
+for traffic in ["wireshark", "syn64"]:
     for workload in ["-p1 -H1 -m1 -c1 -t1",
                     "-p1 -H1 -m1 -c1 -t40",
                     "-p0 -H0 -m0 -c0 -t0",
