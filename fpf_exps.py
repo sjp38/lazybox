@@ -36,7 +36,7 @@ for option in fpf_options:
         start_cmd = "start echo '==========================='\n"
         start_cmd += "start echo '%s'\n" % exps_path
         start_cmd += "start echo '==========================='"
-        main_cmd = "main sleep 28"
+        main_cmd = "main sleep 45"
         back_cmd = "back %s %s %s %s %s %s %s > /dev/null\n" % (
                 remote_exps_cmd,
                 user, target, port, password, lazybox_path, exps_path)
