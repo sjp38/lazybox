@@ -16,7 +16,7 @@ exps_paths = ["exps/pktgen_syn64", "exps/pktgen_wireshark"]
 fpf_path = "%s/fpf/src/build/fpf" % homepath
 
 fpf_options = []
-for cpu in ["3", "1f", "1ff", "3ff", "7ff", "fff", "1fff", "1ffff"]:
+for cpu in ["3", "1f", "1ff", "3ff", "7ff", "fff", "1fff", "1ffff", "1ffffff", "ffffffff"]:
     for workload in ["-p1 -H1 -m1 -c1 -t1",
                     "-p1 -H1 -m1 -c1 -t40",
                     "-p0 -H0 -m0 -c0 -t0",
