@@ -39,6 +39,8 @@ def isnumeric(val):
     return str(val).replace(".", "").replace("-", "").isdigit()
 
 def cmp_cores(a, b):
+    if len(a.split(",")) < 2 or len(b.split(",")) < 2:
+        return 0
     corea = int(float(a.split(",")[1]))
     coreb = int(float(b.split(",")[1]))
     return corea - coreb
@@ -76,6 +78,9 @@ def pr_avg_logs(exps, index, sitems):
 
         for idx in sorted(index.keys()):
             key = index[idx]
+            if len(exps[option]) == 0:
+                avgs[key] = "NO RESULT!!!,"
+                continue
             if isnumeric(avgs[key]):
                 avgs[key] /= len(exps[option])
             str_ += "%s" % avgs[key] + ","
