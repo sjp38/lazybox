@@ -16,7 +16,9 @@ for traffic in ["syn64", "wireshark"]:
                     "' -c3 '",
                     "' -c1f '",
                     "' -c1ff '",
-                    "' -c1ffff '"]:
+                    "' -c1ffff '",
+                    "' -c1ffffff '",
+                    "' -c1ffffffff '"]:,
         keyword = traffic + " " + workload
         cmd = "./fpf_log_reduce.py %s %s" % (LOGPATH, keyword)
         os.system(cmd)
