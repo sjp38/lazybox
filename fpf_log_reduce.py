@@ -69,7 +69,15 @@ def pr_avg_logs(exps, index, sitems):
         for idx in index.keys():
              avgs[index[idx]] = 0
 
-        for result in exp:
+        unmatured = 0
+        for idx, result in enumerate(exp):
+            if result["totalpps"] == "0":
+                unmatured += 1
+                continue
+            if idx == 0 or (unmatured != 0 and idx == unmatured + 1):
+                unmatured += 1
+                continue
+
             for key in result.keys():
                 if isnumeric(result[key]):
                     avgs[key] += float(result[key])
@@ -78,11 +86,11 @@ def pr_avg_logs(exps, index, sitems):
 
         for idx in sorted(index.keys()):
             key = index[idx]
-            if len(exps[option]) == 0:
+            if len(exp) == 0:
                 avgs[key] = "NO RESULT!!!,"
                 continue
             if isnumeric(avgs[key]):
-                avgs[key] /= len(exps[option])
+                avgs[key] /= (len(exp) - unmatured)
             str_ += "%s" % avgs[key] + ","
         out.append(str_)
         str_ = ""
