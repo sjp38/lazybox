@@ -25,6 +25,8 @@ def load_logs(path):
             result = {}
             log.append(result)
             for idx, val in enumerate(spltd):
+                if val.strip() == "":
+                    continue
                 result[index[idx]] = val
     return logs, index
 
