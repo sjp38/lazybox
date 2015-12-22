@@ -18,13 +18,17 @@ fpf_path = "%s/fpf/src/build/fpf" % homepath
 fpf_options = []
 for cpu in ["1ffff"]:
     for workload in ["-p1 -H1 -m1 -c1 -t40"]:
-        option = "-c%s -n4 -- %s" % (cpu, workload)
-        option += (" -f /home/sjpark/fpf/data/umd5_10m.fpf " +
-                "-D0 -L 2000000 -F /home/sjpark/fpf/pcaps/single_http.pcap")
-        option += (' -A "cat:2999999,3000000,3000003/' +
-                'host:baeddel.com,mimasa2525.blog.fc2.com,' +
-                'chocosweete.blogspot.kr" ')
-        fpf_options.append(option)
+        for assertion in [
+                ' -A "cat:2999999,3000000,3000003/' +
+                    'host:baeddel.com,mimasa2525.blog.fc2.com,' +
+                    'chocosweete.blogspot.kr" '
+                ]:
+            option = "-c%s -n4 -- %s" % (cpu, workload)
+            option += (" -f /home/sjpark/fpf/data/umd5_10m.fpf " +
+                    "-F /home/sjpark/fpf/pcaps/single_http.pcap " +
+                    "-D0 -L 2000000")
+            option += assertion
+            fpf_options.append(option)
 
 exp = ""
 for option in fpf_options:
