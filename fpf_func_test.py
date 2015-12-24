@@ -25,7 +25,7 @@ for cpu in ["1ffff"]:
                     'host:baeddel.com,mimasa2525.blog.fc2.com,' +
                     'chocosweete.blogspot.kr" ',
 		    '-A "method:GET/host:imgnews.naver.net/accept:*\/*/referer:http:\/\/portal.nexentire.co.kr\/mail\/10881002.nsf\/3f733137e3189694492572df001ea342\/4e88d576f77ffd2149257dfd0001a0d5\/Body\/M1.2?OpenElement/' +
-		    'user_agent:Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; Trident/7.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.3; .NET4.0C; .NET4.0E) ',
+		    'user_agent:Mozilla\/4.0 (compatible; MSIE 7.0; Windows NT 6.1; Trident\/7.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.3; .NET4.0C; .NET4.0E) ',
 		    '-A "content_type:22/version:769/length:160" ',
 		    '-A "flags:256/questions:1/answer_rrs:0/authority_rrs:0/additional_rrs:0/host:google.com/query_type:1/query_class:0" '
                 ]:
