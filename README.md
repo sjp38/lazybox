@@ -1,7 +1,7 @@
-lazybox
+Lazybox
 =======
 
-Lazybox is a collection of scripts that helps automation of performance
+`lazybox` is a collection of scripts that helps automation of performance
 evaluation experiments. However, it can be used for automation of general
 computer program execution.
 
@@ -75,25 +75,25 @@ miserable way. For detail, see below section, [Experiments Specification File
 Generator](#Experiments Specification File Generator).
 
 ### Type of commands
- * start: Commands which should be done before experiment start.
+ * `start`: Commands which should be done before experiment start.
    (e.g., kernel module loading or program build)
    If multiple start command is described, those commands will be executed
    sequentially.
- * main: Main workload. Experiments will be end after command(s) of this type
+ * `main`: Main workload. Experiments will be end after command(s) of this type
    end. If multiple main workloads exist, they will be executed concurrently
    and workloads terminated earlier will be executed repeatedly until slowest
    workload be terminated.
- * back: Background command which should be run while main type commands run.
+ * `back`: Background command which should be run while main type commands run.
    Unlike main commands, if back workload is terminated earlier than main
    workload(s), it does not repeat execution automatically. If you want back
    workload to run infinitely until main workload run, it should be described as
    main command or use `bash` loop inside the command.
    (e.g., profiling or system stressing task)
- * end: Commands which should be done after experiment end.
+ * `end`: Commands which should be done after experiment end.
    (e.g., kernel modul unloading or meta files cleanup)
    If multiple end command is described, those commands will be executed
    sequentially as start commands do.
- * check: Check whether experiment was successful. Commands be executed after
+ * `check`: Check whether experiment was successful. Commands be executed after
    end commands end and notifies check result using return code. Return code 0
    means sucess, other values means failure. If any one of check command says
    failed, the experiment be executed again until success up to 10 times.
