@@ -18,5 +18,5 @@ def parse_input():
     if len(sys.argv) > 4:
         password = sys.argv[4]
     else:
-        password = getpass.getpass("%s password: " % target)
+        password = getpass.getpass("Password for %s@%s: " % (user, target))
     return user, target, port, password
