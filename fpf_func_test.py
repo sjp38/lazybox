@@ -1,5 +1,14 @@
 #!/usr/bin/env python
 
+"Do functional tests of fpf"
+
+__author__ = "SeongJae Park"
+__author__ += "\nHara Kang"
+__email__ = "sj38.park@gmail.com"
+__copyright__ = "Copyright (c) 2013-2015, SeongJae Park"
+__copyright__ += "\nCopyright (c) 2015, Hara Kang"
+__license__ = "GPLv3"
+
 import os
 import sys
 import ssh_args
