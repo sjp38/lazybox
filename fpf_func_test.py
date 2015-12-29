@@ -18,8 +18,6 @@ user, target, port, password = ssh_args.parse_input()
 homepath = "/home/%s" % user
 remote_exps_cmd = "expect ./remote_exps.exp"
 lazybox_path = "%s/lazybox" % homepath
-#exps_paths = ["exps/pktgen_todcslab", "exps/pktgen_trafficsample",
-#                "exps/pktgen_wireshark"]
 exps_paths = ["exps/pktgen_cat_assert", "exps/pktgen_http_single",
         "exps/pktgen_http_single_no_host", "exps/pktgen_http_multi",
         "exps/pktgen_http_multi_no_host", "exps/pktgen_hello",
