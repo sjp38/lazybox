@@ -20,8 +20,8 @@ remote_exps_cmd = "expect ./remote_exps.exp"
 lazybox_path = "%s/lazybox" % homepath
 exps_paths = ["exps/pktgen_cat_assert", "exps/pktgen_http_single",
         "exps/pktgen_http_single_no_host", "exps/pktgen_http_multi",
-        "exps/pktgen_http_multi_no_host", "exps/pktgen_hello",
-        "exps/pktgen_dns_small"
+        "exps/pktgen_http_multi_no_host", "exps/pktgen_http_multi_loop_bug",
+	"exps/pktgen_hello", "exps/pktgen_dns_small"
         ]
 
 fpf_path = "%s/fpf/src/build/fpf" % homepath
@@ -38,6 +38,7 @@ for cpu in ["1ffff"]:
                 '-A "method:POST/uri:\/androidagent.jsc/host:-759821884/accept:*\/*/cookie:a854-4d86d21ed2dc491038" ',
                 '-A "method:GET/accept:image\/png\, image\/svg+xml\, image\/*;q=0.8\, *\/*;q=0.5/user-agent:Mozilla\/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident\/5.0)/uri:\/m?u=http%3A%2F%2Fimagesearch.naver.com%2Fsearch.naver%3Fsm%3Dext%26viewloc%3D1%26where%3Didetail%26rev%3D31%26query%3D%25EC%259C%25A4%25EC%258A%25B9%25EC%2595%2584%26section%3Dimage%26res_fr%3D0%26res_to%3D0%26ie%3Dutf8%26face%3D0%26color%3D0%26ccl%3D0%26aq%3D0%26spq%3D1%26nx_search_query%3D%25EC%259C%25A4%25EC%258A%25B9%25EC%2595%2584%26nx_and_query%3D%26nx_sub_query%3D%26nx_search_hlquery%3D%26nx_search_fasquery%3D%26datetype%3D0%26startdate%3D0%26enddate%3D0%26start%3D141%26img_id%3Dblog26786680%257C19%257C10166495047_10&e=&i=&pid=SnRudspyi5ossu2pKy4ssssssfl-318834&os=Win32&ln=ko&sr=1920x1080&bw=1904&bh=973&c=24&j=Y&jv=1.8&k=Y&fv=16.0.0.305&sl=&ct=lan&p=Shockwave%20Flash&EOU" ',
                 '-A "method:GET/accept:*\/*/referer:http:\/\/with.gsshop.com\/prd\/prd.gs?prdid=14157618&vodFlag=N&utm_source=Remarketing&utm_medium=advertise&utm_campaign=adbey_pop" ',
+		'-A "method:GET/accept:*\/*/uri:\/delivery\/lg.php?cppv=1&cpp=0RHoZnxVNUdsNGI5YW1xRTV6aklqMU8zOEQyU29BdFNpZmFvWStGSkdhU0QzcmtNci9MQlZWSVFsekU0c2ExdHRRMldlTzVTY1R0bkl3cTd5ZkMybmpLTDBic2dxUmJqUG5ORXMrckF0OUdQWENlTHd3RXNrUEdIdUtaOUd5YTVvaDVLN29EK2FyakxUbkh5c3FadHVkRGVWQ252cE1Da2tUZGlYcUM0cmszSVRaVDNsUzZDeDFOT2t1Q29zVHlNQ0VUT1FUU3o3cnNGN2xrRTJhVFAyb0l5V1JpalRpeVNackFKM08vYlFBUFRpUlN4Y0NtTExaSW5HajEwc2MyRnRMbjdzc1FkZVdDcFpGa1BGTWxCdWlzRy9rb1VpT1lMZU5reVR2QmFMaTlTRWNNMGNxdTB0K2RGdlg0YXRzeFVRMmVtYmVCQ3NjQWRwRExDeWhXZ1ZCM1Judnc9PXw%3D" ',
                 '-A "content_type:22/version:769/length:160" ',
                 '-A "flags:256/questions:1/answer_rrs:0/authority_rrs:0/additional_rrs:0/host:google.com/query_type:1/query_class:1" '
                     ]:
