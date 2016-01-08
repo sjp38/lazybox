@@ -1,8 +1,10 @@
 #!/usr/bin/expect --
 set timeout -1
 
-# Do experiments from remote target machine using run_exps.py
-# lazybox should be installed on remote target machine.
+# Do experiments from a remote target machine using run_exps.py
+#
+# Because run_exps.py is a part of lazybox, lazybox should be installed on the
+# remote target machine before execcution of this program.
 #
 # Usage:
 # expect remote_exps.exp <username> <target> <ssh port> <password> \
@@ -35,7 +37,7 @@ expect -re "password"
 send "$password\r"
 expect -re "$target"
 
-# move to and do experiment
+# move to lazybox and do experiment
 send "pushd $lbpath\r"
 expect -re "$target"
 send "./run_exps.py $exp\r"
