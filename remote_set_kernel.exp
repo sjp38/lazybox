@@ -1,8 +1,11 @@
 #!/usr/bin/expect --
 set timeout -1
 
-# Do experiments from remote target machine using run_exps.py
-# lazybox should be installed on remote target machine.
+# Set kernel of a remote target host as user specified
+#
+# Internally, kernel setting is done via `scripts/set_kernel/set_kernel.py` of
+# lazybox.  For the reason, lazybox should be installed on the remote target
+# machine before execution of this program.
 #
 # Usage:
 # expect remote_set_kernel.exp <username> <target> <ssh port> <password> \
