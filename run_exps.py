@@ -18,6 +18,36 @@ BACK = "back "
 END = "end "
 CHECK = "check "
 
+def parse_lines(f, exps, starts, mains, backs, ends, checks):
+    prevline = ''
+    for line in f:
+        if line.startswith('#'):
+            continue
+        line = line.strip('\n').lstrip()
+        if line.endswith('\\'):
+            prevline += line[:-1]
+            continue
+
+        line = prevline + line
+        prevline = ''
+        if line.startswith(START):
+            starts.append(line[len(START):])
+        elif line.startswith(MAIN):
+            mains.append(line[len(MAIN):])
+        elif line.startswith(BACK):
+            backs.append(line[len(BACK):])
+        elif line.startswith(END):
+            ends.append(line[len(END):])
+        elif line.startswith(CHECK):
+            checks.append(line[len(CHECK):])
+        elif len(line.split()) == 0 and len(mains) > 0:
+            exps.append(Exp(starts, mains, backs, ends, checks))
+            starts = []
+            mains = []
+            backs = []
+            ends = []
+            checks = []
+
 def parse_file(filename):
     exps = []
     starts = []
@@ -26,35 +56,17 @@ def parse_file(filename):
     ends = []
     checks = []
 
-    prevline = ''
-    with open(filename) as f:
-        for line in f:
-            if line.startswith('#'):
-                continue
-            line = line.strip('\n').lstrip()
-            if line.endswith('\\'):
-                prevline += line[:-1]
-                continue
+    f = sys.stdin
+    if filename != "stdin":
+        f = open(filename)
+    else:
+        print "receive experiments specification from stdin"
 
-            line = prevline + line
-            prevline = ''
-            if line.startswith(START):
-                starts.append(line[len(START):])
-            elif line.startswith(MAIN):
-                mains.append(line[len(MAIN):])
-            elif line.startswith(BACK):
-                backs.append(line[len(BACK):])
-            elif line.startswith(END):
-                ends.append(line[len(END):])
-            elif line.startswith(CHECK):
-                checks.append(line[len(CHECK):])
-            elif len(line.split()) == 0 and len(mains) > 0:
-                exps.append(Exp(starts, mains, backs, ends, checks))
-                starts = []
-                mains = []
-                backs = []
-                ends = []
-                checks = []
+    parse_lines(f, exps, starts, mains, backs, ends, checks)
+
+    if filename != "stdin":
+        f.close()
+
     if len(mains) > 0:
         exps.append(Exp(starts, mains, backs, ends, checks))
 
