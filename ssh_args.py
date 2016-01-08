@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 
+"Help argument parsing for remote experiments"
+
+__author__ = "SeongJae Park"
+__email__ = "sj38.park@gmail.com"
+__copyright__ = "Copyright (c) 2015-2016, SeongJae Park"
+__license__ = "GPLv3"
+
 import getpass
 import os
 import sys
