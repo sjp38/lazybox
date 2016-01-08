@@ -62,15 +62,15 @@ def parse_file(filename):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print "USAGE: %s <path to experiments spec file>" % sys.argv[0]
+        print "USAGE: %s <path to experiments spec file> ..." % sys.argv[0]
         exit(1)
 
-    exps = parse_file(sys.argv[1])
+    for exp_file in sys.argv[1:]:
+        exps = parse_file(exp_file)
 
-    for exp in exps:
-        success = False
-        nr_retry = 0
-        while not success and nr_retry < RETRY_LIMIT:
-            success = exp.execute()
-            nr_retry += 1
-
+        for exp in exps:
+            success = False
+            nr_retry = 0
+            while not success and nr_retry < RETRY_LIMIT:
+                success = exp.execute()
+                nr_retry += 1
