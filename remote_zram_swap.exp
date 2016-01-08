@@ -1,8 +1,11 @@
 #!/usr/bin/expect --
 set timeout -1
 
-# Do experiments from remote target machine using run_exps.py
-# lazybox should be installed on remote target machine.
+# Make a remote target host to use a zram block device as a swap device
+#
+# Internally, setting swap area as a zram block device is done via
+# `scripts/zram_swap.sh` of lazybox.  For the reason, lazybox should be
+# installed on the remote target machine before execution of this program.
 #
 # Usage:
 # expect remote_set_kernel.exp <username> <target> <ssh port> <password> \
