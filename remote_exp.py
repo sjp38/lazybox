@@ -6,7 +6,7 @@ import ssh_args
 
 USAGE="%s <user name> <target> <ssh port> [password] [exp]" % sys.argv[0]
 
-user, target, port, password = ssh_args.parse_input()
+user, target, port, password = ssh_args.parse_input(USAGE)
 if len(sys.argv) < 6:
     exp = raw_input("exp to run in remote: ")
 else:

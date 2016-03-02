@@ -13,9 +13,9 @@ import sys
 
 USAGE="%s <user name> <target> <ssh port> [password]" % sys.argv[0]
 
-def parse_input():
+def parse_input(custom_usage=USAGE):
     if len(sys.argv) < 4:
-        print "usage: ", USAGE
+        print "usage: ", custom_usage
         print ""
         exit(1)
 
