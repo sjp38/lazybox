@@ -47,6 +47,8 @@ def parse_lines(f, exps, starts, mains, backs, ends, checks):
             backs = []
             ends = []
             checks = []
+    if len(mains) != 0:
+        exps.append(Exp(starts, mains, backs, ends, checks))
 
 def parse_file(filename):
     exps = []
@@ -66,9 +68,6 @@ def parse_file(filename):
 
     if filename != "stdin":
         f.close()
-
-    if len(mains) > 0:
-        exps.append(Exp(starts, mains, backs, ends, checks))
 
     return exps
 
