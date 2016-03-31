@@ -50,6 +50,17 @@ class Exp:
     def __repr__(self):
         return self.__str__()
 
+    def terminate_tasks(self):
+        print ltime(), "terminate tasks of exp %s" % self
+        for task in self.main_tasks:
+            if task.popn.poll() == None:
+                kill_childs_self(task.popn.pid)
+
+        print ltime(), "kill background procs"
+        for back_proc in self.back_procs:
+            if back_proc.poll() == None:
+                kill_childs_self(back_proc.pid)
+
     def execute(self):
         "Returns True if experiment executed successfully, False if not"
         self.back_procs = []
@@ -79,15 +90,7 @@ class Exp:
                 if nr_completed < len(self.main_tasks):
                     task.popn = subprocess.Popen(task.cmd, shell=True,
                             executable="/bin/bash")
-        print ltime(), "whole main workloads done; kill zombie main procs"
-        for task in self.main_tasks:
-            if task.popn.poll() == None:
-                kill_childs_self(task.popn.pid)
-
-        print ltime(), "kill background procs"
-        for back_proc in self.back_procs:
-            if back_proc.poll() == None:
-                kill_childs_self(back_proc.pid)
+        self.terminate_tasks()
 
         for end in self.end_cmds:
             subprocess.call(end, shell=True, executable="/bin/bash")
