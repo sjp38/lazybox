@@ -109,11 +109,18 @@ def kill_childs_self(pid):
         if child == pid:
             continue
         try:
-            # send TERM than KILL to give a chance to be terminated well and
-            # than to ensure it terminated because TERM could be handled by
-            # process while KILL couldn't.
+            # send INT, TERM and than KILL to give a chance to be terminated
+            # well and than to ensure it terminated because TERM could be
+            # handled by process while KILL couldn't.
+            # Because the processes are stopeed by SIGSTOP that sent from
+            # childs_of(), we should send SIGCONT, too.  It may spawn one more
+            # child while it.  But, let's just hope for now...
             print ltime(), "kill child: ", child
+            os.kill(child, signal.SIGINT)
+            os.kill(child, signal.SIGCONT)
+            time.sleep(2)   # kill_run_exps needs long time...
             os.kill(child, signal.SIGTERM)
+            time.sleep(0.5)
             os.kill(child, signal.SIGKILL)
         except OSError as e:
             print ltime(), "error %s occurred while killing child %s" % (e, child)
