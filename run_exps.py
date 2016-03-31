@@ -7,7 +7,10 @@ __email__ = "sj38.park@gmail.com"
 __copyright__ = "Copyright (c) 2013-2015, SeongJae Park"
 __license__ = "GPLv3"
 
+import os
+import signal
 import sys
+import time
 from exp import Exp
 
 RETRY_LIMIT = 10
@@ -71,17 +74,38 @@ def parse_file(filename):
 
     return exps
 
+got_sigterm = False
+current_exps = []
+
+def sig_handler(signal, frame):
+    global current_exps
+    global got_sigterm
+
+    print "[run_exps] received signal %s" % signal
+    got_sigterm = True
+    for exp in current_exps:
+        exp.terminate_tasks()
+    exit(1)
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print "USAGE: %s <path to experiments spec file> ..." % sys.argv[0]
         exit(1)
 
-    for exp_file in sys.argv[1:]:
-        exps = parse_file(exp_file)
+    signal.signal(signal.SIGINT, sig_handler)
+    signal.signal(signal.SIGTERM, sig_handler)
 
-        for exp in exps:
+    global current_exps
+    for exp_file in sys.argv[1:]:
+        current_exps = parse_file(exp_file)
+
+        for exp in current_exps:
             success = False
             nr_retry = 0
             while not success and nr_retry < RETRY_LIMIT:
+                # wait until sighandler do cleaning and exit().
+                if got_sigterm:
+                    time.sleep(1)
+                    continue
                 success = exp.execute()
                 nr_retry += 1
