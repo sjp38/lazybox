@@ -25,6 +25,35 @@ set password [lindex $argv 3]
 set lbpath [lindex $argv 4]
 set exp [lindex $argv 5]
 
+proc sig_handler {} {
+	global username
+	global target
+	global ssh_port
+	global password
+	global lbpath
+	global exp
+
+	puts "!!!GOT SIGINT!!!"
+	# login
+	spawn ssh -p $ssh_port $username@$target
+	expect -re "password"
+	send "$password\r"
+	expect -re "$target"
+
+	# be su
+	send "sudo su\r"
+	expect -re "password"
+	send "$password\r"
+	expect -re "$target"
+	send "pushd $lbpath\r"
+	expect -re "$target"
+	send "./kill_run_exps.py $exp\r"
+	expect -re "$target"
+	exit 1
+}
+
+trap sig_handler SIGINT
+
 # login
 spawn ssh -p $ssh_port $username@$target
 expect -re "password"
