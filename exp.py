@@ -118,9 +118,9 @@ def kill_childs_self(pid):
             print ltime(), "kill child: ", child
             os.kill(child, signal.SIGINT)
             os.kill(child, signal.SIGCONT)
-            time.sleep(2)   # kill_run_exps needs long time...
-            os.kill(child, signal.SIGTERM)
             time.sleep(0.5)
+            os.kill(child, signal.SIGTERM)
+            time.sleep(0.1)
             os.kill(child, signal.SIGKILL)
         except OSError as e:
             print ltime(), "error %s occurred while killing child %s" % (e, child)
