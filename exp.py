@@ -150,7 +150,10 @@ def childs_of(pid, stop_childs):
     for line in p.stdout:
         print ltime(), line
         spltd = line.split('(')
-        for entry in spltd:
+        for idx, entry in enumerate(spltd):
+            # skip thread
+            if idx > 0 and spltd[idx-1][-1] == '}':
+                continue
             if entry.find(')') == -1:
                 continue
             child_id = entry.split(')')[0]
