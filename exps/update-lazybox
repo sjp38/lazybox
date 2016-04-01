@@ -1,0 +1,1 @@
+main git remote update && git checkout origin/master
