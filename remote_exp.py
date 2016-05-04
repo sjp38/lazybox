@@ -14,7 +14,11 @@ else:
 
 lbpath = "/home/%s/lazybox" % user
 
-cmd = "expect ./remote_exps.exp %s %s %s %s %s %s" % (
-        user, target, port, password, lbpath, exp)
+if password == "__lb_registered":
+    cmd = "expect ./remote_exps_registered.exp %s %s %s %s %s" % (
+            user, target, port, lbpath, exp)
+else:
+    cmd = "expect ./remote_exps.exp %s %s %s %s %s %s" % (
+            user, target, port, password, lbpath, exp)
 print "[remote_exp.py] do cmd $ ", cmd
 os.system(cmd)
