@@ -152,3 +152,4 @@ if __name__ == "__main__":
     for s in splits:
         print s
     print nrs_compose(splits, ["value1"], ["op"])
+    print nrs_compose(splits, ["value2"], ["op"])
