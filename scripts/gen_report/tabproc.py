@@ -53,12 +53,12 @@ def keyindexs(legend, keys):
 def atab_compose(tables, targets, labels):
     """Compose multiple tables into one tables.
 
-    @tables    List of multiple tables to be composed.
+    @tables     List of multiple tables to be composed.
     @targets    Target fields to be located inside composed table.
     @labels     Labels to be used to distinguish sub tables.
 
     Each table in tables should have same legend, same number of rows.  Each
-    row in number should have same field for labels pointing field.
+    row in table should have same field for labels pointing field.
     """
     lable_idxs = keyindexs(tables[0].legend, labels)
     target_idxs = keyindexs(tables[0].legend, targets)
@@ -70,7 +70,7 @@ def atab_compose(tables, targets, labels):
                                     '_'.join(targets)))
 
     ret = ATable("%s-%s" % ('_'.join(labels), '_'.join(targets)),
-            ','.join(new_legend), [])
+            new_legend, [])
     for idx, table in enumerate(tables):
         for ri, row in enumerate(table.rows):
             if idx == 0:
