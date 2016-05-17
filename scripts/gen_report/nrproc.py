@@ -41,16 +41,20 @@ def from_csv(csv):
         rows.append([float(x) for x in line.split(',')])
     return Numbers(title, legend, rows)
 
+def keyindexs(legend, keys):
+    kidxs = []
+    for k in keys:
+        for idx, name in enumerate(legend):
+            if k == name:
+                kidxs.append(idx)
+    return kidxs
+
 def nr_split(numbers, keys):
     """Split numbers into multiple numbers with same keys.
 
     Title of splitted numbers will be the keys.
     """
-    kidxs = []
-    for k in keys:
-        for idx, name in enumerate(numbers.legend):
-            if k == name:
-                kidxs.append(idx)
+    kidxs = keyindexs(numbers.legend, keys)
 
     inter_map = {}
     for row in numbers.rows:
@@ -86,11 +90,7 @@ def stat_of(numbers, keys):
     return ret
 
 def sort_with(numbers, keys):
-    kidxs = []
-    for k in keys:
-        for idx, name in enumerate(numbers.legend):
-            if k == name:
-                kidxs.append(idx)
+    kidxs = keyindexs(numbers.legend, keys)
     for i in reversed(kidxs):
         numbers.rows.sort(key=lambda x: x[i])
     return numbers
