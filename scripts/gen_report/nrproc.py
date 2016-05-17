@@ -41,7 +41,11 @@ def from_csv(csv):
         rows.append([float(x) for x in line.split(',')])
     return Numbers(title, legend, rows)
 
-def group_by(numbers, keys):
+def nr_split(numbers, keys):
+    """Split numbers into multiple numbers with same keys.
+
+    Title of splitted numbers will be the keys.
+    """
     kidxs = []
     for k in keys:
         for idx, name in enumerate(numbers.legend):
@@ -52,8 +56,8 @@ def group_by(numbers, keys):
     for row in numbers.rows:
         key = "%s" % [row[idx] for idx in kidxs]
         if not inter_map.has_key(key):
-            inter_map[key] = []
-        inter_map[key].append(row)
+            inter_map[key] = Numbers(key, numbers.legend, [])
+        inter_map[key].rows.append(row)
     return inter_map.values()
 
 def stat_of(numbers, keys):
@@ -67,12 +71,12 @@ def stat_of(numbers, keys):
 
     ret = Numbers(numbers.title, new_legend, [])
 
-    groups = group_by(numbers, keys)
-    for group in groups:
+    nrs = nr_split(numbers, keys)
+    for nr in nrs:
         new_row = []
         ret.rows.append(new_row)
         for i in range(len(numbers.legend)):
-            vals = [row[i] for row in group]
+            vals = [row[i] for row in nr.rows]
             minv = min(vals)
             maxv = max(vals)
             avg = sum(vals) / len(vals)
@@ -94,6 +98,9 @@ def sort_with(numbers, keys):
 if __name__ == "__main__":
     n = Numbers("foo", ["key", "val"], [[1, 1], [1, 3], [1, 5],
                                         [2, 3], [2,4], [2,5], [3, 5]])
+    nrs = nr_split(n, ["key"])
+    for nr in nrs:
+        print nr
     n = sort_with(stat_of(n, ["key"]), ["key_avg"])
     print n
     print n.csv()
