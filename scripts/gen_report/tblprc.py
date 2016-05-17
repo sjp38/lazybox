@@ -76,7 +76,7 @@ def merge(tables):
             ret.rows[ridx].extend(row)
     return ret
 
-def atab_split(tables, keys):
+def split_with_key(tables, keys):
     """Split tables into multiple tables with same keys.
 
     Title of splitted tables will be the keys.
@@ -110,7 +110,7 @@ def stat_of(table, keys):
 
     ret = ATable(table.title, new_legend, [])
 
-    tables = atab_split(table, keys)
+    tables = split_with_key(table, keys)
     for subtable in tables:
         new_row = []
         ret.rows.append(new_row)
@@ -153,7 +153,7 @@ if __name__ == "__main__":
                 [2, 'sys', 80, 20],
                 [4, "sys", 90, 10],
             ])
-    splits = atab_split(t, ["system"])
+    splits = split_with_key(t, ["system"])
     print merge(splits)
     print pick_fields(merge(splits), ["A-thrs", "A-value1", "B-value1",
                                         "A-value2", "B-value2"])
