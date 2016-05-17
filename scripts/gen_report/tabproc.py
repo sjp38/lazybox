@@ -103,7 +103,7 @@ def atab_split(tables, keys):
 
     inter_map = {}
     for row in tables.rows:
-        key = "%s" % [row[idx] for idx in kidxs]
+        key = "%s" % '-'.join([str(row[idx]) for idx in kidxs])
         if not inter_map.has_key(key):
             inter_map[key] = ATable(key, tables.legend, [])
         inter_map[key].rows.append(row)
