@@ -131,8 +131,8 @@ if __name__ == "__main__":
     t = ATable("foo", ["key", "val"], [[1, 1], [1, 3], [1, 5],
                                         [2, 3], [2,4], [2,5], [3, 5]])
     ts = atab_split(t, ["key"])
-    for t in ts:
-        print t
+    for t_ in ts:
+        print t_
     t = sort_with(stat_of(t, ["key"]), ["key_avg"])
     print t
     print t.csv()
