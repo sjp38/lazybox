@@ -67,7 +67,7 @@ def merge(tables):
     for table in tables:
         for name in table.legend:
             new_legend.append("%s-%s" % (table.title, name))
-    ret = ATable('_'.join([table.title for table in tables]), new_legend, [])
+    ret = ATable('-'.join([table.title for table in tables]), new_legend, [])
 
     for idx, table in enumerate(tables):
         for ridx, row in enumerate(table.rows):
