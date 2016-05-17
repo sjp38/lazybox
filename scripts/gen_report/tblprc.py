@@ -59,7 +59,10 @@ def pick_fields(table, fields):
     return ATable(table.title, fields, new_rows)
 
 def merge(tables):
-    """Merge multiple tables into one tables."""
+    """Merge multiple tables into one tables.
+
+    Tables should have same legend and same number of rows.
+    """
     new_legend = []
     for table in tables:
         for name in table.legend:
