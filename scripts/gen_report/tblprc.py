@@ -91,7 +91,7 @@ def split_with_key(tables, keys):
         inter_map[key].rows.append(row)
     return inter_map.values()
 
-def __stat_of(vals):
+def __calc_stat(vals):
     minv = min(vals)
     maxv = max(vals)
     avg = sum(vals) / len(vals)
@@ -99,7 +99,7 @@ def __stat_of(vals):
     stdev_ = math.sqrt(variance)
     return [minv, maxv, avg, stdev_]
 
-def stat_of(table, keys):
+def calc_stat(table, keys):
     """Get average, min/max values, standard deviation of values in a table
     with same keys.
     """
@@ -121,7 +121,7 @@ def stat_of(table, keys):
                 val = subtable.rows[0][i]
                 new_row.extend([val, val, val, val])
                 continue
-            new_row.extend(__stat_of(vals))
+            new_row.extend(__calc_stat(vals))
     return ret
 
 def sort_with(tables, keys):
@@ -135,12 +135,12 @@ if __name__ == "__main__":
             [
                 [1, 1, 'a'], [1, 3, 'a'], [1, 5, 'a'],
                 [2, 3, 'b'], [2,4,'b'], [2,5,'b'], [3, 5, 'c']])
-    stat_calced = stat_of(t, ["key"])
+    stat_calced = calc_stat(t, ["key"])
     sorted = sort_with(stat_calced, ["key_avg"])
     print sorted
     print sorted.csv()
     print from_csv(sorted.csv())
-    print sort_with(stat_of(from_csv(t.csv()), ["key"]), ["key_avg"])
+    print sort_with(calc_stat(from_csv(t.csv()), ["key"]), ["key_avg"])
 
     t = ATable("foo", ["thrs", "system", "value1", "value2"], [
                 [1, 'A', 10, 90],
