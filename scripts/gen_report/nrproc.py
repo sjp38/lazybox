@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-"Module for numbers processing for report"
+"Module for tables processing for report"
 
 import copy
 import math
 
-class Numbers:
+class ATable:
     title = None    # string
     legend = None   # list of strings
     rows = None     # list of lists of strings
@@ -40,7 +40,7 @@ def from_csv(csv):
     rows = []
     for line in lines[2:]:
         rows.append([float(x) for x in line.split(',')])
-    return Numbers(title, legend, rows)
+    return ATable(title, legend, rows)
 
 def keyindexs(legend, keys):
     kidxs = []
@@ -50,66 +50,66 @@ def keyindexs(legend, keys):
                 kidxs.append(idx)
     return kidxs
 
-def nrs_compose(lis_nrs, targets, labels):
-    """Compose multiple numbers into one numbers.
+def atab_compose(tables, targets, labels):
+    """Compose multiple tables into one tables.
 
-    @lis_nrs    List of multiple numbers to be composed.
-    @targets    Target fields to be located inside composed numbers.
-    @labels     Labels to be used to distinguish sub numbers.
+    @tables    List of multiple tables to be composed.
+    @targets    Target fields to be located inside composed table.
+    @labels     Labels to be used to distinguish sub tables.
 
-    Each numbers in lis_nrs should have same legend, same number of rows.  Each
+    Each table in tables should have same legend, same number of rows.  Each
     row in number should have same field for labels pointing field.
     """
-    lidxs = keyindexs(lis_nrs[0].legend, labels)
-    target_idxs = keyindexs(lis_nrs[0].legend, targets)
+    lable_idxs = keyindexs(tables[0].legend, labels)
+    target_idxs = keyindexs(tables[0].legend, targets)
 
     new_legend = []
-    for nrs in lis_nrs:
-        labelvs = [nrs.rows[0][li] for li in lidxs]
-        new_legend.append("%s-%s" % ('_'.join([str(x) for x in labelvs]),
+    for table in tables:
+        label_vals = [table.rows[0][li] for li in lable_idxs]
+        new_legend.append("%s-%s" % ('_'.join([str(x) for x in label_vals]),
                                     '_'.join(targets)))
 
-    ret = Numbers("%s-%s" % ('_'.join(labels), '_'.join(targets)),
+    ret = ATable("%s-%s" % ('_'.join(labels), '_'.join(targets)),
             ','.join(new_legend), [])
-    for idx, nrs in enumerate(lis_nrs):
-        for ri, row in enumerate(nrs.rows):
+    for idx, table in enumerate(tables):
+        for ri, row in enumerate(table.rows):
             if idx == 0:
                 ret.rows.append([])
             ret.rows[ri].extend([row[i] for i in target_idxs])
     return ret
 
-def nr_split(numbers, keys):
-    """Split numbers into multiple numbers with same keys.
+def atab_split(tables, keys):
+    """Split tables into multiple tables with same keys.
 
-    Title of splitted numbers will be the keys.
+    Title of splitted tables will be the keys.
     """
-    kidxs = keyindexs(numbers.legend, keys)
+    kidxs = keyindexs(tables.legend, keys)
 
     inter_map = {}
-    for row in numbers.rows:
+    for row in tables.rows:
         key = "%s" % [row[idx] for idx in kidxs]
         if not inter_map.has_key(key):
-            inter_map[key] = Numbers(key, numbers.legend, [])
+            inter_map[key] = ATable(key, tables.legend, [])
         inter_map[key].rows.append(row)
     return inter_map.values()
 
-def stat_of(numbers, keys):
-    """Get average, min/max values, standard deviation of numbers with same
-    keys.
+def stat_of(table, keys):
+    """Get average, min/max values, standard deviation of values in a table
+    with same keys.
     """
     new_legend = []
-    for name in numbers.legend:
+    for name in table.legend:
         new_legend.extend([name + "_min", name + "_max", name + "_avg",
                             name + "_stdev"])
 
-    ret = Numbers(numbers.title, new_legend, [])
+    ret = ATable(table.title, new_legend, [])
 
-    nrs = nr_split(numbers, keys)
-    for nr in nrs:
+    tables = atab_split(table, keys)
+    for subtable in tables:
         new_row = []
         ret.rows.append(new_row)
-        for i in range(len(numbers.legend)):
-            vals = [row[i] for row in nr.rows]
+        for i in range(len(subtable.legend)):
+            vals = [row[i] for row in subtable.rows]
             minv = min(vals)
             maxv = max(vals)
             avg = sum(vals) / len(vals)
@@ -118,25 +118,25 @@ def stat_of(numbers, keys):
             new_row.extend([minv, maxv, avg, stdev_])
     return ret
 
-def sort_with(numbers, keys):
-    kidxs = keyindexs(numbers.legend, keys)
+def sort_with(tables, keys):
+    kidxs = keyindexs(tables.legend, keys)
     for i in reversed(kidxs):
-        numbers.rows.sort(key=lambda x: x[i])
-    return numbers
+        tables.rows.sort(key=lambda x: x[i])
+    return tables
 
 if __name__ == "__main__":
-    n = Numbers("foo", ["key", "val"], [[1, 1], [1, 3], [1, 5],
+    t = ATable("foo", ["key", "val"], [[1, 1], [1, 3], [1, 5],
                                         [2, 3], [2,4], [2,5], [3, 5]])
-    nrs = nr_split(n, ["key"])
-    for nr in nrs:
-        print nr
-    n = sort_with(stat_of(n, ["key"]), ["key_avg"])
-    print n
-    print n.csv()
+    ts = atab_split(t, ["key"])
+    for t in ts:
+        print t
+    t = sort_with(stat_of(t, ["key"]), ["key_avg"])
+    print t
+    print t.csv()
     print ""
-    print from_csv(n.csv())
+    print from_csv(t.csv())
 
-    nrs = Numbers("foo", ["thrs", "op", "value1", "value2"], [
+    t = ATable("foo", ["thrs", "op", "value1", "value2"], [
                 [1, 0, 10, 90],
                 [2, 0, 20, 80],
                 [4, 0, 30, 70],
@@ -147,9 +147,9 @@ if __name__ == "__main__":
                 [2, 2, 80, 20],
                 [4, 2, 90, 10],
             ])
-    splits = nr_split(nrs, ["op"])
+    splits = atab_split(t, ["op"])
     print "SPLITTED"
     for s in splits:
         print s
-    print nrs_compose(splits, ["value1"], ["op"])
-    print nrs_compose(splits, ["value2"], ["op"])
+    print atab_compose(splits, ["value1"], ["op"])
+    print atab_compose(splits, ["value2"], ["op"])
