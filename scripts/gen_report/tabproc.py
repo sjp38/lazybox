@@ -39,7 +39,7 @@ def from_csv(csv):
     legend = lines[1].split(',')
     rows = []
     for line in lines[2:]:
-        rows.append([float(x) for x in line.split(',')])
+        rows.append([x for x in line.split(',')])
     return ATable(title, legend, rows)
 
 def keyindexs(legend, keys):
@@ -117,7 +117,12 @@ def stat_of(table, keys):
         new_row = []
         ret.rows.append(new_row)
         for i in range(len(subtable.legend)):
-            vals = [row[i] for row in subtable.rows]
+            try:
+                vals = [float(row[i]) for row in subtable.rows]
+            except ValueError:
+                val = subtable.rows[0][i]
+                new_row.extend([val, val, val, val])
+                continue
             new_row.extend(__stat_of(vals))
     return ret
 
