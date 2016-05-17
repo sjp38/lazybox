@@ -66,8 +66,9 @@ def atab_compose(tables, targets, labels):
     new_legend = []
     for table in tables:
         label_vals = [table.rows[0][li] for li in lable_idxs]
-        new_legend.append("%s-%s" % ('_'.join([str(x) for x in label_vals]),
-                                    '_'.join(targets)))
+        for target in targets:
+            new_legend.append("%s-%s" %
+                    ('_'.join([str(x) for x in label_vals]), target))
 
     ret = ATable("%s-%s" % ('_'.join(labels), '_'.join(targets)),
             new_legend, [])
@@ -158,3 +159,4 @@ if __name__ == "__main__":
     splits = atab_split(t, ["system"])
     print atab_compose(splits, ["value1"], ["system"])
     print atab_compose(splits, ["value2"], ["system"])
+    print atab_compose(splits, ["value1", "value2"], ["system"])
