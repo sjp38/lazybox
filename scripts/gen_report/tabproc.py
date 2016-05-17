@@ -137,30 +137,24 @@ if __name__ == "__main__":
             [
                 [1, 1, 'a'], [1, 3, 'a'], [1, 5, 'a'],
                 [2, 3, 'b'], [2,4,'b'], [2,5,'b'], [3, 5, 'c']])
-    ts = atab_split(t, ["key"])
-    for t_ in ts:
-        print t_
-    compressed = sort_with(stat_of(t, ["key"]), ["key_avg"])
-    print compressed
-    print compressed.csv()
-    print ""
-    print from_csv(compressed.csv())
+    stat_calced = stat_of(t, ["key"])
+    sorted = sort_with(stat_calced, ["key_avg"])
+    print sorted
+    print sorted.csv()
+    print from_csv(sorted.csv())
     print sort_with(stat_of(from_csv(t.csv()), ["key"]), ["key_avg"])
 
-    t = ATable("foo", ["thrs", "op", "value1", "value2"], [
-                [1, 0, 10, 90],
-                [2, 0, 20, 80],
-                [4, 0, 30, 70],
-                [1, 1, 40, 60],
-                [2, 1, 50, 50],
-                [4, 1, 60, 40],
-                [1, 2, 70, 30],
-                [2, 2, 80, 20],
-                [4, 2, 90, 10],
+    t = ATable("foo", ["thrs", "system", "value1", "value2"], [
+                [1, 'A', 10, 90],
+                [2, 'A', 20, 80],
+                [4, 'A', 30, 70],
+                [1, 'B', 40, 60],
+                [2, 'B', 50, 50],
+                [4, 'B', 60, 40],
+                [1, 'sys', 70, 30],
+                [2, 'sys', 80, 20],
+                [4, "sys", 90, 10],
             ])
-    splits = atab_split(t, ["op"])
-    print "SPLITTED"
-    for s in splits:
-        print s
-    print atab_compose(splits, ["value1"], ["op"])
-    print atab_compose(splits, ["value2"], ["op"])
+    splits = atab_split(t, ["system"])
+    print atab_compose(splits, ["value1"], ["system"])
+    print atab_compose(splits, ["value2"], ["system"])
