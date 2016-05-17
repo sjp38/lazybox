@@ -39,7 +39,7 @@ def group_by(numbers, keys):
         inter_map[key].append(row)
     return inter_map.values()
 
-def stat_numbers(numbers, keys):
+def stat_of(numbers, keys):
     """Get average, min/max values, standard deviation of numbers with same
     keys.
     """
@@ -64,7 +64,7 @@ def stat_numbers(numbers, keys):
             new_row.extend([minv, maxv, avg, stdev_])
     return ret
 
-def sort_numbers(numbers, keys):
+def sort_with(numbers, keys):
     kidxs = []
     for k in keys:
         for idx, name in enumerate(numbers.legend):
@@ -77,4 +77,4 @@ def sort_numbers(numbers, keys):
 if __name__ == "__main__":
     n = Numbers("foo", ["key", "val"], [[1, 1], [1, 3], [1, 5],
                                         [2, 3], [2,4], [2,5], [3, 5]])
-    print sort_numbers(stat_numbers(n, ["key"]), ["key_avg"])
+    print sort_with(stat_of(n, ["key"]), ["key_avg"])
