@@ -84,5 +84,6 @@ def sort_with(numbers, keys):
 if __name__ == "__main__":
     n = Numbers("foo", ["key", "val"], [[1, 1], [1, 3], [1, 5],
                                         [2, 3], [2,4], [2,5], [3, 5]])
-    print sort_with(stat_of(n, ["key"]), ["key_avg"])
-    print sort_with(stat_of(n, ["key"]), ["key_avg"]).csv()
+    n = sort_with(stat_of(n, ["key"]), ["key_avg"])
+    print n
+    print n.csv()
