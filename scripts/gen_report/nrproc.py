@@ -24,6 +24,13 @@ class Numbers:
             str_ += "%s" % row + "\n"
         return str_
 
+    def csv(self):
+        str_ = "title,%s\n" % self.title
+        str_ += ",".join(str(x) for x in self.legend) + "\n"
+        for row in self.rows:
+            str_ += ",".join(str(x) for x in row) + "\n"
+        return str_
+
 def group_by(numbers, keys):
     kidxs = []
     for k in keys:
@@ -78,3 +85,4 @@ if __name__ == "__main__":
     n = Numbers("foo", ["key", "val"], [[1, 1], [1, 3], [1, 5],
                                         [2, 3], [2,4], [2,5], [3, 5]])
     print sort_with(stat_of(n, ["key"]), ["key_avg"])
+    print sort_with(stat_of(n, ["key"]), ["key_avg"]).csv()
