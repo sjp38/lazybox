@@ -79,6 +79,21 @@ def atab_compose(tables, targets, labels):
             ret.rows[ri].extend([row[i] for i in target_idxs])
     return ret
 
+def merge(tables):
+    """Merge multiple tables into one tables."""
+    new_legend = []
+    for table in tables:
+        for name in table.legend:
+            new_legend.append("%s-%s" % (table.title, name))
+    ret = ATable('_'.join([table.title for table in tables]), new_legend, [])
+
+    for idx, table in enumerate(tables):
+        for ridx, row in enumerate(table.rows):
+            if idx == 0:
+                ret.rows.append([])
+            ret.rows[ridx].extend(row)
+    return ret
+
 def atab_split(tables, keys):
     """Split tables into multiple tables with same keys.
 
@@ -160,3 +175,4 @@ if __name__ == "__main__":
     print atab_compose(splits, ["value1"], ["system"])
     print atab_compose(splits, ["value2"], ["system"])
     print atab_compose(splits, ["value1", "value2"], ["system"])
+    print merge(splits)
