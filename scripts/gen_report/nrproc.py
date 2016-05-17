@@ -25,11 +25,12 @@ class Numbers:
         return str_
 
     def csv(self):
-        str_ = "title,%s\n" % self.title
-        str_ += ",".join(str(x) for x in self.legend) + "\n"
+        lines = []
+        lines.append("title,%s" % self.title)
+        lines.append(",".join(str(x) for x in self.legend))
         for row in self.rows:
-            str_ += ",".join(str(x) for x in row) + "\n"
-        return str_
+            lines.append(",".join(str(x) for x in row))
+        return '\n'.join(lines)
 
 def group_by(numbers, keys):
     kidxs = []
