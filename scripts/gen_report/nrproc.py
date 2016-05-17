@@ -64,7 +64,17 @@ def stat_numbers(numbers, keys):
             new_row.extend([minv, maxv, avg, stdev_])
     return ret
 
+def sort_numbers(numbers, keys):
+    kidxs = []
+    for k in keys:
+        for idx, name in enumerate(numbers.legend):
+            if k == name:
+                kidxs.append(idx)
+    for i in reversed(kidxs):
+        numbers.rows.sort(key=lambda x: x[i])
+    return numbers
+
 if __name__ == "__main__":
     n = Numbers("foo", ["key", "val"], [[1, 1], [1, 3], [1, 5],
                                         [2, 3], [2,4], [2,5], [3, 5]])
-    print stat_numbers(n, ["key"])
+    print sort_numbers(stat_numbers(n, ["key"]), ["key_avg"])
