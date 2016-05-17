@@ -93,6 +93,14 @@ def atab_split(tables, keys):
         inter_map[key].rows.append(row)
     return inter_map.values()
 
+def __stat_of(vals):
+    minv = min(vals)
+    maxv = max(vals)
+    avg = sum(vals) / len(vals)
+    variance = float(sum([pow(v - avg, 2) for v in vals])) / len(vals)
+    stdev_ = math.sqrt(variance)
+    return [minv, maxv, avg, stdev_]
+
 def stat_of(table, keys):
     """Get average, min/max values, standard deviation of values in a table
     with same keys.
@@ -110,12 +118,7 @@ def stat_of(table, keys):
         ret.rows.append(new_row)
         for i in range(len(subtable.legend)):
             vals = [row[i] for row in subtable.rows]
-            minv = min(vals)
-            maxv = max(vals)
-            avg = sum(vals) / len(vals)
-            variance = float(sum([pow(v - avg, 2) for v in vals])) / len(vals)
-            stdev_ = math.sqrt(variance)
-            new_row.extend([minv, maxv, avg, stdev_])
+            new_row.extend(__stat_of(vals))
     return ret
 
 def sort_with(tables, keys):
