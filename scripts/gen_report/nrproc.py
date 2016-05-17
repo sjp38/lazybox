@@ -2,6 +2,7 @@
 
 "Module for numbers processing for report"
 
+import copy
 import math
 
 class Numbers:
@@ -48,6 +49,34 @@ def keyindexs(legend, keys):
             if k == name:
                 kidxs.append(idx)
     return kidxs
+
+def nrs_compose(lis_nrs, targets, labels):
+    """Compose multiple numbers into one numbers.
+
+    @lis_nrs    List of multiple numbers to be composed.
+    @targets    Target fields to be located inside composed numbers.
+    @labels     Labels to be used to distinguish sub numbers.
+
+    Each numbers in lis_nrs should have same legend, same number of rows.  Each
+    row in number should have same field for labels pointing field.
+    """
+    lidxs = keyindexs(lis_nrs[0].legend, labels)
+    target_idxs = keyindexs(lis_nrs[0].legend, targets)
+
+    new_legend = []
+    for nrs in lis_nrs:
+        labelvs = [nrs.rows[0][li] for li in lidxs]
+        new_legend.append("%s-%s" % ('_'.join([str(x) for x in labelvs]),
+                                    '_'.join(targets)))
+
+    ret = Numbers("%s-%s" % ('_'.join(labels), '_'.join(targets)),
+            ','.join(new_legend), [])
+    for idx, nrs in enumerate(lis_nrs):
+        for ri, row in enumerate(nrs.rows):
+            if idx == 0:
+                ret.rows.append([])
+            ret.rows[ri].extend([row[i] for i in target_idxs])
+    return ret
 
 def nr_split(numbers, keys):
     """Split numbers into multiple numbers with same keys.
@@ -106,3 +135,20 @@ if __name__ == "__main__":
     print n.csv()
     print ""
     print from_csv(n.csv())
+
+    nrs = Numbers("foo", ["thrs", "op", "value1", "value2"], [
+                [1, 0, 10, 90],
+                [2, 0, 20, 80],
+                [4, 0, 30, 70],
+                [1, 1, 40, 60],
+                [2, 1, 50, 50],
+                [4, 1, 60, 40],
+                [1, 2, 70, 30],
+                [2, 2, 80, 20],
+                [4, 2, 90, 10],
+            ])
+    splits = nr_split(nrs, ["op"])
+    print "SPLITTED"
+    for s in splits:
+        print s
+    print nrs_compose(splits, ["value1"], ["op"])
