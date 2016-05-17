@@ -133,16 +133,19 @@ def sort_with(tables, keys):
     return tables
 
 if __name__ == "__main__":
-    t = ATable("foo", ["key", "val"], [[1, 1], [1, 3], [1, 5],
-                                        [2, 3], [2,4], [2,5], [3, 5]])
+    t = ATable("foo", ["key", "val", "something"],
+            [
+                [1, 1, 'a'], [1, 3, 'a'], [1, 5, 'a'],
+                [2, 3, 'b'], [2,4,'b'], [2,5,'b'], [3, 5, 'c']])
     ts = atab_split(t, ["key"])
     for t_ in ts:
         print t_
-    t = sort_with(stat_of(t, ["key"]), ["key_avg"])
-    print t
-    print t.csv()
+    compressed = sort_with(stat_of(t, ["key"]), ["key_avg"])
+    print compressed
+    print compressed.csv()
     print ""
-    print from_csv(t.csv())
+    print from_csv(compressed.csv())
+    print sort_with(stat_of(from_csv(t.csv()), ["key"]), ["key_avg"])
 
     t = ATable("foo", ["thrs", "op", "value1", "value2"], [
                 [1, 0, 10, 90],
