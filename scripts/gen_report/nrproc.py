@@ -32,6 +32,15 @@ class Numbers:
             lines.append(",".join(str(x) for x in row))
         return '\n'.join(lines)
 
+def from_csv(csv):
+    lines = csv.split('\n')
+    title = lines[0].split(',')[1]
+    legend = lines[1].split(',')
+    rows = []
+    for line in lines[2:]:
+        rows.append([float(x) for x in line.split(',')])
+    return Numbers(title, legend, rows)
+
 def group_by(numbers, keys):
     kidxs = []
     for k in keys:
@@ -88,3 +97,5 @@ if __name__ == "__main__":
     n = sort_with(stat_of(n, ["key"]), ["key_avg"])
     print n
     print n.csv()
+    print ""
+    print from_csv(n.csv())
