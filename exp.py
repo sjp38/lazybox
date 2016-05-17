@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-"Describes class and functions for an experiment"
+"Define class and functions for an experiment"
 
 __author__ = "SeongJae Park"
 __email__ = "sj38.park@gmail.com"
-__copyright__ = "Copyright (c) 2013-2015, SeongJae Park"
+__copyright__ = "Copyright (c) 2013-2016, SeongJae Park"
 __license__ = "GPLv3"
 
 import datetime
