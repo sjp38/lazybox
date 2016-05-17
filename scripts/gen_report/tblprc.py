@@ -50,35 +50,6 @@ def keyindexs(legend, keys):
                 kidxs.append(idx)
     return kidxs
 
-def atab_compose(tables, targets, labels):
-    """Compose multiple tables into one tables.
-
-    @tables     List of multiple tables to be composed.
-    @targets    Target fields to be located inside composed table.
-    @labels     Labels to be used to distinguish sub tables.
-
-    Each table in tables should have same legend, same number of rows.  Each
-    row in table should have same field for labels pointing field.
-    """
-    lable_idxs = keyindexs(tables[0].legend, labels)
-    target_idxs = keyindexs(tables[0].legend, targets)
-
-    new_legend = []
-    for table in tables:
-        label_vals = [table.rows[0][li] for li in lable_idxs]
-        for target in targets:
-            new_legend.append("%s-%s" %
-                    ('_'.join([str(x) for x in label_vals]), target))
-
-    ret = ATable("%s-%s" % ('_'.join(labels), '_'.join(targets)),
-            new_legend, [])
-    for idx, table in enumerate(tables):
-        for ri, row in enumerate(table.rows):
-            if idx == 0:
-                ret.rows.append([])
-            ret.rows[ri].extend([row[i] for i in target_idxs])
-    return ret
-
 def pick_fields(table, fields):
     """Reconstruct table with selected fields only"""
     fields_idxs = keyindexs(table.legend, fields)
@@ -180,9 +151,6 @@ if __name__ == "__main__":
                 [4, "sys", 90, 10],
             ])
     splits = atab_split(t, ["system"])
-    print atab_compose(splits, ["value1"], ["system"])
-    print atab_compose(splits, ["value2"], ["system"])
-    print atab_compose(splits, ["value1", "value2"], ["system"])
     print merge(splits)
     print pick_fields(merge(splits), ["A-thrs", "A-value1", "B-value1",
                                         "A-value2", "B-value2"])
