@@ -79,6 +79,14 @@ def atab_compose(tables, targets, labels):
             ret.rows[ri].extend([row[i] for i in target_idxs])
     return ret
 
+def pick_fields(table, fields):
+    """Reconstruct table with selected fields only"""
+    fields_idxs = keyindexs(table.legend, fields)
+    new_rows = []
+    for row in table.rows:
+        new_rows.append([row[idx] for idx in fields_idxs])
+    return ATable(table.title, fields, new_rows)
+
 def merge(tables):
     """Merge multiple tables into one tables."""
     new_legend = []
@@ -176,3 +184,5 @@ if __name__ == "__main__":
     print atab_compose(splits, ["value2"], ["system"])
     print atab_compose(splits, ["value1", "value2"], ["system"])
     print merge(splits)
+    print pick_fields(merge(splits), ["A-thrs", "A-value1", "B-value1",
+                                        "A-value2", "B-value2"])
