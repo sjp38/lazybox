@@ -31,6 +31,12 @@ class ATable:
     def update_at(self, row, col, val):
         self.rows[row][col] = val
 
+    def get_title(self):
+        return self.title
+
+    def set_title(self, title):
+        self.title = title
+
     def csv(self):
         lines = []
         lines.append("title,%s" % self.title)
