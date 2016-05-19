@@ -25,6 +25,12 @@ class ATable:
             str_ += "%s" % row + "\n"
         return str_
 
+    def item_at(self, row, col):
+        return self.rows[row][col]
+
+    def update_at(self, row, col, val):
+        self.rows[row][col] = val
+
     def csv(self):
         lines = []
         lines.append("title,%s" % self.title)
