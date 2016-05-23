@@ -31,6 +31,12 @@ class ATable:
     def update_at(self, row, col, val):
         self.rows[row][col] = val
 
+    def replace_legend(self, oldlegend, newlegend):
+        for idx, name in enumerate(self.legend):
+            if name == oldlegend:
+                self.legend[idx] = newlegend
+        return self
+
     def get_title(self):
         return self.title
 
@@ -167,5 +173,5 @@ if __name__ == "__main__":
             ])
     splits = split_with_key(t, ["system"])
     print merge(splits)
-    print pick_fields(merge(splits), ["A-thrs", "A-value1", "B-value1",
-                                        "A-value2", "B-value2"])
+    print pick_fields(merge(splits).replace_legend("A-thrs", "thrs"),
+            ["thrs", "A-value1", "B-value1", "A-value2", "B-value2"])
