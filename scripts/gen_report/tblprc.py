@@ -43,6 +43,12 @@ class ATable:
     def set_title(self, title):
         self.title = title
 
+    def append_column(self, legend, generator):
+        self.legend.append(legend)
+        for row in self.rows:
+            generator(row)
+        return self
+
     def csv(self):
         lines = []
         lines.append("title, %s" % self.title)
@@ -175,3 +181,6 @@ if __name__ == "__main__":
     print merge(splits)
     print pick_fields(merge(splits).replace_legend("A-thrs", "thrs"),
             ["thrs", "A-value1", "B-value1", "A-value2", "B-value2"])
+
+    t2 = t.append_column("avg", lambda x: x.append((x[2] + x[3]) / 2))
+    print t2
