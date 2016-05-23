@@ -45,10 +45,10 @@ class ATable:
 
     def csv(self):
         lines = []
-        lines.append("title,%s" % self.title)
-        lines.append(",".join(str(x) for x in self.legend))
+        lines.append("title, %s" % self.title)
+        lines.append(", ".join(str(x) for x in self.legend))
         for row in self.rows:
-            lines.append(",".join(str(x) for x in row))
+            lines.append(", ".join(str(x) for x in row))
         return '\n'.join(lines)
 
 def from_csv(csv):
