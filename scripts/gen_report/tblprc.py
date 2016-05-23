@@ -47,11 +47,11 @@ class ATable:
 
 def from_csv(csv):
     lines = csv.split('\n')
-    title = lines[0].split(',')[1]
-    legend = lines[1].split(',')
+    title = lines[0].split(',')[1].strip()
+    legend = [x.strip() for x in lines[1].split(',')]
     rows = []
     for line in lines[2:]:
-        rows.append([x for x in line.split(',')])
+        rows.append([x.strip() for x in line.split(',')])
     return ATable(title, legend, rows)
 
 def keyindexs(legend, keys):
