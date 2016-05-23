@@ -154,6 +154,22 @@ def sort_with(tables, keys):
         tables.rows.sort(key=lambda x: x[i])
     return tables
 
+def compensate(tables, kidx, default_val):
+    """tables should be aligned by the key"""
+    total_keys = []
+    for table in tables:
+        for row in table.rows:
+            key = row[kidx]
+            if not key in total_keys:
+                total_keys.append(key)
+    total_keys.sort()
+    for table in tables:
+        for idx, key in enumerate(total_keys):
+            if len(table.rows) <= idx or table.rows[idx][kidx] != key:
+                new_row = [default_val] * len(table.rows[0])
+                new_row[kidx] = key
+                table.rows.insert(idx, new_row)
+
 if __name__ == "__main__":
     t = ATable("foo", ["key", "val", "something"],
             [
@@ -183,4 +199,12 @@ if __name__ == "__main__":
             ["thrs", "A-value1", "B-value1", "A-value2", "B-value2"])
 
     t2 = t.append_column("avg", lambda x: x.append((x[2] + x[3]) / 2))
+    print t2
+
+    t = ATable("foo", ["key", "val"], [[1, 3], [3, 5], [5, 7]])
+    t2 = ATable("bar", ["key", "val"], [[1, 3], [2, 4], [5, 7]])
+    print t
+    print t2
+    compensate([t, t2], 0, -1)
+    print t
     print t2
