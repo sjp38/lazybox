@@ -49,6 +49,11 @@ class ATable:
             generator(row)
         return self
 
+    def convert_column(self, column, converter):
+        for row in self.rows:
+            row[column] = converter(row)
+        return self
+
     def csv(self):
         lines = []
         lines.append("title, %s" % self.title)
@@ -206,5 +211,10 @@ if __name__ == "__main__":
     print t
     print t2
     compensate([t, t2], 0, -1)
+    print "compensated"
     print t
     print t2
+
+    t = ATable("foo", ["key", "val"], [[1, 3], [3, 5]])
+    t.convert_column(0, lambda r: str(r[0]))
+    print t
