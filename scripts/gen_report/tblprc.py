@@ -2,7 +2,6 @@
 
 "Module for tables processing"
 
-import copy
 import math
 
 class ATable:
