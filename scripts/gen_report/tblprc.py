@@ -112,7 +112,7 @@ def merge_vertical(tables):
     `compensate_columns()` first."""
     new_rows = []
     if len(tables) < 1:
-        return new_rows
+        return None
 
     for table in tables:
         for row in table.rows:
