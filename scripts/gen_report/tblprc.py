@@ -190,6 +190,21 @@ def compensate(tables, key_col, default_val):
                 new_row[key_col] = key
                 table.rows.insert(idx, new_row)
 
+def compensate_columns(tables, default_val):
+    """Compensate tables to have same columns."""
+    unified_legend = []
+    for table in tables:
+        for name in table.legend:
+            if not name in unified_legend:
+                unified_legend.append(name)
+    for table in tables:
+        for name in unified_legend:
+            if name in table.legend:
+                continue
+            for row in table.rows:
+                row[name] = default_val
+        table.legend = unified_legend
+
 if __name__ == "__main__":
     t = ATable("foo", ["key", "val", "something"],
             [
@@ -239,3 +254,10 @@ if __name__ == "__main__":
     t = ATable("foo", ["key", "val"], [[1, 3], [2, 4]])
     t2 = ATable("foo2", ["key", "val"], [[3,3], [4,8]])
     print merge_vertical([t, t2])
+
+
+    t3 = ATable("fooo", ["key", "val2"], [[3,4], [4,5]])
+    compensate_columns([t, t3], -1)
+    print "column compensated"
+    print t
+    print t3
