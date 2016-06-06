@@ -8,12 +8,14 @@ import math
 class ATable:
     title = None    # string
     legend = None   # list of strings
+    colidx = None
     rows = None     # list of lists of strings
 
     def __init__(self, title, legend, rows):
         self.title = title
         self.legend = legend
         self.rows = rows
+        self.set_colidx()
 
     def __repr__(self):
         return self.__str__()
@@ -25,16 +27,23 @@ class ATable:
             str_ += "%s" % row + "\n"
         return str_
 
+    def set_colidx(self):
+        if self.colidx == None:
+            self.colidx = {}
+        for idx, name in enumerate(self.legend):
+            self.colidx[name] = idx
+
     def item_at(self, row, col):
-        return self.rows[row][col]
+        return self.rows[row][self.colidx[col]]
 
     def update_at(self, row, col, val):
-        self.rows[row][col] = val
+        self.rows[row][self.colidx[col]] = val
 
     def replace_legend(self, oldlegend, newlegend):
         for idx, name in enumerate(self.legend):
             if name == oldlegend:
                 self.legend[idx] = newlegend
+        self.set_colidx()
         return self
 
     def get_title(self):
@@ -47,11 +56,13 @@ class ATable:
         self.legend.append(legend)
         for row in self.rows:
             generator(row)
+        self.set_colidx()
         return self
 
     def convert_column(self, column, converter):
         for row in self.rows:
             row[column] = converter(row)
+        self.set_colidx()
         return self
 
     def csv(self):
