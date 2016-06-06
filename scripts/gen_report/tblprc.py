@@ -63,6 +63,7 @@ class ATable:
         return '\n'.join(lines)
 
 def from_csv(csv):
+    """Parse csv text and construct a table."""
     lines = csv.split('\n')
     title = lines[0].split(',')[1].strip()
     legend = [x.strip() for x in lines[1].split(',')]
@@ -90,7 +91,8 @@ def pick_fields(table, fields):
 def merge(tables):
     """Merge multiple tables into one tables.
 
-    Tables should have same legend and same number of rows.
+    Tables should have same legend and same number of rows.  If tables have
+    differenct number of rows, compensate() function may be helpful.
     """
     new_legend = []
     for table in tables:
@@ -160,7 +162,9 @@ def sort_with(tables, keys):
     return tables
 
 def compensate(tables, kidx, default_val):
-    """tables should be aligned by the key"""
+    """Compensate tables to have same keys.
+
+    Rows in tables should be sorted by the key."""
     total_keys = []
     for table in tables:
         for row in table.rows:
