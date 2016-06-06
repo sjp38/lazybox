@@ -98,14 +98,15 @@ def merge(tables):
     for table in tables:
         for name in table.legend:
             new_legend.append('-'.join([table.title, name]))
-    ret = ATable('-'.join([table.title for table in tables]), new_legend, [])
+    new_rows = []
 
     for idx, table in enumerate(tables):
         for ridx, row in enumerate(table.rows):
             if idx == 0:
-                ret.rows.append([])
-            ret.rows[ridx].extend(row)
-    return ret
+                new_rows.append([])
+            new_rows[ridx].extend(row)
+    return ATable('-'.join([table.title for table in tables]),
+            new_legend, new_rows)
 
 def split_with_key(tables, keys):
     """Split tables into multiple tables with same keys.
@@ -139,12 +140,13 @@ def calc_stat(table, keys):
         new_legend.extend([name + "_min", name + "_max", name + "_avg",
                             name + "_stdev"])
 
+    new_rows = []
     ret = ATable(table.title, new_legend, [])
 
     tables = split_with_key(table, keys)
     for subtable in tables:
         new_row = []
-        ret.rows.append(new_row)
+        new_rows.append(new_row)
         for i in range(len(subtable.legend)):
             try:
                 vals = [float(row[i]) for row in subtable.rows]
@@ -153,7 +155,7 @@ def calc_stat(table, keys):
                 new_row.extend([val, val, val, val])
                 continue
             new_row.extend(__calc_stat(vals))
-    return ret
+    return ATable(table.title, new_legend, new_rows)
 
 def sort_with(tables, keys):
     kidxs = keyindexs(tables.legend, keys)
