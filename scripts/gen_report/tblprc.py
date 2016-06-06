@@ -108,7 +108,8 @@ def merge(tables):
 def merge_vertical(tables):
     """Merge multiple tables into one tables vertically.
 
-    Tables should have same legend."""
+    Tables should have same legend.  If not, consider to use
+    `compensate_columns()` first."""
     new_rows = []
     if len(tables) < 1:
         return new_rows
