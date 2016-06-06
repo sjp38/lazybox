@@ -204,6 +204,7 @@ def compensate_columns(tables, default_val):
             for row in table.rows:
                 row[name] = default_val
         table.legend = unified_legend
+    return tables
 
 if __name__ == "__main__":
     t = ATable("foo", ["key", "val", "something"],
