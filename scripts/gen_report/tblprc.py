@@ -119,6 +119,19 @@ def merge(tables):
     return ATable('-'.join([table.title for table in tables]),
             new_legend, new_rows)
 
+def merge_vertical(tables):
+    """Merge multiple tables into one tables vertically.
+
+    Tables should have same legend."""
+    new_rows = []
+    if len(tables) < 1:
+        return new_rows
+
+    for table in tables:
+        new_rows.extend(table.rows)
+    return ATable('-'.join([table.title for table in tables]),
+            tables[0].legend, new_rows)
+
 def split_with_key(tables, keys):
     """Split tables into multiple tables with same keys.
 
@@ -235,3 +248,7 @@ if __name__ == "__main__":
     t = ATable("foo", ["key", "val"], [[1, 3], [3, 5]])
     t.convert_column(0, lambda r: str(r[0]))
     print t
+
+    t = ATable("foo", ["key", "val"], [[1, 3], [2, 4]])
+    t2 = ATable("foo2", ["key", "val"], [[3,3], [4,8]])
+    print merge_vertical([t, t2])
