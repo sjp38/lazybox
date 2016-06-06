@@ -52,11 +52,10 @@ class ATable:
     def set_title(self, title):
         self.title = title
 
-    def append_column(self, legend, generator):
-        self.legend.append(legend)
-        for row in self.rows:
-            generator(row)
-        self.set_colidx()
+    def append_column(self, col_name, generator):
+        self.legend.append(col_name)
+        for idx in range(len(self.rows)):
+            self.rows[idx].append(generator(idx))
         return self
 
     def convert_column(self, column, converter):
@@ -233,7 +232,8 @@ if __name__ == "__main__":
     print pick_fields(merge(splits).replace_legend("A-thrs", "thrs"),
             ["thrs", "A-value1", "B-value1", "A-value2", "B-value2"])
 
-    t2 = t.append_column("avg", lambda x: x.append((x[2] + x[3]) / 2))
+    t2 = t.append_column("avg", lambda x:
+                        t.item_at(x, "value1") + t.item_at(x, "value2") / 2)
     print t2
 
     t = ATable("foo", ["key", "val"], [[1, 3], [3, 5], [5, 7]])
