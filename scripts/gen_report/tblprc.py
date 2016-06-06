@@ -59,8 +59,8 @@ class ATable:
         return self
 
     def convert_column(self, column, converter):
-        for row in self.rows:
-            row[column] = converter(row)
+        for idx in range(len(self.rows)):
+            self.rows[idx][column] = converter(idx)
         self.set_colidx()
         return self
 
@@ -246,7 +246,7 @@ if __name__ == "__main__":
     print t2
 
     t = ATable("foo", ["key", "val"], [[1, 3], [3, 5]])
-    t.convert_column(0, lambda r: str(r[0]))
+    t.convert_column(0, lambda r: str(t.item_at(r, "val")))
     print t
 
     t = ATable("foo", ["key", "val"], [[1, 3], [2, 4]])
