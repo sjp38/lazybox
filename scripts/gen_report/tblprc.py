@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"Module for tables processing for report"
+"Module for tables processing"
 
 import copy
 import math
@@ -8,10 +8,10 @@ import math
 class ATable:
     title = None    # string
     legend = None   # list of strings
-    rows = None     # list of Maps[column name: value]
+    rows = None     # list of dicts[column name: value]
 
     def __init__(self, title, legend, rows):
-        """rows is list of list."""
+        """received `rows` is list of list."""
         self.title = title
         self.legend = legend
         self.rows = []
@@ -121,9 +121,9 @@ def merge_vertical(tables):
             tables[0].legend, new_rows)
 
 def split_with_key(table, keys):
-    """Split tables into multiple tables with same keys.
+    """Split a table into multiple tables with same keys.
 
-    Title of splitted tables will be the keys.
+    Title of each splitted tables will be the key.
     """
     inter_map = {}
     for row in table.rows:
