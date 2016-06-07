@@ -139,14 +139,14 @@ def __calc_stat(vals):
     avg = sum(vals) / len(vals)
     variance = float(sum([pow(v - avg, 2) for v in vals])) / len(vals)
     stdev_ = math.sqrt(variance)
-    return [minv, maxv, avg, stdev_]
+    return [minv, maxv, avg, stdev_, len(vals)]
 
 def calc_stat(table, keys):
     """Get average, min/max values, standard deviation of values in a table
     with same keys.
     """
     new_legend = []
-    suffixes = ["_min", "_max", "_avg", "_stdev"]
+    suffixes = ["_min", "_max", "_avg", "_stdev", "_nr_samples"]
     for name in table.legend:
         new_legend.extend([name + suffix for suffix in suffixes])
 
@@ -162,7 +162,7 @@ def calc_stat(table, keys):
                 vals = [float(row[col]) for row in subtable.rows]
             except ValueError:
                 val = subtable.rows[0][col]
-                new_row.extend([val, val, val, val])
+                new_row.extend([val, val, val, val, len(vals)])
                 continue
             new_row.extend(__calc_stat(vals))
     return ATable(table.title, new_legend, new_rows)
