@@ -36,6 +36,9 @@ class ATable:
     def nr_rows(self):
         return len(self.rows)
 
+    def remove_row(self, idx):
+        del self.rows[idx]
+
     def replace_legend(self, oldlegend, newlegend):
         for idx, name in enumerate(self.legend):
             if name == oldlegend:
