@@ -147,7 +147,10 @@ def __calc_stat(vals):
     stdev_ = math.sqrt(variance)
     return [minv, maxv, avg, stdev_, len(vals)]
 
-def calc_stat(table, keys):
+def default_exclude_fn(col, val):
+    return False
+
+def calc_stat(table, keys, exclude_fn = default_exclude_fn):
     """Get average, min/max values, standard deviation of values in a table
     with same keys.
     """
@@ -165,7 +168,8 @@ def calc_stat(table, keys):
         new_rows.append(new_row)
         for col in subtable.legend:
             try:
-                vals = [float(row[col]) for row in subtable.rows]
+                vals = [float(row[col]) for row in subtable.rows
+                        if not exclude_fn(col, row[col])]
             except ValueError:
                 val = subtable.rows[0][col]
                 new_row.extend([val, val, val, val, len(vals)])
