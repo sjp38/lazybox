@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"Module for tables processing"
+"Module for little data processing"
 
 import math
 
