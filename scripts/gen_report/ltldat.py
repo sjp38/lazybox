@@ -177,10 +177,10 @@ def calc_stat(table, keys, exclude_fn = default_exclude_fn):
             new_row.extend(__calc_stat(vals))
     return ATable(table.title, new_legend, new_rows)
 
-def sort_with(tables, keys):
+def sort_with(table, keys):
     for key in reversed(keys):
-        tables.rows.sort(key=lambda x: x[key])
-    return tables
+        table.rows.sort(key=lambda x: x[key])
+    return table
 
 def compensate(tables, key_col, default_val):
     """Compensate tables to have same keys.
