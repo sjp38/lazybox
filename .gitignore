@@ -1,4 +1,6 @@
 *.tar.xz
 *.swp
-workloads/kbuild/build_dir
 *.o
+*.pyc
+
+workloads/kbuild/build_dir
