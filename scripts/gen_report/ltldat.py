@@ -53,6 +53,9 @@ class ATable:
     def set_title(self, title):
         self.title = title
 
+    def get_legend(self):
+        return self.legend
+
     def append_column(self, col_name, generator):
         self.legend.append(col_name)
         for idx in range(len(self.rows)):
