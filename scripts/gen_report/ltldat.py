@@ -93,6 +93,15 @@ def pick_fields(table, fields):
         new_rows.append([row[col] for col in fields])
     return ATable(table.title, fields, new_rows)
 
+def exclude_fields(table, exclude_fields):
+    """Copy table with selected fields only"""
+    legend = []
+    for colname in table.legend:
+        if colname in exclude_fields:
+            continue
+        legend.append(colname)
+    return pick_fields(table, legend)
+
 def merge(tables):
     """Merge multiple tables into one tables.
 
@@ -279,3 +288,9 @@ if __name__ == "__main__":
     print "column compensated"
     print t
     print t3
+
+    t = ATable("foo", ["key", "val"], [[1, 3], [1, 4], [1, 5], [2, 1], [2, 2]])
+    stat = calc_stat(t, ["key"])
+    stat = exclude_fields(stat,
+            ["key_min", "key_max", "key_stdev", "key_nr_samples"])
+    print stat
