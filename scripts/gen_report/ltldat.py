@@ -157,7 +157,7 @@ def __calc_stat(vals):
     avg = sum(vals) / len(vals)
     variance = float(sum([pow(v - avg, 2) for v in vals])) / len(vals)
     stdev_ = math.sqrt(variance)
-    return [minv, maxv, avg, stdev_]
+    return [avg, minv, maxv, stdev_]
 
 def default_exclude_fn(col, val):
     return False
