@@ -158,7 +158,7 @@ def calc_stat(table, keys, exclude_fn = default_exclude_fn):
     with same keys.
     """
     new_legend = []
-    suffixes = ["_min", "_max", "_avg", "_stdev", "_nr_samples"]
+    suffixes = ["_avg", "_min", "_max", "_stdev", "_nr_samples"]
     for name in table.legend:
         new_legend.extend([name + suffix for suffix in suffixes])
 
@@ -178,7 +178,11 @@ def calc_stat(table, keys, exclude_fn = default_exclude_fn):
                 new_row.extend([val, val, val, val, len(vals)])
                 continue
             new_row.extend(__calc_stat(vals))
-    return ATable(table.title, new_legend, new_rows)
+    raw_table = ATable(table.title, new_legend, new_rows)
+    final_legend = []
+    for suffix in suffixes:
+        final_legend.extend([name + suffix for name in table.legend])
+    return pick_fields(raw_table, final_legend)
 
 def sort_with(table, keys):
     for key in reversed(keys):
