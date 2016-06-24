@@ -157,7 +157,7 @@ def __calc_stat(vals):
     avg = sum(vals) / len(vals)
     variance = float(sum([pow(v - avg, 2) for v in vals])) / len(vals)
     stdev_ = math.sqrt(variance)
-    return [avg, minv, maxv, stdev_]
+    return [avg, stdev_, minv, maxv]
 
 def default_exclude_fn(col, val):
     return False
@@ -167,7 +167,7 @@ def calc_stat(table, keys, exclude_fn = default_exclude_fn):
     with same keys.
     """
     new_legend = []
-    suffixes = ["_avg", "_min", "_max", "_stdev"]
+    suffixes = ["_avg", "_stdev", "_min", "_max"]
     for name in table.legend:
         new_legend.extend([name + suffix for suffix in suffixes])
     new_legend.append("nr_samples")
