@@ -157,7 +157,7 @@ def __calc_stat(vals):
     avg = sum(vals) / len(vals)
     variance = float(sum([pow(v - avg, 2) for v in vals])) / len(vals)
     stdev_ = math.sqrt(variance)
-    return [minv, maxv, avg, stdev_, len(vals)]
+    return [minv, maxv, avg, stdev_]
 
 def default_exclude_fn(col, val):
     return False
@@ -167,9 +167,10 @@ def calc_stat(table, keys, exclude_fn = default_exclude_fn):
     with same keys.
     """
     new_legend = []
-    suffixes = ["_avg", "_min", "_max", "_stdev", "_nr_samples"]
+    suffixes = ["_avg", "_min", "_max", "_stdev"]
     for name in table.legend:
         new_legend.extend([name + suffix for suffix in suffixes])
+    new_legend.append("nr_samples")
 
     new_rows = []
     ret = ATable(table.title, new_legend, [])
@@ -184,13 +185,15 @@ def calc_stat(table, keys, exclude_fn = default_exclude_fn):
                         if not exclude_fn(col, row[col])]
             except ValueError:
                 val = subtable.rows[0][col]
-                new_row.extend([val, val, val, val, len(vals)])
+                new_row.extend([val, val, val, val])
                 continue
             new_row.extend(__calc_stat(vals))
+        new_row.append(len(subtable.rows))
     raw_table = ATable(table.title, new_legend, new_rows)
     final_legend = []
     for suffix in suffixes:
         final_legend.extend([name + suffix for name in table.legend])
+    final_legend.append("nr_samples")
     return pick_fields(raw_table, final_legend)
 
 def sort_with(table, keys):
