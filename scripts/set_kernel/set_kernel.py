@@ -25,6 +25,7 @@ def set_grub_kernel(target_kernel):
     for line in lines.split('\n'):
         if line.find('Previous') != -1 or line.find('Advanced') != -1:
             prev_section = True
+            position = 0
             print 'previous or advanced line found: %s' % line
             continue;
 
