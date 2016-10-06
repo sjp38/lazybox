@@ -17,7 +17,7 @@ def grub_kernels():
     kernels = []
     for line in lines.split('\n'):
         tokens = line.split()
-        if len(tokens) < 1:
+        if len(tokens) < 2:
             continue
         if tokens[0] == 'initrd':
             kernel_position = tokens[1]
