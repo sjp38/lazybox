@@ -16,8 +16,11 @@ def grub_kernels():
 
     kernels = []
     for line in lines.split('\n'):
-        if line.find('initrd') != -1:
-            kernel_position = line.split()[1]
+        tokens = line.split()
+        if len(tokens) < 1:
+            continue
+        if tokens[0] == 'initrd':
+            kernel_position = tokens[1]
             kernel_name = kernel_position.lstrip('/boot/initrd.img-')
             if not kernel_name in kernels:
                 kernels.append(kernel_name)
