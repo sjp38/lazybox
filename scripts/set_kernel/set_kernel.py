@@ -29,8 +29,11 @@ def set_grub_kernel(target_kernel):
             print 'previous or advanced line found: %s' % line
             continue;
 
-        if line.find('initrd') != -1:
-            kernel_position = line.split()[1]
+        tokens = line.split()
+        if len(tokens) < 2:
+            continue
+        if tokens[0] == "initrd":
+            kernel_position = tokens[1]
             kernel_name = kernel_position.lstrip('/boot/initrd.img-')
             if kernel_name == target_kernel:
                 found = True
