@@ -111,7 +111,7 @@ if __name__ == "__main__":
     kernel_param = ""
     if len(sys.argv) > 3:
         kernel_param = ' '.join(sys.argv[3:])
-    print "set kernel %s with parameter %s on %s" % (kernel_name, kernel_param, bootloader)
+    print "set kernel %s with parameter '%s' on %s" % (kernel_name, kernel_param, bootloader)
 
     if bootloader == GRUB:
         if kernel_param != "":
