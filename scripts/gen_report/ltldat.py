@@ -187,6 +187,10 @@ def calc_stat(table, keys, exclude_fn = default_exclude_fn):
                 val = subtable.rows[0][col]
                 new_row.extend([val, val, val, val])
                 continue
+            if len(vals) == 0:
+                val = subtable.rows[0][col]
+                new_row.extend([val, val, val, val])
+                continue
             new_row.extend(__calc_stat(vals))
         new_row.append(len(subtable.rows))
     raw_table = ATable(table.title, new_legend, new_rows)
