@@ -3,7 +3,7 @@
 if [ $# -ne 1 ];
 then
 	echo "Usage: $0 <target>"
-	exit
+	exit 1
 fi
 
 TARGET=$1
