@@ -95,7 +95,6 @@ if __name__ == "__main__":
     signal.signal(signal.SIGINT, sig_handler)
     signal.signal(signal.SIGTERM, sig_handler)
 
-    global current_exps
     for exp_file in sys.argv[1:]:
         current_exps = parse_file(exp_file)
 
