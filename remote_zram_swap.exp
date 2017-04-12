@@ -29,21 +29,21 @@ set zram_size [lindex $argv 5]
 
 # login
 spawn ssh -p $ssh_port $username@$target
-expect -re "password"
+expect "*password*"
 send "$password\r"
-expect -re "$target"
+expect "*$target*"
 
 # be root
 send "sudo su\r"
-expect -re "password"
+expect "*password*"
 send "$password\r"
-expect -re "$target"
+expect "*$target*"
 
 # move to lazybox
 send "pushd $lbpath\r"
-expect -re "$target"
+expect "*$target*"
 
 # enable zram
 send "./scripts/zram_swap.sh $zram_size\r"
-expect -re "$target"
+expect "*$target*"
 puts ""

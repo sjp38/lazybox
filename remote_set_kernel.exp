@@ -36,31 +36,31 @@ if { [llength $argv] > 7 } {
 
 # login
 spawn ssh -p $ssh_port $username@$target
-expect -re "password"
+expect "*password*"
 send "$password\r"
-expect -re "$target"
+expect "*$target*"
 
 # be root
 send "sudo su\r"
-expect -re "password"
+expect "*password*"
 send "$password\r"
-expect -re "$target"
+expect "*$target*"
 
 # move to lazybox
 send "pushd $lbpath\r"
-expect -re "$target"
+expect "*$target*"
 
 # change kernel
 send "./scripts/set_kernel/set_kernel.py $bootloader $kern_name $kern_param\r"
-expect -re "$target"
+expect "*$target*"
 
 send "sync\r"
-expect -re "$target"
+expect "*$target*"
 send "popd\r"
-expect -re "$target"
+expect "*$target*"
 
 send "reboot\r"
-expect -re "$target"
+expect "*$target*"
 
 # wait 30 seconds for reboot
 set count 30

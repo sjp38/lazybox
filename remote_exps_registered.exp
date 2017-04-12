@@ -30,15 +30,15 @@ expect -re "$target"
 
 # be su
 send "sudo su\r"
-expect -re "password"
+expect "*password*"
 send "$password\r"
-expect -re "$target"
+expect "*$target*"
 
 # move to lazybox and do experiment
 send "pushd $lbpath\r"
-expect -re "$target"
+expect "*$target*"
 send "./run_exps.py $exp\r"
-expect -re "$target"
+expect "*$target*"
 
 send "popd\r"
-expect -re "$target"
+expect "*$target*"
