@@ -29,19 +29,19 @@ set exp [lindex $argv 5]
 spawn ssh -p $ssh_port $username@$target
 expect "*password*"
 send "$password\r"
-expect "*$target*"
+expect "*$target*$ "
 
 # be su
 send "sudo su\r"
 expect "*password*"
 send "$password\r"
-expect "*$target*"
+expect "*$target*# "
 
 # move to lazybox and do experiment
 send "pushd $lbpath\r"
-expect "*$target*"
+expect "*$target*# "
 send "./run_exps.py $exp\r"
-expect "*$target*"
+expect "*$target*# "
 
 send "popd\r"
-expect "*$target*"
+expect "*$target*# "
