@@ -75,7 +75,9 @@ experiments specification file generator rather than write it down manually in
 miserable way. For detail, see below section, [Experiments Specification File
 Generator](#Experiments Specification File Generator).
 
+
 ### Type of commands
+
  * `start`: Commands which should be done before experiment start.
    (e.g., kernel module loading or program build)
    If multiple start command is described, those commands will be executed
@@ -99,7 +101,9 @@ Generator](#Experiments Specification File Generator).
    means sucess, other values means failure. If any one of check command says
    failed, the experiment be executed again until success up to 10 times.
 
+
 ### Example
+
 Below is an example for *experiments specification file*
 ```
 start git checkout v1.0
@@ -125,6 +129,7 @@ end make clean
 end git checkout master
 ```
 
+
 Experiments Specification File Generator
 ----------------------------------------
 
@@ -140,7 +145,9 @@ To help the process, we provide simple stub generator, `generate_exp_conf.py`.
 It contains essential code for automated experiments specification file
 generator.
 
+
 ### Usage of the stub
+
 1. Copy the stub
 2. Edit main loop of experiments generation as you need
 3. Run modified copy and redirect stdout to appropriate file
