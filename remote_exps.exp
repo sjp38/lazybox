@@ -1,6 +1,8 @@
 #!/usr/bin/expect --
 set timeout -1
 
+source "remote.tcl"
+
 # Do experiments from a remote target machine using run_exps.py
 #
 # Because run_exps.py is a part of lazybox, lazybox should be installed on the
@@ -25,18 +27,7 @@ set password [lindex $argv 3]
 set lbpath [lindex $argv 4]
 set exp [lindex $argv 5]
 
-# login
-spawn ssh -t -p $ssh_port $username@$target \
-	"sudo -- bash -c 'cd $lbpath; ./run_exps.py $exp'"
+remote_sudocmd $username $target $ssh_port $password \
+		"cd $lbpath; ./run_exps.py $exp"
 
-# for ssh password
-expect "*password*"
-send "$password\r"
-
-# for sudo command
-expect "*password*"
-send "$password\r"
-
-# wait for completion of ssh
-expect eof
 puts "\nremote_exps.exp FINISHED"
