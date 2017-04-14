@@ -27,23 +27,9 @@ set password [lindex $argv 3]
 set lbpath [lindex $argv 4]
 set zram_size [lindex $argv 5]
 
-# login
-spawn ssh -p $ssh_port $username@$target
-expect "*password*"
-send "$password\r"
-expect "*$target*$ "
+source "remote.tcl"
 
-# be root
-send "sudo su\r"
-expect "*password*"
-send "$password\r"
-expect "*$target*# "
+remote_sudocmd $username $target $ssh_port $password \
+		"cd $lbpath; ./scripts/zram_swap.sh $zram_size"
 
-# move to lazybox
-send "pushd $lbpath\r"
-expect "*$target*# "
-
-# enable zram
-send "./scripts/zram_swap.sh $zram_size\r"
-expect "*$target*# "
-puts ""
+puts "\nremote_zram_swap.exp FINISHED"
