@@ -10,7 +10,7 @@ source "remote.tcl"
 
 if { [llength $argv] < 5 } {
 	puts "usage: "
-	puts "expect remote_exps.exp \\"
+	puts "expect remote_cmds.exp \\"
         puts "              <username> <target> <ssh port> <password> <cmds>"
 	exit 1
 }
