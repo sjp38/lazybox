@@ -34,23 +34,14 @@ if { [llength $argv] > 7 } {
 	set kern_param [lindex $argv 7]
 }
 
-spawn ssh -t -p $ssh_port $username@$target \
-	"sudo -- bash -c \
-		'cd $lbpath; \
+source "remote.tcl"
+
+remote_sudocmd $username $target $ssh_port $password \
+		"cd $lbpath; \
 		./scripts/set_kernel/set_kernel.py \
 			$bootloader $kern_name $kern_param; \
 		sync; \
-		reboot'"
-# ssh password
-expect "*password*"
-send "$password\r"
-
-# sudo password
-expect "*password*"
-send "$password\r"
-
-# wait for completion of ssh
-expect eof
+		reboot"
 
 # wait 30 seconds for reboot
 set count 30
@@ -60,4 +51,4 @@ while { $count > 0 } {
 	send_user "$count "
 	set count [expr $count - 1]
 }
-puts ""
+puts "\nremote_set_kernel.exp FINISHED"
