@@ -24,14 +24,9 @@ set ssh_port [lindex $argv 2]
 set lbpath [lindex $argv 3]
 set exp [lindex $argv 4]
 
-# login
-spawn ssh -t -p $ssh_port $username@$target \
-	"sudo -- bash -c 'cd $lbpath; sudo ./run_exps.py $exp'"
+source "remote.tcl"
 
-# for sudo command
-expect "*password*"
-send "$password\r"
+remote_sudocmd_registered $username $target $ssh_port $password \
+	"cd $lbpath; sudo ./run_exps.py $exp"
 
-# wait for completion of ssh
-expect eof
 puts "\nremote_exps_registered.exp FINISHED"
