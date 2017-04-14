@@ -26,10 +26,17 @@ set lbpath [lindex $argv 4]
 set exp [lindex $argv 5]
 
 # login
-spawn ssh -t -p $ssh_port $username@$target "cd $lbpath; sudo ./run_exps.py $exp"
+spawn ssh -t -p $ssh_port $username@$target \
+	"cd $lbpath; sudo ./run_exps.py $exp"
+
+# for ssh password
 expect "*password*"
 send "$password\r"
+
+# for sudo command
 expect "*password*"
 send "$password\r"
+
+# wait for completion of ssh
 expect eof
 puts "\nremote_exps.exp FINISHED"
