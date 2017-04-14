@@ -26,7 +26,7 @@ set exp [lindex $argv 4]
 
 # login
 spawn ssh -t -p $ssh_port $username@$target \
-	"cd $lbpath; sudo ./run_exps.py $exp"
+	"sudo -- bash -c 'cd $lbpath; sudo ./run_exps.py $exp'"
 
 # for sudo command
 expect "*password*"
