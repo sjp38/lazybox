@@ -1,0 +1,33 @@
+#!/usr/bin/expect --
+set timeout -1
+
+# Execute commands from a remote target machine
+#
+# Usage:
+# expect remote_cmds.exp <username> <target> <ssh port> <password> <cmds>
+
+if { [llength $argv] < 5 } {
+	puts "usage: "
+	puts "expect remote_exps.exp \\"
+        puts "              <username> <target> <ssh port> <password> <cmds>"
+	exit 1
+}
+
+set username [lindex $argv 0]
+set target [lindex $argv 1]
+set ssh_port [lindex $argv 2]
+set password [lindex $argv 3]
+set cmds [lindex $argv 4]
+
+spawn ssh -t -p $ssh_port $username@$target sudo -- bash -c '$cmds'
+
+# for ssh password
+expect "*password*"
+send "$password\r"
+
+# for sudo command
+expect "*password*"
+send "$password\r"
+
+# wait for completion of ssh
+expect eof
