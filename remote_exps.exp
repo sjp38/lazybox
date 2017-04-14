@@ -26,22 +26,10 @@ set lbpath [lindex $argv 4]
 set exp [lindex $argv 5]
 
 # login
-spawn ssh -p $ssh_port $username@$target
+spawn ssh -t -p $ssh_port $username@$target "cd $lbpath; sudo ./run_exps.py $exp"
 expect "*password*"
 send "$password\r"
-expect "*$target*$ "
-
-# be su
-send "sudo su\r"
 expect "*password*"
 send "$password\r"
-expect "*$target*# "
-
-# move to lazybox and do experiment
-send "pushd $lbpath\r"
-expect "*$target*# "
-send "./run_exps.py $exp\r"
-expect "*$target*# "
-
-send "popd\r"
-expect "*$target*# "
+expect eof
+puts "\nremote_exps.exp FINISHED"
