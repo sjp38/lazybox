@@ -1,6 +1,8 @@
 #!/usr/bin/expect --
 set timeout -1
 
+source "remote.tcl"
+
 # Execute commands from a remote target machine
 #
 # Usage:
@@ -19,15 +21,4 @@ set ssh_port [lindex $argv 2]
 set password [lindex $argv 3]
 set cmds [lindex $argv 4]
 
-spawn ssh -t -p $ssh_port $username@$target sudo -- bash -c '$cmds'
-
-# for ssh password
-expect "*password*"
-send "$password\r"
-
-# for sudo command
-expect "*password*"
-send "$password\r"
-
-# wait for completion of ssh
-expect eof
+remote_sudocmd $username $target $ssh_port $password $cmds
