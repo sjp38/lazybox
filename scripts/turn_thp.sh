@@ -8,6 +8,7 @@ then
 	echo ""
 	echo "Current status: "
 	cat $SYSFS_THP_ENABLED
+	echo ""
 	exit 1
 fi
 
