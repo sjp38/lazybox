@@ -23,6 +23,8 @@ def trace_begin():
 def pr_evcnts_in_time():
     title = "time"
     evnames = sorted(ev_per_time.keys())
+    if len(evnames) == 0:
+        return
     for n in evnames:
         title += ", %s" % n
     print title
