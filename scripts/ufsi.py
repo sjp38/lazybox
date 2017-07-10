@@ -51,6 +51,6 @@ for z in free_pages:
 nr_usable = 0
 for z in free_pages:
     for i, p in enumerate(z[order:]):
-        nr_usable += 2**i * p
+        nr_usable += 2**(i+order) * p
 
 print (totalfree - nr_usable) / float(totalfree)
