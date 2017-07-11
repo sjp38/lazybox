@@ -18,7 +18,7 @@ from Core import *
 
 
 def trace_begin():
-	print "in trace_begin"
+    pass
 
 def pr_evcnts_in_time():
     title = "time"
