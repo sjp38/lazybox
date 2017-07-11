@@ -29,20 +29,12 @@ def trace_end():
     for ev in sorted(lbperfutil.event_names()):
         print "event ", ev, ": ", lbperfutil.nr_total_event(ev)
 
-nr_events = {}
-
 # pd is for parameters dict
 # keys of pd: attr, symbol, sample, dso, comm, ev_name, raw_buf, callchain
 # keys of pd['sample']: ip, pid, period, time, tid, cpu
 def process_event(pd):
     name = pd["ev_name"]
     count = pd["sample"]["period"]
-    try:
-        nr_events[name] += count
-    except KeyError:
-        nr_events[name] = count
-
-    # sampled time in second
     t = pd["sample"]["time"] / (1000*1000*1000)
     lbperfutil.count_event(name, t, count)
 
