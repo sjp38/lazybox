@@ -25,7 +25,7 @@ def trace_end():
     for ev in sorted(lbperfutil.event_names()):
         lbperfutil.pr_evcnts_in_time([ev])
         print "\n\n"
-    print "in trace_end"
+
     for ev in sorted(lbperfutil.event_names()):
         print "event ", ev, ": ", lbperfutil.nr_total_event(ev)
 
