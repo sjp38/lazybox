@@ -20,9 +20,11 @@ from Core import *
 def trace_begin():
     pass
 
-def pr_evcnts_in_time():
+def pr_evcnts_in_time(evnames=[]):
+    if not evnames:
+        evnames = sorted(ev_per_time.keys())
+
     title = "time"
-    evnames = sorted(ev_per_time.keys())
     if len(evnames) == 0:
         return
     for n in evnames:
