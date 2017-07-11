@@ -20,12 +20,23 @@ def trace_begin():
     pass
 
 def trace_end():
+    print "Every Events per Second"
+    print "======================="
+    print ""
     lbperfutil.pr_evcnts_in_time()
 
+    print "\n"
+    print "Event per second"
+    print "================"
+    print ""
     for ev in sorted(lbperfutil.event_names()):
         lbperfutil.pr_evcnts_in_time([ev])
-        print "\n\n"
+        print ""
 
+    print "\n"
+    print "Total Events Count"
+    print "=================="
+    print ""
     for ev in sorted(lbperfutil.event_names()):
         print "event ", ev, ": ", lbperfutil.nr_total_event(ev)
 
