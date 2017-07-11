@@ -32,6 +32,12 @@ def pr_evcnts_in_time(evnames=[]):
             line += ",%10s" % count
         print line
 
+def nr_total_event(event):
+    ret = 0
+    for s in ev_per_time[event]:
+        ret += ev_per_time[event][s]
+    return ret
+
 def event_names():
     return ev_per_time.keys()
 
