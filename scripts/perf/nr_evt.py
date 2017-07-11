@@ -10,8 +10,6 @@
 import os
 import sys
 
-print "environ: ", os.environ['HOME']
-
 sys.path.append(os.environ['HOME'] + 'lazybox/scripts/perf')
 import lbperfutil
 
