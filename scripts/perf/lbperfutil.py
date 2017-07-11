@@ -15,7 +15,7 @@ def pr_evcnts_in_time(evnames=[]):
     if not evnames:
         evnames = sorted(ev_per_time.keys())
 
-    title = "time"
+    title = "  time"
     if len(evnames) == 0:
         return
     for n in evnames:
@@ -24,7 +24,7 @@ def pr_evcnts_in_time(evnames=[]):
 
     secs = sorted(ev_per_time[n])
     for s in secs:
-        line = "%10s" % (s - secs[0])
+        line = "%6s" % (s - secs[0])
         for n in evnames:
             count = 0
             if s in ev_per_time[n]:
