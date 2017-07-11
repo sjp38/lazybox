@@ -25,6 +25,7 @@ def trace_end():
     print ""
     lbperfutil.pr_evcnts_in_time()
 
+    """
     print "\n"
     print "Event per second"
     print "================"
@@ -32,6 +33,7 @@ def trace_end():
     for ev in sorted(lbperfutil.event_names()):
         lbperfutil.pr_evcnts_in_time([ev])
         print ""
+    """
 
     print "\n"
     print "Total Events Count"
