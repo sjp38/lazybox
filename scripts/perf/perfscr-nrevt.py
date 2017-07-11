@@ -31,7 +31,7 @@ def pr_evcnts_in_time():
 
     secs = sorted(ev_per_time[n])
     for s in secs:
-        line = "%10s" % s
+        line = "%10s" % (s - secs[0])
         for n in evnames:
             count = 0
             if s in ev_per_time[n]:
