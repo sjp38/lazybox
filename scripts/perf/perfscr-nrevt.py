@@ -10,39 +10,17 @@
 import os
 import sys
 
-sys.path.append(os.environ['PERF_EXEC_PATH'] + \
-	'/scripts/python/Perf-Trace-Util/lib/Perf/Trace')
+print "environ: ", os.environ['HOME']
 
-from perf_trace_context import *
-from Core import *
+sys.path.append(os.environ['HOME'] + 'lazybox/scripts/perf')
+import lbperfutil
 
 
 def trace_begin():
     pass
 
-def pr_evcnts_in_time(evnames=[]):
-    if not evnames:
-        evnames = sorted(ev_per_time.keys())
-
-    title = "time"
-    if len(evnames) == 0:
-        return
-    for n in evnames:
-        title += ", %s" % n
-    print title
-
-    secs = sorted(ev_per_time[n])
-    for s in secs:
-        line = "%10s" % (s - secs[0])
-        for n in evnames:
-            count = 0
-            if s in ev_per_time[n]:
-                count = ev_per_time[n][s]
-            line += ",%10s" % count
-        print line
-
 def trace_end():
-    pr_evcnts_in_time()
+    lbperfutil.pr_evcnts_in_time()
     return
     for ev in sorted(ev_per_time.keys()):
         print "event ", ev, "\n"
@@ -55,7 +33,6 @@ def trace_end():
         print "event ", ev, ": ", nr_events[ev]
 
 nr_events = {}
-ev_per_time = autodict()
 
 # pd is for parameters dict
 # keys of pd: attr, symbol, sample, dso, comm, ev_name, raw_buf, callchain
@@ -70,10 +47,7 @@ def process_event(pd):
 
     # sampled time in second
     t = pd["sample"]["time"] / (1000*1000*1000)
-    try:
-        ev_per_time[name][t] += count
-    except TypeError:
-        ev_per_time[name][t] = count
+    lbperfutil.count_event(name, t, count)
 
 def trace_unhandled(event_name, context, event_fields_dict):
 		print ' '.join(['%s=%s'%(k,str(v))for k,v in sorted(event_fields_dict.items())])
