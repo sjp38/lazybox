@@ -55,6 +55,9 @@ def trace_end():
 nr_events = {}
 ev_per_time = autodict()
 
+# pd is for parameters dict
+# keys of pd: attr, symbol, sample, dso, comm, ev_name, raw_buf, callchain
+# keys of pd['sample']: ip, pid, period, time, tid, cpu
 def process_event(pd):
     name = pd["ev_name"]
     count = pd["sample"]["period"]
