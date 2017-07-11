@@ -21,10 +21,10 @@ def trace_begin():
 
 def trace_end():
     lbperfutil.pr_evcnts_in_time()
-    return
-    for ev in sorted(ev_per_time.keys()):
+
+    for ev in sorted(lbperfutil.ev_per_time.keys()):
         print "event ", ev, "\n"
-        evcnts = ev_per_time[ev]
+        evcnts = lbperfutil.ev_per_time[ev]
         for t in sorted(evcnts.keys()):
             print t, ": ", evcnts[t]
         print "\n\n"
