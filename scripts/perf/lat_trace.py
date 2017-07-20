@@ -22,7 +22,7 @@ from Core import *
 
 
 def trace_begin():
-	print "in trace_begin"
+    pass
 
 def trace_end():
     secs = sorted(latencies.keys())
