@@ -20,6 +20,15 @@ sys.path.append(os.environ['PERF_EXEC_PATH'] + \
 from perf_trace_context import *
 from Core import *
 
+import getopt
+
+USAGE = sys.argv[0] + "<orders>"
+
+target_orders = []
+
+if len(sys.argv) > 1:
+    target_orders = [int(o) for o in sys.argv[1].split(',')]
+
 
 def trace_begin():
     pass
@@ -36,6 +45,9 @@ latencies = autodict()
 def sj__alloc_nodemask(event_name, context, common_cpu,
 	common_secs, common_nsecs, common_pid, common_comm,
 	common_callchain, __probe_ip, order):
+    if target_orders and order not in target_orders:
+        return
+
     try:
         start_events[common_cpu][order] += [common_secs * 10**9 + common_nsecs]
     except TypeError:
@@ -44,6 +56,9 @@ def sj__alloc_nodemask(event_name, context, common_cpu,
 def sj__alloc_nodemask_ret(event_name, context, common_cpu,
 	common_secs, common_nsecs, common_pid, common_comm,
 	common_callchain, __probe_ip, order):
+    if target_orders and order not in target_orders:
+        return
+
     start = start_events[common_cpu][order][0]
     start_events[common_cpu][order] = start_events[common_cpu][order][1:]
     endtime = common_secs * 10**9 + common_nsecs
