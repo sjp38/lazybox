@@ -29,7 +29,7 @@ def pr_evcnts_in_time(evnames=[]):
             count = 0
             if s in ev_per_time[n]:
                 count = ev_per_time[n][s]
-            line += ",%10s" % count
+            line += ",%13s" % count
         print line
 
 def nr_total_event(event):
