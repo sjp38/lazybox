@@ -49,9 +49,9 @@ def process_event(pd):
     t = pd["sample"]["time"] / (1000*1000*1000)
     lbperfutil.count_event(name, t, count)
 
-def trace_unhandled(event_name, context, event_fields_dict):
-		print ' '.join(['%s=%s'%(k,str(v))for k,v in sorted(event_fields_dict.items())])
+#def trace_unhandled(event_name, context, event_fields_dict):
+#		print ' '.join(['%s=%s'%(k,str(v))for k,v in sorted(event_fields_dict.items())])
 
-def print_header(event_name, cpu, secs, nsecs, pid, comm):
-	print "%-20s %5u %05u.%09u %8u %-20s " % \
-	(event_name, cpu, secs, nsecs, pid, comm),
+#def print_header(event_name, cpu, secs, nsecs, pid, comm):
+#	print "%-20s %5u %05u.%09u %8u %-20s " % \
+#	(event_name, cpu, secs, nsecs, pid, comm),
