@@ -60,7 +60,10 @@ def sj__alloc_nodemask_ret(event_name, context, common_cpu,
         return
 
     start = start_events[common_cpu][order][0]
-    start_events[common_cpu][order] = start_events[common_cpu][order][1:]
+    try:
+        start_events[common_cpu][order] = start_events[common_cpu][order][1:]
+    except TypeError:
+        return
     endtime = common_secs * 10**9 + common_nsecs
     try:
         latencies[start] += [endtime - start]
