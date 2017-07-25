@@ -6,6 +6,7 @@ Report buddy allocator stat
 
 import subprocess
 import sys
+import time
 
 def pr_buddystat():
     binfo = subprocess.check_output("cat /proc/buddyinfo".split())
@@ -35,4 +36,12 @@ def pr_buddystat():
         print "%s %s" % (" ".join(fields[0:4]), free_mem)
 
 if __name__ == "__main__":
-    pr_buddystat()
+    delay = -1
+    if len(sys.argv) > 1:
+        delay = float(sys.argv[1])
+
+    while True:
+        pr_buddystat()
+        if delay == -1:
+            break
+        time.sleep(delay)
