@@ -12,8 +12,8 @@ for line in sys.stdin:
 
 data = sorted(data)
 
-for i in range(precision + 1):
+for i in range(precision):
     idx = len(data) / precision * i
-    if idx == len(data):
-        idx -= 1
     print "%d, %d" % (100 / precision * i, data[idx])
+
+print "%d, %d" % (100, data[-1])
