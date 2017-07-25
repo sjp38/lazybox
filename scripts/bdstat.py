@@ -21,4 +21,14 @@ for line in binfo.strip('\n').split('\n'):
     free_mem = 0
     for i, freep in enumerate(fields[4:]):
         free_mem += int(freep) * 2**i * 4096
-    print "%s %d (%d GiB)" % (" ".join(fields[0:4]), free_mem, free_mem / 2**30)
+
+    if free_mem > 2**30:
+        free_mem = "%.2f GiB" % (free_mem / 2.0**30)
+    elif free_mem > 2**20:
+        free_mem = "%.2f MiB" % (free_mem / 2.0**20)
+    elif free_mem > 2**10:
+        free_mem = "%.2f KiB" % (free_mem / 2.0**10)
+    else:
+        free_mem = "%d B" % free_mem
+
+    print "%s %s" % (" ".join(fields[0:4]), free_mem)
