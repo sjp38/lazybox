@@ -45,3 +45,4 @@ if __name__ == "__main__":
         if delay == -1:
             break
         time.sleep(delay)
+        print ""
