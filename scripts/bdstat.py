@@ -33,7 +33,7 @@ def pr_buddystat():
         else:
             free_mem = "%d B" % free_mem
 
-        print "%s %s" % (" ".join(fields[0:4]), free_mem)
+        print "%s, %s" % (" ".join(fields[0:4]), free_mem)
 
 if __name__ == "__main__":
     delay = -1
