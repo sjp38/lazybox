@@ -46,3 +46,24 @@ def count_event(name, time, count):
         ev_per_time[name][time] += count
     except TypeError:
         ev_per_time[name][time] = count
+
+
+start_events = autodict()
+latencies = autodict()
+def latency_start(id_, time):
+    try:
+        start_events[id_] += [time]
+    except TypeError:
+        start_events[id_] = [time]
+
+def latency_end(id_, time):
+    start = start_events[id_][0]
+    try:
+        start_events[id_] = start_events[id_][1:]
+    except TypeError:
+        return
+    endtime = time
+    try:
+        latencies[start] += [endtime - start]
+    except TypeError:
+        latencies[start] = [endtime - start]
