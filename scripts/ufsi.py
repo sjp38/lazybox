@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""
+description = """
 Unusable Free Space Index
 
 This script calculates `unusable free space index`[0] which represents degree
@@ -26,6 +26,7 @@ import sys
 
 if len(sys.argv) < 2:
     print "USAGE: %s <order of desired pages>" % sys.argv[0]
+    print description
     exit(1)
 
 order = int(sys.argv[1])
