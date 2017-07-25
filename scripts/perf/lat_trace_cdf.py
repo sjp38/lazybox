@@ -13,4 +13,7 @@ for line in sys.stdin:
 data = sorted(data)
 
 for i in range(precision + 1):
-    print "%d, %d" % (100 / precision * i, data[len(data) / precision * i])
+    idx = len(data) / precision * i
+    if idx == len(data):
+        idx -= 1
+    print "%d, %d" % (100 / precision * i, data[idx])
