@@ -39,19 +39,26 @@ Node 0, zone   Normal   2380    928   1518   7668  12639  12078  11520
 Node 1, zone   Normal    681   2489   1869  12689  23714  23179  22081
 """
 
+zones = []
 free_pages = []
 for line in binfo.strip('\n').split('\n'):
     fields = line.split()
+    zones.append(fields[:4])
     free_pages.append([int(x) for x in fields[4:]])
 
-totalfree = 0
+totalfrees = []
 for z in free_pages:
+    free = 0
     for i, p in enumerate(z):
-        totalfree += 2**i * p
+        free += 2**i * p
+    totalfrees.append(free)
 
-nr_usable = 0
+usables = []
 for z in free_pages:
+    usable = 0
     for i, p in enumerate(z[order:]):
-        nr_usable += 2**(i+order) * p
+        usable += 2**(i+order) * p
+    usables.append(usable)
 
-print (totalfree - nr_usable) / float(totalfree)
+for i, z in enumerate(zones):
+    print "%s: %f" % (' '.join(z), (totalfrees[i] - usables[i]) / float(totalfrees[i]))
