@@ -62,3 +62,4 @@ for z in free_pages:
 
 for i, z in enumerate(zones):
     print "%s: %f" % (' '.join(z), (totalfrees[i] - usables[i]) / float(totalfrees[i]))
+print "Total: ", (sum(totalfrees) - sum(usables)) / float(sum(totalfrees))
