@@ -84,19 +84,17 @@ def pr_fields():
     for f in sorted(cpus[0].keys() + ["topology"]):
         print "'" + f + "'"
 
-USAGE = "USAGE: %s <field | fields>" % sys.argv[0]
+USAGE = "USAGE: %s <field>" % sys.argv[0]
 
 if __name__ == "__main__":
     cpus = parse_cpuinfo()
 
     if len(sys.argv) < 2:
         print USAGE
-        exit(0)
-    key = sys.argv[1]
-
-    if key == "fields":
+        print "\nAvaliable fields are:"
         pr_fields()
         exit(0)
+    key = sys.argv[1]
 
     if key == "topology":
         pr_topology(cpus)
