@@ -109,7 +109,7 @@ if __name__ == "__main__":
     output = ''
     for i, cpu in enumerate(cpus):
         if i % 8 == 0:
-            output += '%3d: ' % i
+            output += 'cpu %3d-%3d: ' % (i, i + 7)
         output += '%s, ' % cpu[key]
         if i % 8 == 7:
             output += '\n'
