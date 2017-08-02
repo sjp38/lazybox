@@ -24,6 +24,17 @@ anti-fragmentation." Ottawa Linux Symposium. Vol. 1. 2006.
 import subprocess
 import sys
 
+def human_readable_size_form(nr_bytes):
+    if nr_bytes > 2**30:
+        nr_bytes = "%.2f GiB" % (nr_bytes / 2.0**30)
+    elif nr_bytes > 2**20:
+        nr_bytes = "%.2f MiB" % (nr_bytes / 2.0**20)
+    elif nr_bytes > 2**10:
+        nr_bytes = "%.2f KiB" % (nr_bytes / 2.0**10)
+    else:
+        nr_bytes = "%d B" % nr_bytes
+    return nr_bytes
+
 if len(sys.argv) < 2:
     print "USAGE: %s <order of desired pages>" % sys.argv[0]
     print description
@@ -63,11 +74,11 @@ for z in free_bdpages:
 SZ_PAGE = 4096
 
 for i, z in enumerate(zones):
-    print "%s: %f (total %d GB, usable %d GB)" % (' '.join(z),
+    print "%s: %f (total %s, usable %s)" % (' '.join(z),
             (free_pages[i] - usable_pages[i]) / float(free_pages[i]),
-            free_pages[i] * SZ_PAGE / (1024*1024*1024),
-            usable_pages[i] * SZ_PAGE / (1024*1024*1024))
-print "Total: %f (total %d GB, usable %d GB)" % (
+            human_readable_size_form(free_pages[i] * SZ_PAGE),
+            human_readable_size_form(usable_pages[i] * SZ_PAGE))
+print "Total: %f (total %s, usable %s)" % (
         (sum(free_pages) - sum(usable_pages)) / float(sum(free_pages)),
-        sum(free_pages) * SZ_PAGE / (1024*1024*1024),
-        sum(usable_pages) * SZ_PAGE / (1024*1024*1024))
+        human_readable_size_form(sum(free_pages) * SZ_PAGE),
+        human_readable_size_form(sum(usable_pages) * SZ_PAGE))
