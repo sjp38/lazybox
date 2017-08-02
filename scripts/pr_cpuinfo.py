@@ -102,9 +102,8 @@ if __name__ == "__main__":
 
     if not key in cpus[0].keys():
         print USAGE
-        print ""
-        print "Key '%s' is wrong.  Valid keys are:" % key
-        print ', '.join(sorted(cpus[0].keys()))
+        print "\nKey '%s' is wrong.  Valid keys are:" % key
+        pr_fields()
         exit(1)
 
     output = ''
