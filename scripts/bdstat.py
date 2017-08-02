@@ -8,6 +8,17 @@ import subprocess
 import sys
 import time
 
+def human_readable_size_form(nr_bytes):
+    if nr_bytes > 2**30:
+        nr_bytes = "%.2f GiB" % (nr_bytes / 2.0**30)
+    elif nr_bytes > 2**20:
+        nr_bytes = "%.2f MiB" % (nr_bytes / 2.0**20)
+    elif nr_bytes > 2**10:
+        nr_bytes = "%.2f KiB" % (nr_bytes / 2.0**10)
+    else:
+        nr_bytes = "%d B" % nr_bytes
+    return nr_bytes
+
 def pr_buddystat():
     binfo = subprocess.check_output("cat /proc/buddyinfo".split())
     """
@@ -24,16 +35,8 @@ def pr_buddystat():
         for i, freep in enumerate(fields[4:]):
             free_mem += int(freep) * 2**i * 4096
 
-        if free_mem > 2**30:
-            free_mem = "%.2f GiB" % (free_mem / 2.0**30)
-        elif free_mem > 2**20:
-            free_mem = "%.2f MiB" % (free_mem / 2.0**20)
-        elif free_mem > 2**10:
-            free_mem = "%.2f KiB" % (free_mem / 2.0**10)
-        else:
-            free_mem = "%d B" % free_mem
-
-        print "%s, %s" % (" ".join(fields[0:4]), free_mem)
+        print "%s, %s" % (" ".join(fields[0:4]),
+                human_readable_size_form(free_mem))
 
 if __name__ == "__main__":
     delay = -1
