@@ -80,7 +80,7 @@ def pr_topology(cpus):
         output += "\n"
         print output
 
-USAGE = "USAGE: %s [field]" % sys.argv[0]
+USAGE = "USAGE: %s <field | fields>" % sys.argv[0]
 
 if __name__ == "__main__":
     cpus = parse_cpuinfo()
@@ -89,6 +89,12 @@ if __name__ == "__main__":
         print USAGE
         exit(0)
     key = sys.argv[1]
+
+    if key == "fields":
+        for f in sorted(cpus[0].keys() + ["topology"]):
+            print "'" + f + "'"
+        exit(0)
+
     if key == "topology":
         pr_topology(cpus)
         exit(0)
