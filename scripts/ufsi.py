@@ -60,7 +60,14 @@ for z in free_bdpages:
         usable += 2**(i+order) * p
     usable_pages.append(usable)
 
+SZ_PAGE = 4096
+
 for i, z in enumerate(zones):
-    print "%s: %f" % (' '.join(z),
-            (free_pages[i] - usable_pages[i]) / float(free_pages[i]))
-print "Total: ", (sum(free_pages) - sum(usable_pages)) / float(sum(free_pages))
+    print "%s: %f (total %d GB, usable %d GB)" % (' '.join(z),
+            (free_pages[i] - usable_pages[i]) / float(free_pages[i]),
+            free_pages[i] * SZ_PAGE / (1024*1024*1024),
+            usable_pages[i] * SZ_PAGE / (1024*1024*1024))
+print "Total: %f (total %d GB, usable %d GB)" % (
+        (sum(free_pages) - sum(usable_pages)) / float(sum(free_pages)),
+        sum(free_pages) * SZ_PAGE / (1024*1024*1024),
+        sum(usable_pages) * SZ_PAGE / (1024*1024*1024))
