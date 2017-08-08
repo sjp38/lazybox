@@ -10,5 +10,5 @@ pushd $FILEDIR
 # TODO: Wait more gracefully
 sleep 5
 
-./run-webserving.sh
+./run-webserving.sh $1
 popd
