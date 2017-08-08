@@ -11,9 +11,10 @@ pushd $FILEDIR
 echo "Wait mysql startup..."
 for i in {1..5}
 do
-	echo $i
+	printf "%d " $i
 	sleep 1
 done
+printf "\n"
 
 ./run-webserving.sh $1
 popd
