@@ -5,7 +5,7 @@ REPO="https://github.com/sjp38/cloudsuite-personal.git"
 TARGET_DIR="cloudsuite"
 TARGET_REV="e48bc2434bc2d15fcec7f496245726a6a35ca000"
 
-if ! which git
+if ! which git &> /dev/null
 then
 	echo "[Error] git not found. Please install it."
 	exit 1
