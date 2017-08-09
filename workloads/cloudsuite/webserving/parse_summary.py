@@ -22,8 +22,9 @@ xmldat = "".join(sys.stdin)
 root = ET.fromstring(xmldat)
 #walk_elem(root, 0)
 
-print "ops:\t", root.find("./benchSummary/metric").text
 print "users:\t", root.find("./driverSummary/users").text
+print "nr_ops:\t", root.find("./driverSummary/totalOps").text
+print "ops:\t", root.find("./benchSummary/metric").text
 
 response_times = root.findall("./driverSummary/responseTimes/operation")
 for op in response_times:
