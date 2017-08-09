@@ -29,8 +29,6 @@ print "ops:\t", root.find("./benchSummary/metric").text
 response_times = root.findall("./driverSummary/responseTimes/operation")
 for op in response_times:
     for lat in op:
-        if not lat.text:
-            continue
         if lat.tag == "passed":
             continue
         if lat.tag == "percentile":
