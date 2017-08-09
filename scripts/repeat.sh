@@ -13,7 +13,7 @@ fi
 DELAY=$1
 COUNT=$2
 
-for i in $(seq 1 $COUNT)
+for ((N = 0; N < $COUNT; N++))
 do
 	eval ${@:3}
 	sleep $DELAY
