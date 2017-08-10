@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Parse summary.xml and print out requested field
+Receive summary.xml from stdin and print out essential fields
 """
 
 import xml.etree.ElementTree as ET
