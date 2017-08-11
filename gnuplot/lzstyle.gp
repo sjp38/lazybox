@@ -15,3 +15,6 @@ set linetype 5 pointtype 7 linecolor rgb "#7e0021" lw 1
 set linetype 6 pointtype 1 linecolor rgb "#83caff" lw 1
 set linetype 7 pointtype 2 linecolor rgb "#314004" lw 1
 set linetype 8 pointtype 3 linecolor rgb "#aecf00" lw 1
+
+set boxwidth 0.5
+set style fill solid
