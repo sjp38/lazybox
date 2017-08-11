@@ -1,6 +1,6 @@
 load "lzstyle.gp"
 
-set autoscale fix
+set autoscale
 
 set key tmargin center
 set key horizontal
@@ -16,5 +16,10 @@ if (!exists("DATA")) {
 	exit
 }
 
-plot for [IDX=0:2] DATA index IDX using 1:2 \
-	with linespoints title columnheader(1)
+stats DATA
+
+plot 								\
+	for [IDX=0:1] DATA index IDX using 1:2 			\
+		with boxes title columnheader(1),		\
+	for [IDX=0:STATS_blocks] DATA index IDX using 1:2 	\
+		with linespoints title columnheader(1)
