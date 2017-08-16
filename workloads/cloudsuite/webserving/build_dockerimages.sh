@@ -18,7 +18,7 @@ docker build -t $REPONAME:mysql ./
 pushd ../memcached_server
 docker build -t $REPONAME:memcached ./
 
-pushd ../memcached_server
+pushd ../web_server
 docker build -t $REPONAME:webserver ./
 
 pushd ../faban_client
