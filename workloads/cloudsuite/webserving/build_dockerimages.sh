@@ -10,14 +10,16 @@ then
 	exit 1
 fi
 
+REPONAME="sj-cloudsuite/web-serving"
+
 pushd ./cloudsuite/benchmarks/web-serving/db_server
-docker build -t sj-cloudsuite/web-serving:mysql ./
+docker build -t $REPONAME:mysql ./
 
 pushd ../memcached_server
-docker build -t sj-cloudsuite/web-serving:memcached ./
+docker build -t $REPONAME:memcached ./
 
 pushd ../memcached_server
-docker build -t sj-cloudsuite/web-serving:webserver ./
+docker build -t $REPONAME:webserver ./
 
 pushd ../faban_client
-docker build -t sj-cloudsuite/web-serving:client ./
+docker build -t $REPONAME:client ./
