@@ -10,6 +10,9 @@ data = []
 for line in sys.stdin:
     data.append(int(line.split()[1]))
 
+if len(data) == 0:
+    exit(0)
+
 data = sorted(data)
 
 for i in range(precision):
