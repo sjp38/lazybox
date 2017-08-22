@@ -1,7 +1,6 @@
 
 set key tmargin center
 set key horizontal
-set key box
 
 set style line 1 lw 4
 
