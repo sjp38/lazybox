@@ -13,4 +13,5 @@ if len(data) > 0:
     average = sum(data) / float(len(data))
     min_ = min(data)
     max_ = max(data)
-print "avg, min, max: %.3f, %d, %d" % (average, min_, max_)
+print "avg, min, max, count: %.3f, %d, %d, %d" % (
+        average, min_, max_, len(data))
