@@ -14,6 +14,6 @@ data = sorted(data)
 
 for i in range(precision):
     idx = len(data) / precision * i
-    print "%.3f %d" % (100.0 / precision * i, data[idx])
+    print "%d %.3f" % (data[idx], 100.0 / precision * i)
 
-print "%d %d" % (100, data[-1])
+print "%d %d" % (data[-1], 100)
