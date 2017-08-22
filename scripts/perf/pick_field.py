@@ -17,7 +17,11 @@ wanted = sys.argv[1]
 
 for line in sys.stdin:
     tokens = line.split()
-    time = float(tokens[3][:-1]) * 1000 * 1000 * 1000   # nano second level
+    try:
+        time = float(tokens[3][:-1]) * 1000 * 1000 * 1000   # nano second level
+    except ValueError:
+        # ignore
+        continue
     for fields in tokens[5:]:
         key, value = fields.split('=')
         if key == wanted:
