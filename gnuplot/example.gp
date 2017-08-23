@@ -15,8 +15,8 @@ if (!exists("DATA") || !exists("NR_IDXS")) {
 	exit
 }
 
-plot 								\
-	for [IDX=0:NR_IDXS] DATA index IDX using 1:2 			\
-		with boxes title columnheader(1),		\
+plot 							\
+	for [IDX=0:NR_IDXS] DATA index IDX using 1:2 	\
+		with boxes title columnheader(1),	\
 	for [IDX=0:NR_IDXS] DATA index IDX using 1:2 	\
 		with linespoints title columnheader(1)
