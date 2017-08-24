@@ -1,4 +1,4 @@
 for tag in mysql memcached webserver client
 do
-	docker rmi sj-cloudsuite/web-serving:$tag
+	docker rmi lb-cloudsuite/web-serving:$tag
 done

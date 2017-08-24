@@ -10,7 +10,7 @@ then
 	exit 1
 fi
 
-REPONAME="sj-cloudsuite/web-serving"
+REPONAME="lb-cloudsuite/web-serving"
 
 pushd ./cloudsuite/benchmarks/web-serving/db_server
 docker build -t $REPONAME:mysql ./
