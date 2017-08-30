@@ -26,6 +26,8 @@ function nr_records {
 
 # index start from 0
 NR_IDXS=$((`nr_records $TMPFILE` - 1))
-gnuplot -e "DATA='$TMPFILE'; NR_IDXS='$NR_IDXS'" ./scatter.gp
+NR_COLS=`cat $TMPFILE | tail -n 1 | awk '{print NF}'`
+
+gnuplot -e "DATA='$TMPFILE'; NR_IDXS='$NR_IDXS'; NR_COLS='$NR_COLS'" ./$1.gp
 
 rm $TMPFILE
