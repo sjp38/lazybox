@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if [ $# -ne 1 ]
+then
+	echo "Usage: $0 <chart type>"
+	echo " supported chart types are: scatter, clustered_box"
+	exit 1
+fi
+
 SCRIPT_DIR=`dirname $0`
 
 export GNUPLOT_LIB=$SCRIPT_DIR
