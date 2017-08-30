@@ -24,6 +24,7 @@ function nr_records {
 	awk 'BEGIN{RS="\n\n\n";}{print NR;}' $1 | wc -l
 }
 
-gnuplot -e "DATA='$TMPFILE'; NR_IDXS='`nr_records $TMPFILE`'" ./scatter.gp
+NR_IDXS=$((`nr_records $TMPFILE` - 1))
+gnuplot -e "DATA='$TMPFILE'; NR_IDXS='$NR_IDXS'" ./scatter.gp
 
 rm $TMPFILE
