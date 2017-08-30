@@ -13,7 +13,7 @@ set output "plot.pdf"
 
 if (!exists("DATA") || !exists("NR_COLS")) {
 	print "DATA and NR_COLS should be passed via -e option."
-	print "(e.g., `$ gnuplot -e \"DATA='./data'; NR_COLS='3'\" ./example.gp`)"
+	print "(e.g., \`$ gnuplot -e \"DATA='./data'; NR_COLS='3'\" ./example.gp\`)"
 	exit
 }
 
