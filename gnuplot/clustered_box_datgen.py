@@ -3,7 +3,7 @@
 import random
 
 keys = ["metric", "sysA", "sysB", "sysC", "sysD", "sysE", "sysF", "sysG"]
-xaxes = ["metricA", "metricB", "metricC", "metricD", "metricE", "metricF", "metricG"]
+xaxes = ["metricA", "metricB", "metricC", "metricD", "metricE", "metricF"]
 
 print "\t".join(keys)
 line = ""
