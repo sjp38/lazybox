@@ -102,6 +102,26 @@ class ATable:
 
         return ATable(self.title, self.legend, rows)
 
+def wrong_csv_format_check(csv):
+    lines = [l.strip() for l in csv.split('\n')]
+    fields = [f.strip() for f in lines[0].split(',')]
+    if len(fields) != 2:
+        print "title line has %d (>2) fields" % len(fields)
+        return True
+    if fields[0] != "title":
+        print "title line should have keyword 'title' but '%s'" % fields[0]
+        return True
+
+    nr_legends = len(lines[1].split(','))
+    for idx, l in enumerate(lines[2:]):
+        nr_fields = len(l.split(','))
+        if nr_fields != nr_legends:
+            print "line %d has %d fields but # of legends are %d" % (
+                    2 + idx, nr_fields, nr_legends)
+            print "the line: `%s`" % l
+            return True
+    return False
+
 def from_csv(csv):
     """Parse csv text and construct a table."""
     lines = csv.split('\n')
@@ -375,3 +395,41 @@ x2 val2-2
     print ""
     t = ATable("foo", ["key", "sysA", "sysB"], [[1, "3", "6"], [2, "4", "7"]])
     print t.normalize(1, [0])
+
+    print "\n"
+    print "format csv check test"
+    print "====================="
+    print ""
+    if wrong_csv_format_check(
+            """title, fooo
+            leg1, leg2, leg3
+            v1, v2, v3
+            v4, v5, v6"""):
+        print "FAIL"
+        exit(1)
+
+    if not wrong_csv_format_check(
+            """titel, fooo
+            leg1, leg2, leg3
+            v1, v2, v3
+            v4, v5, v6"""):
+        print "FAIL"
+        exit(1)
+
+    if not wrong_csv_format_check(
+            """title, fooo
+            leg1, leg2, leg3
+            v1, v2, v3
+            v4, v5"""):
+        print "FAIL"
+        exit(1)
+    if not wrong_csv_format_check(
+            """title, fooo
+            leg1, leg2, leg3
+            v1, v2, v3
+            v4, v5, v6
+            """):
+        print "FAIL"
+        exit(1)
+
+    print "PASS"
