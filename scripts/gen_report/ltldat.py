@@ -84,6 +84,22 @@ class ATable:
                 [str(row[cname]) for cname in self.legend]) + "\n"
         return txt.strip()
 
+    def normalize(self, basis_idx):
+        rows = []
+        for row in self.rows:
+            rows.append([row[cname] for cname in self.legend])
+
+        for row in rows:
+            for idx, field in enumerate(row):
+                v = field
+                try:
+                    v = float(field) / float(row[basis_idx])
+                except ValueError:
+                    pass
+                row[idx] = v
+
+        return ATable(self.title, self.legend, rows)
+
 def from_csv(csv):
     """Parse csv text and construct a table."""
     lines = csv.split('\n')
@@ -349,3 +365,11 @@ x2 val2-2
     print ""
     print t
     print t.human_readable_txt()
+
+
+    print "\n\n\n"
+    print "normalization test"
+    print "=================="
+    print ""
+    t = ATable("foo", ["key", "sysA", "sysB"], [["1:", "3", "6"], ["2:", "4", "7"]])
+    print t.normalize(1)
