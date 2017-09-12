@@ -101,7 +101,6 @@ def from_human_readable_txt(text):
     title = records[0].strip()
     legend = []
     rows = []
-    print "records: ", records
     for ridx, rec in enumerate(records):
         lines = [x.strip() for x in rec.split('\n')]
         if ridx == 0:
@@ -112,9 +111,6 @@ def from_human_readable_txt(text):
             if ridx == 1:
                 rows.append([])
                 rows[idx].append(l.split()[0])
-            print "rows: ", rows
-            print "idx: ", idx
-            print "line: ", l
             rows[idx].append(l.split()[1])
     return ATable(title, legend, rows)
 
