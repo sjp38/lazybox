@@ -82,7 +82,7 @@ class ATable:
         for row in self.rows:
             txt += "\t".join(
                 [str(row[cname]) for cname in self.legend]) + "\n"
-        return txt
+        return txt.strip()
 
 def from_csv(csv):
     """Parse csv text and construct a table."""
