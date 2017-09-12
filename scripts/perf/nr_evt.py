@@ -9,10 +9,7 @@
 
 import os
 import sys
-
-sys.path.append(os.environ['HOME'] + 'lazybox/scripts/perf')
 import lbperfutil
-
 
 def trace_begin():
     pass
