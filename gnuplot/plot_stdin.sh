@@ -35,6 +35,12 @@ function nr_records {
 NR_IDXS=$((`nr_records $TMPFILE` - 1))
 NR_COLS=`cat $TMPFILE | tail -n 1 | awk '{print NF}'`
 
+if [ $NR_COLS -lt 2 ]
+then
+	echo "Number of columns are $NR_COLS (< 2).  Maybe something wrong."
+	exit 1
+fi
+
 gnuplot -e "DATA='$TMPFILE'; NR_IDXS='$NR_IDXS'; NR_COLS='$NR_COLS'" ./$1.gp
 
 rm $TMPFILE
