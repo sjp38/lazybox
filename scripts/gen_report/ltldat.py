@@ -124,6 +124,9 @@ def wrong_csv_format_check(csv):
 
 def from_csv(csv):
     """Parse csv text and construct a table."""
+    if wrong_csv_format_check(str(csv).strip()):
+        return False
+
     lines = csv.split('\n')
     title = lines[0].split(',')[1].strip()
     legend = [x.strip() for x in lines[1].split(',')]
