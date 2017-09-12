@@ -172,6 +172,8 @@ def from_csv(csv):
 def from_human_readable_txt(text):
     """Parse line-base data and construct a table."""
     text = text.strip()
+    if wrong_human_readable_txt(text):
+        return False
     records = text.split('\n\n\n')
     title = records[0].strip()
     legend = []
