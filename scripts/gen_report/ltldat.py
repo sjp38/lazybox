@@ -359,7 +359,7 @@ legend2
 x1 val2-1
 x2 val2-2
 """)
-    print "\n\n\n"
+    print "\n"
     print "human readable text test"
     print "========================"
     print ""
@@ -367,7 +367,7 @@ x2 val2-2
     print t.human_readable_txt()
 
 
-    print "\n\n\n"
+    print "\n"
     print "normalization test"
     print "=================="
     print ""
