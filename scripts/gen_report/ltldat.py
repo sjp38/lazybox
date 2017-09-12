@@ -122,6 +122,40 @@ def wrong_csv_format_check(csv):
             return True
     return False
 
+def wrong_human_readable_txt(text):
+    text = text.strip()
+    records = text.split('\n\n\n')
+
+    nr_rows = len(records[1].split('\n'))
+    xvalues = []
+
+    for ridx, rec in enumerate(records[1:]):
+        ridx += 1
+        nr_lines = len(rec.split('\n'))
+        if nr_lines == 0:
+            print "record %d has no data at all" % ridx
+            return True
+
+        if nr_lines != nr_rows:
+            print "record %d has %d rows but first record has %d rows" % (
+                    ridx, nr_lines, nr_rows)
+            return True
+
+        compare_xvalues = []
+        for l in rec.split('\n')[1:]:
+            if len(l.split()) < 2:
+                print "each line should have at least two fields"
+                return True
+            if ridx == 1:
+                xvalues.append(l.split()[0].strip())
+            else:
+                compare_xvalues.append(l.split()[0].strip())
+        if ridx > 1 and xvalues != compare_xvalues:
+            print "xvalues of record %d is '%s' but record 0 has '%s'" % (
+                    ridx, ' '.join(compare_xvalues), ' '.join(xvalues))
+            return True
+    return False
+
 def from_csv(csv):
     """Parse csv text and construct a table."""
     if wrong_csv_format_check(str(csv).strip()):
@@ -431,6 +465,72 @@ x2 val2-2
             leg1, leg2, leg3
             v1, v2, v3
             v4, v5, v6
+            """):
+        print "FAIL"
+        exit(1)
+
+    print "PASS"
+
+    print "\n"
+    print "human readable text format check test"
+    print "====================================="
+    print ""
+    if wrong_human_readable_txt(
+            """Title
+
+
+            legend1
+            x1 val1
+            x2 val2
+
+
+            legend2
+            x1 val2-1
+            x2 val2-2
+            """):
+        print "FAIL"
+        exit(1)
+    if not wrong_human_readable_txt(
+            """Title
+
+
+            legend1
+            x1 val1
+
+
+            legend2
+            x1 val2-1
+            x2 val2-2
+            """):
+        print "FAIL"
+        exit(1)
+    if not wrong_human_readable_txt(
+            """Title
+
+
+            legend1
+            x1 val1
+            x2
+
+
+            legend2
+            x1 val2-1
+            x2 val2-2
+            """):
+        print "FAIL"
+        exit(1)
+    if not wrong_human_readable_txt(
+            """Title
+
+
+            legend1
+            x1 val1
+            x2 val2
+
+
+            legend2
+            x1 val2-1
+            x3 val2-2
             """):
         print "FAIL"
         exit(1)
