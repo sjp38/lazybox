@@ -84,13 +84,15 @@ class ATable:
                 [str(row[cname]) for cname in self.legend]) + "\n"
         return txt.strip()
 
-    def normalize(self, basis_idx):
+    def normalize(self, basis_idx, exclude_cols):
         rows = []
         for row in self.rows:
             rows.append([row[cname] for cname in self.legend])
 
         for row in rows:
             for idx, field in enumerate(row):
+                if idx in exclude_cols:
+                    continue
                 v = field
                 try:
                     v = float(field) / float(row[basis_idx])
@@ -371,5 +373,5 @@ x2 val2-2
     print "normalization test"
     print "=================="
     print ""
-    t = ATable("foo", ["key", "sysA", "sysB"], [["1:", "3", "6"], ["2:", "4", "7"]])
-    print t.normalize(1)
+    t = ATable("foo", ["key", "sysA", "sysB"], [[1, "3", "6"], [2, "4", "7"]])
+    print t.normalize(1, [0])
