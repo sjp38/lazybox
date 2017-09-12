@@ -76,6 +76,14 @@ class ATable:
                 [str(row[cname]) for cname in self.legend]))
         return '\n'.join(lines)
 
+    def human_readable_txt(self):
+        txt = "# %s\n" % self.title
+        txt += "\t".join(self.legend) + "\n"
+        for row in self.rows:
+            txt += "\t".join(
+                [str(row[cname]) for cname in self.legend]) + "\n"
+        return txt
+
 def from_csv(csv):
     """Parse csv text and construct a table."""
     lines = csv.split('\n')
@@ -84,6 +92,30 @@ def from_csv(csv):
     rows = []
     for line in lines[2:]:
         rows.append([x.strip() for x in line.split(',')])
+    return ATable(title, legend, rows)
+
+def from_human_readable_txt(text):
+    """Parse line-base data and construct a table."""
+    text = text.strip()
+    records = text.split('\n\n\n')
+    title = records[0].strip()
+    legend = []
+    rows = []
+    print "records: ", records
+    for ridx, rec in enumerate(records):
+        lines = [x.strip() for x in rec.split('\n')]
+        if ridx == 0:
+            legend.append("xv")
+        else:
+            legend.append(lines[0])
+        for idx, l in enumerate(lines[1:]):
+            if ridx == 1:
+                rows.append([])
+                rows[idx].append(l.split()[0])
+            print "rows: ", rows
+            print "idx: ", idx
+            print "line: ", l
+            rows[idx].append(l.split()[1])
     return ATable(title, legend, rows)
 
 def pick_fields(table, fields):
@@ -106,7 +138,7 @@ def merge(tables):
     """Merge multiple tables into one tables.
 
     Tables should have same legend and same number of rows.  If tables have
-    differenct number of rows, compensate() function may be helpful.
+    different number of rows, compensate() function may be helpful.
     Each name of tables should be unique.
     """
     new_legend = []
@@ -301,3 +333,23 @@ if __name__ == "__main__":
     stat = exclude_fields(stat,
             ["key_min", "key_max", "key_stdev", "key_nr_samples"])
     print stat
+
+    t = from_human_readable_txt(
+"""Title
+
+
+legend1
+x1 val1
+x2 val2
+
+
+legend2
+x1 val2-1
+x2 val2-2
+""")
+    print "\n\n\n"
+    print "human readable text test"
+    print "========================"
+    print ""
+    print t
+    print t.human_readable_txt()
