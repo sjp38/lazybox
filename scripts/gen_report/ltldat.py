@@ -98,6 +98,8 @@ class ATable:
                     v = float(field) / float(row[basis_idx])
                 except ValueError:
                     pass
+                except ZeroDivisionError:
+                    v = -0.1
                 row[idx] = v
 
         return ATable(self.title, self.legend, rows)
