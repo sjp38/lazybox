@@ -91,7 +91,7 @@ class ATable:
 
         for row in rows:
             for idx, field in enumerate(row):
-                if idx in exclude_cols:
+                if idx in exclude_cols or idx == basis_idx:
                     continue
                 v = field
                 try:
@@ -101,6 +101,11 @@ class ATable:
                 except ZeroDivisionError:
                     v = -0.1
                 row[idx] = v
+        for row in rows:
+            if float(row[basis_idx]) == 0:
+                row[basis_idx] = -0.1
+            else:
+                row[basis_idx] = 1.0
 
         return ATable(self.title, self.legend, rows)
 
