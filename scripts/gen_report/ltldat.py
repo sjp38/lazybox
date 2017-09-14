@@ -88,25 +88,20 @@ class ATable:
         rows = []
         for row in self.rows:
             rows.append([row[cname] for cname in self.legend])
+        basevals = [r[basis_idx] for r in rows]
 
-        for row in rows:
+        for ri, row in enumerate(rows):
             for idx, field in enumerate(row):
-                if idx in exclude_cols or idx == basis_idx:
+                if idx in exclude_cols:
                     continue
                 v = field
                 try:
-                    v = float(field) / float(row[basis_idx])
+                    v = float(v) / float(basevals[ri])
                 except ValueError:
                     pass
                 except ZeroDivisionError:
                     v = -0.1
                 row[idx] = v
-        for row in rows:
-            if float(row[basis_idx]) == 0:
-                row[basis_idx] = -0.1
-            else:
-                row[basis_idx] = 1.0
-
         return ATable(self.title, self.legend, rows)
 
 def wrong_csv_format_check(csv):
