@@ -84,7 +84,7 @@ class ATable:
                 [str(row[cname]) for cname in self.legend]) + "\n"
         return txt.strip()
 
-    def normalize(self, basis_idx, exclude_cols):
+    def normalize(self, basis_idx=1, exclude_cols=[0]):
         rows = []
         for row in self.rows:
             rows.append([row[cname] for cname in self.legend])
