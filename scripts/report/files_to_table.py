@@ -48,9 +48,16 @@ for p in paths:
         print "All filename should be %s but %s" % (title, p)
         exit(1)
 
-path_to_variants = [os.path.dirname(os.path.dirname(p)) for p in paths]
 commpath = os.path.commonprefix(paths)
-variants = [os.path.relpath(p, commpath) for p in path_to_variants]
+dirs = [os.path.dirname(p) for p in paths]
+variants = [os.path.relpath(d, commpath) for d in dirs]
+uniqueid_useless = True
+for v in variants:
+    if os.path.dirname(v) == '':
+        uniqueid_useless = False
+        break
+if uniqueid_useless:
+    variants = [os.path.dirname(v) for v in variants]
 
 text = title + "\n\n\n"
 for idx, path in enumerate(paths):
