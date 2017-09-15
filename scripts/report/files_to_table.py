@@ -49,9 +49,7 @@ for p in paths:
         exit(1)
 
 path_to_variants = [os.path.dirname(os.path.dirname(p)) for p in paths]
-print "path_to_variants ", path_to_variants
 commpath = os.path.commonprefix(paths)
-print "commpath ", commpath
 variants = [os.path.relpath(p, commpath) for p in path_to_variants]
 
 text = title + "\n\n\n"
@@ -62,7 +60,5 @@ for idx, path in enumerate(paths):
             line = line.replace(':', '')
             text += line
     text += "\n\n"
-
-print text
 
 print ltldat.from_human_readable_txt(text).human_readable_txt()
