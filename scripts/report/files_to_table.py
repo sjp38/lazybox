@@ -30,16 +30,6 @@ if len(sys.argv) < 2:
     print "Usage: %s <files>" % sys.argv[0]
     exit(1)
 
-# Path is results_root/level 1 variant/level2 variant/.../leveln variant/M/title
-# M could be any unique id for repeats or average.
-# For example, following commands would be available:
-# 
-# $ ./results_table.py results/tpch/nothp/1/perf results/tpch/thp/1/perf
-# $ ./results_table.py results/tpch/nothp/avg/perf results/tpch/thp/avg/perf
-
-# We also assumes that every file has multiple line of `key: value` format.
-# All files should have same keys.
-
 paths = sys.argv[1:]
 
 title = os.path.basename(paths[0])
