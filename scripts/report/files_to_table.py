@@ -1,0 +1,68 @@
+#!/usr/bin/env python
+
+"""
+Construct and show a human readable, gnuplot convertible data from multiple
+files that containing results of experiment(s).
+
+Each file should be located in '<common directory>/
+<variance level1>/.../<variance levelN>/<unique id>/ directory.  Unique id
+would be id of repeated run or 'avg' or 'stdev', etc.  Variance should be more
+common for lower level and more specific for higher level.  For example,
+following case would be possible.
+```
+results/workloadA/systemA/configA/1/perf
+results/workloadA/systemA/configA/2/perf
+results/workloadA/systemA/configA/avg/perf
+results/workloadA/systemA/configB/1/perf
+results/workloadA/systemB/configA/1/perf
+```
+
+Each file should be constructed with `<key>: <value>` lines.
+"""
+
+import os
+import sys
+
+sys.path.append(os.environ['HOME'] + '/lazybox/scripts/gen_report')
+import ltldat
+
+if len(sys.argv) < 2:
+    print "Usage: %s <files>" % sys.argv[0]
+    exit(1)
+
+# Path is results_root/level 1 variant/level2 variant/.../leveln variant/M/title
+# M could be any unique id for repeats or average.
+# For example, following commands would be available:
+# 
+# $ ./results_table.py results/tpch/nothp/1/perf results/tpch/thp/1/perf
+# $ ./results_table.py results/tpch/nothp/avg/perf results/tpch/thp/avg/perf
+
+# We also assumes that every file has multiple line of `key: value` format.
+# All files should have same keys.
+
+paths = sys.argv[1:]
+
+title = os.path.basename(paths[0])
+for p in paths:
+    if os.path.basename(p) != title:
+        print "All filename should be %s but %s" % (title, p)
+        exit(1)
+
+path_to_variants = [os.path.dirname(os.path.dirname(p)) for p in paths]
+print "path_to_variants ", path_to_variants
+commpath = os.path.commonprefix(paths)
+print "commpath ", commpath
+variants = [os.path.relpath(p, commpath) for p in path_to_variants]
+
+text = title + "\n\n\n"
+for idx, path in enumerate(paths):
+    text += variants[idx] + "\n"
+    with open(path, 'r') as f:
+        for line in f:
+            line = line.replace(':', '')
+            text += line
+    text += "\n\n"
+
+print text
+
+print ltldat.from_human_readable_txt(text).human_readable_txt()
