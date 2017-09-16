@@ -31,12 +31,16 @@ parser = argparse.ArgumentParser(description=program_decr,
         formatter_class=argparse.RawDescriptionHelpFormatter)
 parser.add_argument('files', metavar='file', type=str, nargs='+',
         help='paths to files')
+parser.add_argument('-n', '--normalize', action='store_true',
+        help='normalize the table to first file value')
 args = parser.parse_args()
 
 paths = vars(args)['files']
 if len(paths) == 0:
     parser.print_help()
     exit(1)
+
+normalize = vars(args)['normalize']
 
 title = os.path.basename(paths[0])
 for p in paths:
@@ -64,4 +68,7 @@ for idx, path in enumerate(paths):
             text += line
     text += "\n\n"
 
-print ltldat.from_human_readable_txt(text).human_readable_txt()
+table = ltldat.from_human_readable_txt(text)
+if normalize:
+    table = table.normalize()
+print table.human_readable_txt()
