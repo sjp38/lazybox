@@ -35,7 +35,7 @@ def trace_end():
     print "=================="
     print ""
     for ev in sorted(lbperfutil.event_names()):
-        print "event ", ev, ": ", lbperfutil.nr_total_event(ev)
+        print ev, ": ", lbperfutil.nr_total_event(ev)
 
 # pd is for parameters dict
 # keys of pd: attr, symbol, sample, dso, comm, ev_name, raw_buf, callchain
