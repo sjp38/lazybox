@@ -20,5 +20,17 @@ if (!exists("DATA") || !exists("NR_COLS")) {
 set xlabel XLABEL
 set ylabel YLABEL
 
+if (LOGSCALE eq "x") {
+	set logscale x
+}
+
+if (LOGSCALE eq "y") {
+	set logscale y
+}
+
+if (LOGSCALE eq "xy") {
+	set logscale xy
+}
+
 plot DATA using 2:xtic(1) title column,	\
 	for [i=3:NR_COLS] '' using i title column
