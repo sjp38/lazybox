@@ -27,6 +27,16 @@ import sys
 sys.path.append(os.environ['HOME'] + '/lazybox/scripts/gen_report')
 import ltldat
 
+def commonpath(paths):
+    cpath = os.path.commonprefix(paths)
+    if os.path.isdir(cpath):
+        return cpath
+    while len(cpath) > 0:
+        cpath = cpath[:-1]
+        if os.path.isdir(cpath):
+            return cpath
+    return cpath
+
 parser = argparse.ArgumentParser(description=program_decr,
         formatter_class=argparse.RawDescriptionHelpFormatter)
 parser.add_argument('files', metavar='file', type=str, nargs='+',
@@ -48,7 +58,7 @@ for p in paths:
         print "All filename should be %s but %s" % (title, p)
         exit(1)
 
-commpath = os.path.commonprefix(paths)
+commpath = commonpath(paths)
 dirs = [os.path.dirname(p) for p in paths]
 variants = [os.path.relpath(d, commpath) for d in dirs]
 uniqueid_useless = True
