@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if [ $# -ne 3 ]
+if [ $# -lt 3 ]
 then
-	echo "Usage: $0 <chart type> <x label> <y label>"
+	echo "Usage: $0 <chart type> <x label> <y label> [logscale]"
 	echo " supported chart types are: scatter, clustered_box"
 	exit 1
 fi
@@ -12,6 +12,7 @@ SCRIPT_DIR=`dirname $0`
 CHART_TYPE=$1
 XLABEL=$2
 YLABEL=$3
+LOGSCALE=$4
 
 export GNUPLOT_LIB=$SCRIPT_DIR
 
@@ -46,6 +47,7 @@ then
 fi
 
 gnuplot -e "DATA='$TMPFILE'; NR_IDXS='$NR_IDXS'; NR_COLS='$NR_COLS'; \
-		XLABEL='$XLABEL'; YLABEL='$YLABEL'" ./$CHART_TYPE.gp
+		XLABEL='$XLABEL'; YLABEL='$YLABEL'; \
+		LOGSCALE='$LOGSCALE'" ./$CHART_TYPE.gp
 
 rm $TMPFILE
