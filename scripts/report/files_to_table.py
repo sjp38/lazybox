@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 program_decr = """
-Construct and show a human readable, gnuplot convertible data from multiple
+Construct and show a human readable, gnuplot convertible table from multiple
 files that containing results of experiment(s).
 
 Each file should be located in '<common directory>/
