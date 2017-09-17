@@ -64,6 +64,8 @@ for idx, path in enumerate(paths):
     text += variants[idx] + "\n"
     with open(path, 'r') as f:
         for line in f:
+            if line.startswith("#"):
+                continue
             line = line.replace(':', '')
             text += line
     text += "\n\n"
