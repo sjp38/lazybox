@@ -9,6 +9,7 @@ fi
 
 SCRIPT_DIR=`dirname $0`
 
+CHART_TYPE=$1
 XLABEL=$2
 YLABEL=$3
 
@@ -45,6 +46,6 @@ then
 fi
 
 gnuplot -e "DATA='$TMPFILE'; NR_IDXS='$NR_IDXS'; NR_COLS='$NR_COLS'; \
-		XLABEL='$XLABEL'; YLABEL='$YLABEL'" ./$1.gp
+		XLABEL='$XLABEL'; YLABEL='$YLABEL'" ./$CHART_TYPE.gp
 
 rm $TMPFILE
