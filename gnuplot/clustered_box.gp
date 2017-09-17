@@ -17,5 +17,8 @@ if (!exists("DATA") || !exists("NR_COLS")) {
 	exit
 }
 
+set xlabel XLABEL
+set ylabel YLABEL
+
 plot DATA using 2:xtic(1) title column,	\
 	for [i=3:NR_COLS] '' using i title column
