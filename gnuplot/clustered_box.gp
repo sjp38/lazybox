@@ -20,6 +20,10 @@ if (!exists("DATA") || !exists("NR_COLS")) {
 set xlabel XLABEL
 set ylabel YLABEL
 
+if (LOGSCALE ne "") {
+	set yrange [0.1:*]
+}
+
 if (LOGSCALE eq "x") {
 	set logscale x
 }
