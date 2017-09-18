@@ -2,10 +2,6 @@ load "lzstyle.gp"
 
 set autoscale
 
-set key tmargin center
-set key horizontal
-set key box
-
 set term pdf font "times new roman,12"
 set output "plot.pdf"
 
