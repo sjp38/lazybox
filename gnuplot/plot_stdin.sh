@@ -42,7 +42,7 @@ NR_COLS=`cat $TMPFILE | tail -n 1 | awk '{print NF}'`
 
 if [ $NR_COLS -lt 2 ]
 then
-	echo "Number of columns are $NR_COLS (< 2).  Maybe something wrong."
+	echo "Number of columns is $NR_COLS (< 2).  Maybe something wrong."
 	exit 1
 fi
 
