@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 
 program_decr = """
-Construct and show a human readable, gnuplot convertible data from multiple
-files that containing results of experiment(s).
-
-The output will be multiple records that applicable for scatter type chart
-generation using gnuplot.
+Construct and show a human readable, gnuplot convertible data in table or
+records format from multiple files that containing results of experiment(s).
 
 Each file should be located in '<common directory>/
 <variance level1>/.../<variance levelN>/<unique id>/ directory.  Unique id
@@ -42,14 +39,21 @@ def commonpath(paths):
 
 parser = argparse.ArgumentParser(description=program_decr,
         formatter_class=argparse.RawDescriptionHelpFormatter)
+parser.add_argument('form', choices=['table', 'records'],
+        help='format to be used')
 parser.add_argument('files', metavar='file', type=str, nargs='+',
         help='paths to files')
+parser.add_argument('-n', '--normalize', action='store_true',
+        help='normalize the table to first file value')
 args = parser.parse_args()
 
+form = vars(args)['form']
 paths = vars(args)['files']
 if len(paths) == 0:
     parser.print_help()
     exit(1)
+
+normalize = vars(args)['normalize']
 
 title = os.path.basename(paths[0])
 for p in paths:
@@ -68,15 +72,32 @@ for v in variants:
 if uniqueid_useless:
     variants = [os.path.dirname(v) for v in variants]
 
-text = ""
-for idx, path in enumerate(paths):
-    text += variants[idx] + "\n"
-    with open(path, 'r') as f:
-        for line in f:
-            if line.startswith("#"):
-                continue
-            line = line.replace(':', '')
-            text += line
-    text += "\n\n"
+if form == 'table':
+    text = title + "\n\n\n"
+    for idx, path in enumerate(paths):
+        text += variants[idx] + "\n"
+        with open(path, 'r') as f:
+            for line in f:
+                if line.startswith("#"):
+                    continue
+                line = line.replace(':', '')
+                text += line
+        text += "\n\n"
 
-print text.strip()
+    table = ltldat.from_human_readable_txt(text)
+    if normalize:
+        table = table.normalize()
+    print table.human_readable_txt()
+if form == 'records':
+    text = ""
+    for idx, path in enumerate(paths):
+        text += variants[idx] + "\n"
+        with open(path, 'r') as f:
+            for line in f:
+                if line.startswith("#"):
+                    continue
+                line = line.replace(':', '')
+                text += line
+        text += "\n\n"
+
+    print text.strip()
