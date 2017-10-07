@@ -10,7 +10,8 @@ import math
 import os
 import sys
 
-sys.path.append(os.environ['HOME'] + '/lazybox/scripts/gen_report')
+fpath = os.path.realpath(os.path.dirname(__file__))
+sys.path.append(fpath + '/../gen_report')
 import ltldat
 
 parser = argparse.ArgumentParser(description=program_decr,
