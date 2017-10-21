@@ -85,7 +85,7 @@ if form == 'table':
                 text += line
         text += "\n\n"
 
-    table = ltldat.from_human_readable_txt(text)
+    table = ltldat.from_human_readable_records(text)
     if normalize:
         table = table.normalize()
     print table.human_readable_txt()

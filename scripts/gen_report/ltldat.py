@@ -171,7 +171,7 @@ def from_csv(csv):
         rows.append([x.strip() for x in line.split(',')])
     return ATable(title, legend, rows)
 
-def from_human_readable_txt(text):
+def from_human_readable_records(text):
     """Parse line-base data and construct a table."""
     text = text.strip()
     if wrong_human_readable_txt(text):
@@ -409,7 +409,7 @@ if __name__ == "__main__":
             ["key_min", "key_max", "key_stdev", "key_nr_samples"])
     print stat
 
-    t = from_human_readable_txt(
+    t = from_human_readable_records(
 """Title
 
 
