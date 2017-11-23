@@ -25,6 +25,27 @@ class Task:
         self.cmd = cmd
         self.popn = popn
 
+def linebreak(cmd, nr_cols):
+    if len(cmd) < nr_cols or len(cmd.split()) == 1:
+        return cmd
+    fields = cmd.split()
+    newcmd = fields[0]
+    for f in fields[1:]:
+        line = newcmd.split('\n')[-1]
+        if len(" ".join([line, f])) > nr_cols:
+            newcmd += " \\\n\t"
+        newcmd = " ".join([newcmd, f])
+    return newcmd
+
+def pretty(cmds, lv=1):
+    ind = "\t" * lv;
+    ret = ""
+    for cmd in cmds:
+        ret += linebreak(cmd, 80) + "\n"
+    ret = '\n'.join([ind + l for l in ret.split('\n')])
+
+    return ret.rstrip();
+
 class Exp:
     start_cmds = []
     end_cmds = []
@@ -43,9 +64,10 @@ class Exp:
         self.check_cmds = check
 
     def __str__(self):
-        return "{EXP:\n\tstart: %s\n\tmain: %s\n\tback: %s\n\tend: %s\n\tcheck: %s\n}" % (
-                self.start_cmds, self.main_cmds, self.back_cmds, self.end_cmds,
-                self.check_cmds)
+        return "{\n  start:\n%s\n  main:\n%s\n  back:\n%s\n  end:\n%s\n  check:\n%s\n}" % (
+                pretty(self.start_cmds), pretty(self.main_cmds),
+                pretty(self.back_cmds), pretty(self.end_cmds),
+                pretty(self.check_cmds))
 
     def __repr__(self):
         return self.__str__()
