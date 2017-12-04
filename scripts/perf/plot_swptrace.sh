@@ -10,7 +10,7 @@ NR_SAMPLES=`cat $MIDFILE | wc -l`
 if [ $NR_SAMPLES -gt $MAX_SAMPLES ]
 then
 	echo "Too big ($NR_SAMPLES) data.  Shrink to $MAX_SAMPLES data"
-	./sample.py $(($NR_SAMPLES / $MAX_SAMPLES)) < $MIDFILE > $MIDFILE.tmp
+	$BINDIR/sample.py $(($NR_SAMPLES / $MAX_SAMPLES)) < $MIDFILE > $MIDFILE.tmp
 	mv $MIDFILE.tmp $MIDFILE
 fi
 
