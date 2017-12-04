@@ -26,5 +26,5 @@ parse_perfout() {
 }
 
 parse_perfout |
-	$BINDIR/../../gnuplot/plot_stdin.sh scatter \
+	$BINDIR/../../gnuplot/plot_stdin.sh scatter-dot \
 		"Time (seconds)" "Page Frame"
