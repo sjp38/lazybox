@@ -1,5 +1,7 @@
 #!/bin/bash
 
+BINDIR=`dirname $0`
+
 foo() {
 	echo "Swpin"
 	perf script | grep swpin | sed -e 's/://' | sed -e 's/page=//' |
@@ -12,4 +14,5 @@ foo() {
 }
 
 foo |
-	../../gnuplot/plot_stdin.sh scatter "Time (seconds)" "Page Frame"
+	$BINDIR/../../gnuplot/plot_stdin.sh scatter \
+		"Time (seconds)" "Page Frame"
