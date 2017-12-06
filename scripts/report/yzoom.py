@@ -2,6 +2,10 @@
 
 import sys
 
+if len(sys.argv) < 3:
+    print "Usage: %s <min> <max>" % sys.argv[0]
+    sys.exit(1)
+
 ymin = int(sys.argv[1])
 ymax = int(sys.argv[2])
 
