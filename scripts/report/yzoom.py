@@ -11,5 +11,5 @@ ymax = int(sys.argv[2])
 
 for l in sys.stdin:
     yval = int(l.split()[1], 0)
-        if yval > ymin and yval < ymax:
-            print l.strip()
+    if yval > ymin and yval < ymax:
+        print l.strip()
