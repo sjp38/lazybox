@@ -2,10 +2,10 @@
 
 program_decr = """
 Make user specified status (average, min, max, stdev) from single or multiple
-files with same format.  In case of single file, it assumes the file to be in
-records and get statistic of second field only.  In case of multiple files, it
-assumes the files to be in table format.  The input file should be generated
-using `files_to.py`.
+files with same format.  In case of single file, it assumes the file to be in a
+single record format and get statistic of second field only.  In case of
+multiple files, it assumes the files to be in table format.  The input file
+should be generated using `files_to.py`.
 """
 
 import argparse
@@ -60,7 +60,6 @@ for p in paths:
             print "[Error] Number of lines are different for %s!" % p
             exit(1)
 
-basis = datas[0]
 for lidx in range(len(datas[0])):
     lines = [data[lidx] for data in datas]
     values = []
