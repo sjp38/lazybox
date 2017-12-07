@@ -32,7 +32,7 @@ def single_file_stat(path):
     nrs = []
     with open(path, 'r') as f:
         for l in f:
-            nrs.append(float(int(l.split()[1], 0)))
+            nrs.append(int(l.split()[1], 0))
     if target == 'avg':
         print sum(nrs) / len(nrs)
     elif target == 'min':
