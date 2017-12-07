@@ -3,7 +3,7 @@
 import sys
 
 if len(sys.argv) != 2:
-    print "Usage: %s <interval between lines>"
+    print "Usage: %s <interval between lines>" % sys.argv[0]
     sys.exit(1)
 interval=int(sys.argv[1])
 
