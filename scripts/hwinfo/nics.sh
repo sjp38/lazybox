@@ -6,12 +6,20 @@ then
 	exit 1
 fi
 
-lspci | grep "Ethernet controller" | awk '{
-	for (i = 4; i <= NF; i++) {
-		printf $i
-		if (i < NF) {
-			printf " "
+function ethernets() {
+	lspci | grep "Ethernet controller" | awk '{
+		for (i = 2; i <= NF; i++) {
+			printf $i
+			if (i < NF) {
+				printf " "
+			}
 		}
-	}
-	printf "\n"
-}'
+		printf "\n"
+	}' | uniq
+}
+
+IFS=$'\n'
+for l in `ethernets`
+do
+	echo $l x `lspci | grep $l | wc -l`
+done
