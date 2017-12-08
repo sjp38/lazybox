@@ -8,7 +8,7 @@ fi
 
 function ethernets() {
 	lspci | grep "Ethernet controller" | awk '{
-		for (i = 2; i <= NF; i++) {
+		for (i = 4; i <= NF; i++) {
 			printf $i
 			if (i < NF) {
 				printf " "
