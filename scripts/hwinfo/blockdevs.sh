@@ -13,6 +13,9 @@ do
 		if (NF < 2) {
 			next
 		}
-		print
+		for (i = 1; i < NF; i++) {
+			printf $i " "
+		}
+		printf "(" $i ")\n"
 	}'
 done
