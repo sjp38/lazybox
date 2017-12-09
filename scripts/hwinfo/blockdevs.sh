@@ -7,7 +7,12 @@ then
 fi
 
 IFS=$'\n'
-for l in `lsblk -o MODEL -n | sort`
+for l in `lsblk -o MODEL,SIZE -n | sort`
 do
-	echo $l
+	echo $l | awk '{
+		if (NF < 2) {
+			next
+		}
+		print
+	}'
 done
