@@ -1,0 +1,3 @@
+#!/bin/bash
+
+convert -density 150 $1.pdf -quality 90 $1.png
