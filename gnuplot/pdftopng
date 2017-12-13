@@ -1,3 +1,9 @@
 #!/bin/bash
 
+if [ $# -ne 1 ]
+then
+	echo "Usage: $0 <name of pdf without suffix>"
+	exit 1
+fi
+
 convert -density 150 $1.pdf -quality 90 $1.png
