@@ -1,13 +1,14 @@
 #!/bin/bash
 
-if [ $# -ne 2 ]
+if [ $# -ne 3 ]
 then
-	echo "Usage: $0 <ip addr of target machine> <timeout>"
+	echo "Usage: $0 <on|off> <target machine ip> <timeout>"
 	exit 1
 fi
 
-ADDR=$1
-TIMEOUT=$2
+ONOFF=$1
+ADDR=$2
+TIMEOUT=$3
 
 while true;
 do
@@ -18,7 +19,15 @@ do
 	fi
 	if ping $ADDR -c 1 > /dev/null
 	then
-		break
+		if [ $ONOFF = "on" ]
+		then
+			break
+		fi
+	else
+		if [ $ONOFF = "off" ]
+		then
+			break
+		fi
 	fi
 
 	sleep 2
