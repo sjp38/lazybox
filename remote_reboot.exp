@@ -8,7 +8,7 @@ set timeout -1
 
 if { [llength $argv] < 4 } {
 	puts "usage: "
-	puts "expect remote_set_kernel.exp \\"
+	puts "expect remote_reboot.exp \\"
 	puts "			<username> <target> <ssh port> <password> \\"
 	exit 1
 }
