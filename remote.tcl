@@ -25,7 +25,7 @@ proc remote_sudocmd_registered {username target ssh_port password cmds} {
 }
 
 proc remote_sudoercmd {username target ssh_port password cmds} {
-	spawn ssh -t -p $ssh_port $username@$target 'sudo $cmds'
+	spawn ssh -t -p $ssh_port $username@$target bash -c '$cmds'
 
 	# for ssh password
 	expect "*password*"
