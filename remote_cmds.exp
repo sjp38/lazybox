@@ -21,4 +21,4 @@ set ssh_port [lindex $argv 2]
 set password [lindex $argv 3]
 set cmds [lindex $argv 4]
 
-remote_sudocmd $username $target $ssh_port $password $cmds
+remote_sudoercmd $username $target $ssh_port $password $cmds
