@@ -2,7 +2,7 @@
 
 BINDIR=`dirname $0`
 
-pushd $BINDIR > /dev/null
+cd $BINDIR
 
 MODEL=`./cpumodel.sh`
 SOCKS=`./nr_cpusocks.sh`
@@ -34,5 +34,3 @@ printf "IPs: "
 linestocsv "`./ipaddrs.sh`"
 printf "STORAGEs: "
 linestocsv "`./blockdevs.sh`"
-
-popd > /dev/null
