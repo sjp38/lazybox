@@ -2,7 +2,7 @@
 
 BINDIR=`dirname $0`
 
-pushd $BINDIR > /dev/null
+cd $BINDIR
 
 MODEL=`./cpumodel.sh`
 SOCKS=`./nr_cpusocks.sh`
@@ -10,7 +10,7 @@ CORES=`./nr_cpuspersock.sh`
 THRS=`./nr_thrspercpu.sh`
 TOTAL_THRS=`./nr_hwthrs.sh`
 
-DETAIL="$TOTAL_THRS thrs / $SOCKS socks / $CORES cores / $THRS hyper-thr"
+DETAIL="$SOCKS socks / $CORES cores / $THRS hyper-thr / $TOTAL_THRS thrs"
 echo CPU: $MODEL "($DETAIL)"
 echo MEM: `./sz_mem.sh`
 
@@ -34,5 +34,3 @@ printf "IPs: "
 linestocsv "`./ipaddrs.sh`"
 printf "STORAGEs: "
 linestocsv "`./blockdevs.sh`"
-
-popd > /dev/null
