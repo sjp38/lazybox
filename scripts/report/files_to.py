@@ -29,7 +29,19 @@ sys.path.append(fpath + '/../gen_report')
 import ltldat
 
 def commonpath(paths):
-    cpath = os.path.commonprefix(paths)
+    if len(paths) < 2:
+        print "[ERROR] commonpath() should receive 2 or more paths!"
+        exit(1)
+    splitted = [p.split('/') for p in paths]
+    common = []
+    for idx, field in enumerate(splitted[0]):
+        matched = 0
+        for other in splitted[1:]:
+            if other[idx] == field:
+                matched += 1
+        if matched == len(paths) - 1:
+            common.append(field)
+    cpath = '/'.join(common)
     if os.path.isdir(cpath):
         return cpath
     while len(cpath) > 0:
