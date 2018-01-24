@@ -78,6 +78,8 @@ for lidx in range(len(datas[0])):
                 avg = sum(nrs) / len(nrs)
                 variance = sum([pow(v - avg, 2) for v in nrs]) / len(nrs)
                 value = math.sqrt(variance)
+                if value > avg / 10:
+                    print "[WARNING] stdev %s, avg %s!" % (value, avg)
         except ValueError:
             if not all(f == fields[0] for f in fields):
                 print "[Error] different text field! %s" % fields
