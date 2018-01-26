@@ -12,7 +12,7 @@ BINDIR=`dirname $0`
 cd $BINDIR
 
 COMM=$1
-PID=`ps -eo pid,comm | grep $COMM | head -n 1 | awk '{print $1}'`
+PID=`pgrep -f "$COMM" | head -n 1 | awk '{print $1}'`
 
 echo "vsz	rss	pid	cmd"
 while true;
