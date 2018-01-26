@@ -8,6 +8,9 @@ then
 	exit 1
 fi
 
+BINDIR=`dirname $0`
+cd $BINDIR
+
 COMM=$1
 PID=`ps -eo pid,comm | grep $COMM | head -n 1 | awk '{print $1}'`
 
