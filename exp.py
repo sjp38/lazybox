@@ -165,12 +165,13 @@ def all_childs(pid):
         break
     return childs
 
-def childs_of(pid, stop_childs):
+def childs_of(pid, stop_childs, print_tree=True):
     childs = []
     p = subprocess.Popen('pstree -p %s' % pid, shell=True,
             stdout=subprocess.PIPE, bufsize=1)
     for line in p.stdout:
-        print ltime(), line
+        if print_tree:
+            print ltime(), line
         spltd = line.split('(')
         for idx, entry in enumerate(spltd):
             # skip thread
