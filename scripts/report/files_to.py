@@ -50,6 +50,25 @@ def commonpath(paths):
             return cpath
     return cpath
 
+def common_suffixpath(paths):
+    if len(paths) < 2:
+        print "[ERROR] cut_commonsuffix() should receive 2 or more paths!"
+        exit(1)
+    splitted = [p.split('/') for p in paths]
+    common = []
+    for idx, field in reversed(list(enumerate(splitted[0]))):
+        matched = 0
+        for other in splitted[1:]:
+            if other[idx] == field:
+                matched += 1
+        if matched == len(paths) - 1:
+            common.append(field)
+    cpath = '/'.join(reversed(common))
+    if cpath != '':
+        cpath = '/' + cpath
+    return cpath
+
+
 parser = argparse.ArgumentParser(description=program_decr,
         formatter_class=argparse.RawDescriptionHelpFormatter)
 parser.add_argument('form', choices=['table', 'records'],
@@ -84,6 +103,8 @@ for v in variants:
         break
 if uniqueid_useless:
     variants = [os.path.dirname(v) for v in variants]
+comm_suffix = common_suffixpath(variants)
+variants = [v[0:len(v) - len(comm_suffix)] for v in variants]
 
 if form == 'table':
     text = title + "\n\n\n"
