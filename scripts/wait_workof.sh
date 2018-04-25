@@ -26,7 +26,7 @@ CMD=$1
 while true;
 do
 	BEFORE_TICK=`ticks_used $CMD`
-	sleep 1
+	sleep 0.5
 	DIFF=$(( `ticks_used $CMD` - $BEFORE_TICK ))
 	if [ $DIFF == "0" ]
 	then
