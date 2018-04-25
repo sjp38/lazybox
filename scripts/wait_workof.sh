@@ -6,7 +6,7 @@ then
 	exit 1
 fi
 
-function nr_running() {
+function ticks_used() {
 	CMD=$1
 	pids=`pidof $CMD`
 	if [ pids == "" ]
@@ -14,26 +14,21 @@ function nr_running() {
 		echo "0"
 	fi
 
-	NR_RUNNING=0
+	TICKS=0
 	for pid in $pids
 	do
-		if [ `grep "running" /proc/$pid/status | wc -l` -eq 1 ]
-		then
-			NR_RUNNING=$(( $NR_RUNNING + 1 ))
-		fi
-		if [ `grep "disk sleep" /proc/$pid/status | wc -l` -eq 1 ]
-		then
-			NR_RUNNING=$(( $NR_RUNNING + 1 ))
-		fi
+		TICKS=$(( $TICKS + `awk '{print $14 + $15}' /proc/$pid/stat` ))
 	done
-	echo $NR_RUNNING
+	echo $TICKS
 }
 
 CMD=$1
 while true;
 do
+	BEFORE_TICK=`ticks_used $CMD`
 	sleep 1
-	if [ `nr_running $CMD` == "0" ]
+	DIFF=$(( `ticks_used $CMD` - $BEFORE_TICK ))
+	if [ $DIFF == "0" ]
 	then
 		break
 	fi
