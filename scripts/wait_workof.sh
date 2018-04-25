@@ -21,6 +21,10 @@ function nr_running() {
 		then
 			NR_RUNNING=$(( $NR_RUNNING + 1 ))
 		fi
+		if [ `grep "disk sleep" /proc/$pid/status | wc -l` -eq 1 ]
+		then
+			NR_RUNNING=$(( $NR_RUNNING + 1 ))
+		fi
 	done
 	echo $NR_RUNNING
 }
