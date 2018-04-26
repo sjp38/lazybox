@@ -17,5 +17,5 @@ set linetype 8 pointtype 3 linecolor rgb "#aecf00" lw 1
 
 set linestyle 1 pointtype 0 linecolor rgb "#000000" lw 1
 
-set boxwidth 0.5
+set boxwidth 1
 set style fill solid border -1
