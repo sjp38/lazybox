@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import argparse
 import datetime
 import sys
 import os
@@ -27,12 +28,12 @@ def grub_kernels():
     return kernels
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print ("USAGE: %s <bootloader>\n" %
-                sys.argv[0])
-        print "\tbootloader: (%s|%s|%s)" % (GRUB, CUBOX, RASP2)
-        quit()
-    bootloader = sys.argv[1]
+    parser = argparse.ArgumentParser()
+    parser.add_argument('bootloader', nargs='?', type=str, default='grub',
+            choices=[GRUB, CUBOX, RASP2], metavar='bootloader',
+            help='bootloader of the system')
+    args = parser.parse_args()
+    bootloader = args.bootloader
 
     if bootloader == GRUB:
         kernels = grub_kernels()
