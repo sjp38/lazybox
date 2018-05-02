@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import argparse
 import datetime
 import sys
 import os
@@ -104,16 +105,21 @@ def set_rasp2_kernel_param(kernel_param):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        print ("USAGE: %s <bootloader> <kernel name> [kernel parameter]\n" %
-                sys.argv[0])
-        print "\tbootloader: (%s|%s|%s)" % (GRUB, CUBOX, RASP2)
-        quit()
-    bootloader = sys.argv[1]
-    kernel_name = sys.argv[2]
-    kernel_param = ""
-    if len(sys.argv) > 3:
-        kernel_param = ' '.join(sys.argv[3:])
+    parser = argparse.ArgumentParser()
+    parser.add_argument('bootloader', type=str,
+            choices=[GRUB, CUBOX, RASP2], metavar='bootloader',
+            help='bootloader of the system')
+    parser.add_argument('kernel_name', type=str, metavar='k_name',
+            help='name of kernel to be used')
+    parser.add_argument('kernel_param', nargs='*', type=str,
+            metavar='k_param',
+            help='parameter of the kernel to be used')
+    args = parser.parse_args()
+
+    bootloader=args.bootloader
+    kernel_name = args.kernel_name
+    kernel_param = ' '.join(args.kernel_param)
+
     print "set kernel %s with parameter '%s' on %s" % (kernel_name, kernel_param, bootloader)
 
     if bootloader == GRUB:
