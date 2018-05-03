@@ -55,7 +55,9 @@ def set_grub_kernel(target_kernel):
     cmd = "sed -i 's/.*set default.*/set default=%s/' %s" % (
             set_default, GRUBCFG_PATH)
     print "set kernel with cmd: ", cmd
-    os.system(cmd)
+    ret = os.system(cmd)
+    if ret != 0:
+        print "FAILED to set kernel!!!"
 
 def set_uenv_kernel(target_kernel):
     # TODO: relative path based on assumption should be removed in future
