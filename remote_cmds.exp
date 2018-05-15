@@ -6,12 +6,13 @@ source "remote.tcl"
 # Execute commands from a remote target machine
 #
 # Usage:
-# expect remote_cmds.exp <username> <target> <ssh port> <password> <cmds>
+# expect remote_cmds.exp <username> <target> <ssh port> <password> <cmds> [nr_password]
 
 if { [llength $argv] < 5 } {
 	puts "usage: "
 	puts "expect remote_cmds.exp \\"
-        puts "              <username> <target> <ssh port> <password> <cmds>"
+        puts "              <username> <target> <ssh port> <password> \\"
+	puts "              <cmds> \[nr_password\]"
 	exit 1
 }
 
@@ -21,4 +22,10 @@ set ssh_port [lindex $argv 2]
 set password [lindex $argv 3]
 set cmds [lindex $argv 4]
 
-remote_sudoercmd $username $target $ssh_port $password $cmds
+# We assume one password for sudo
+set npass 1
+if { [llength $argv] > 5 } {
+	set npass [lindex $argv 5]
+}
+
+remote_cmd_n_password $username $target $ssh_port $password $cmds $npass
