@@ -17,7 +17,9 @@ sudo mkdir $MEMCG_DIR
 sudo bash -c "echo $$ > $MEMCG_DIR/tasks"
 sudo bash -c "echo $MEMLIM > $MEMCG_DIR/memory.limit_in_bytes"
 
-$COMM
+echo "COMM: $COMM"
+
+eval "$COMM"
 
 while read pid; do
 	sudo bash -c "echo $pid > $MEMCG_ORIG_DIR/tasks"
