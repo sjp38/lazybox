@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Create artificial memory shortage on a memcgroup
+# Consume entire memory + <sz spike> periodically
 
 if [ $# -ne 2 ]
 then
@@ -25,16 +25,13 @@ INTERVAL=$2
 
 MEMCG=`cat /proc/$$/cgroup | grep memory | awk -F: '{print $3}'`
 MEMCG=/sys/fs/cgroup/memory/$MEMCG
-MEMLIMFILE=$MEMCG/memory.limit_in_bytes
-MEMLIM=`cat $MEMLIMFILE`
+MEMLIM=`cat $MEMCG/memory.limit_in_bytes`
 
 while :;
 do
 	sleep $INTERVAL
 	MEM_IN_USE=`cat $MEMCG/memory.usage_in_bytes`
-	TARGET_LIM=$(($MEM_IN_USE - $SZ_SPIKE))
-	echo "Shrink mem lim to $TARGET_LIM"
-	sudo bash -c "echo $TARGET_LIM > $MEMLIMFILE"
-	sleep 2
-	sudo bash -c "echo $MEMLIM > $MEMLIMFILE"
+	TO_CONSUME=$(($MEMLIM - $MEM_IN_USE + $SZ_SPIKE))
+	echo "consume $TO_CONSUME bytes"
+	$MWALK $TO_CONSUME 64 0 -q
 done
