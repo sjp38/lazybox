@@ -30,6 +30,8 @@ echo "COMM: $COMM"
 
 eval "$COMM"
 
+killall memcg_mspike.sh
+
 
 
 while read pid; do
