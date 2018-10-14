@@ -95,8 +95,16 @@ if __name__ == "__main__":
     signal.signal(signal.SIGINT, sig_handler)
     signal.signal(signal.SIGTERM, sig_handler)
 
+    dryrun = False
+    if "--dryrun" in sys.argv:
+        sys.argv.remove("--dryrun")
+        dryrun = True
+
     for exp_file in sys.argv[1:]:
         current_exps = parse_file(exp_file)
+        if dryrun:
+            print current_exps
+            continue
 
         for exp in current_exps:
             success = False
