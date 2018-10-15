@@ -13,13 +13,13 @@ FUNCTION=$1
 cmd="sudo ply -A -c \
 'kprobe:$FUNCTION
 {
-	@start[pid()] = nsecs()
+	@start[tid()] = nsecs()
 }
 
-kretprobe:$FUNCTION / @start[pid()] /
+kretprobe:$FUNCTION / @start[tid()] /
 {
-	@latency.quantize(nsecs() - @start[pid()]);
-	@start[pid()] = nil;
+	@latency.quantize(nsecs() - @start[tid()]);
+	@start[tid()] = nil;
 }'"
 
 eval $cmd
