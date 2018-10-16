@@ -10,6 +10,10 @@ fi
 
 TARGET=$1
 
+echo "Press Ctrl-C to finish tracing and show results"
+echo "Format: <tid>	<execution time (nanoseconds)>"
+echo
+
 cmd="sudo ply -c \
 'kprobe:$TARGET
 {

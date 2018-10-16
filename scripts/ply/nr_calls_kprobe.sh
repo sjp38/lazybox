@@ -10,6 +10,10 @@ fi
 
 TARGET=$1
 
+echo "Press Ctrl-C to finish tracing and show results"
+echo "Format: <function>	<number of calls>"
+echo
+
 cmd="sudo ply -c \
 'kprobe:$TARGET
 {

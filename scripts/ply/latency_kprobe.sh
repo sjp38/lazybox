@@ -10,6 +10,10 @@ fi
 
 FUNCTION=$1
 
+echo "Press Ctrl-C to finish tracing and show results"
+echo "Format: <latency range (nanoseconds)> <distribution>"
+echo
+
 cmd="sudo ply -A -c \
 'kprobe:$FUNCTION
 {
