@@ -1,0 +1,11 @@
+This directory contains scripts using ply[1].
+
+
+Pre-requisites
+--------------
+
+To use the scripts, 'ply' should be installed on the machine.  Also, the kernel
+should be configured to support the 'ply'.
+
+
+[1] https://wkz.github.io/ply/
