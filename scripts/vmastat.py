@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 
+import argparse
 import subprocess
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--verbose', '-v', action='store_true', help='verbose output')
+args = parser.parse_args()
+verbose = args.verbose
 
 res = subprocess.check_output("ps --no-headers -e -o pid".split())
 pids = res.split()
@@ -15,6 +21,11 @@ for p in pids:
         nr_proc_vmas.append(nr_vmas)
     except:
         nr_proc_vmas.append(-1)
+
+print "pid\tnr_vmas"
+for i in range(0, len(pids)):
+    print "%s\t%d" % (pids[i], nr_proc_vmas[i])
+print
 
 nr_vmas_sorted = sorted([n for n in nr_proc_vmas if n != -1])
 l = len(nr_vmas_sorted)
