@@ -23,7 +23,7 @@ for p in pids:
         pass
 
 print "pid\tnr_vmas"
-for p in nr_vmas_map:
+for p, n in sorted(nr_vmas_map.iteritems(), key=lambda (k,v): (v,k)):
     print "%s\t%d" % (p, nr_vmas_map[p])
 print
 
