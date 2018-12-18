@@ -46,10 +46,11 @@ for p in procs:
     except:
         pass
 
-print "proc\tnr_vmas"
-for p, n in sorted(nr_vmas_map.iteritems(), key=lambda (k,v): (v,k)):
-    print "%s\t%d" % (p, nr_vmas_map[p])
-print
+if verbose:
+    print "proc\tnr_vmas"
+    for p, n in sorted(nr_vmas_map.iteritems(), key=lambda (k,v): (v,k)):
+        print "%s\t%d" % (p, nr_vmas_map[p])
+    print
 
 nr_vmas_sorted = sorted(nr_vmas_map.values())
 l = len(nr_vmas_sorted)
