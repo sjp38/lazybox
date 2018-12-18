@@ -8,13 +8,22 @@ parser.add_argument('--verbose', '-v', action='store_true', help='verbose output
 args = parser.parse_args()
 verbose = args.verbose
 
-res = subprocess.check_output("ps --no-headers -e -o pid".split())
-pids = res.split()
+res = subprocess.check_output("ps --no-headers -e -o pid,cmd".split())
+procs = []
+for l in res.split('\n'):
+    fields = l.split()
+    if len(fields) > 0:
+        pid = fields[0]
+    cmd = ""
+    if len(fields) > 1:
+        cmd = fields[1]
+    procs.append("%s(%s)" % (pid, cmd))
 
 nr_vmas_map = {}
-for p in pids:
+for p in procs:
+    pid = p.split('(')[0]
     try:
-        with open("/proc/%s/maps" % p, 'r') as f:
+        with open("/proc/%s/maps" % pid, 'r') as f:
             nr_vmas = 0
             for l in f:
                 nr_vmas += 1
@@ -22,7 +31,7 @@ for p in pids:
     except:
         pass
 
-print "pid\tnr_vmas"
+print "proc\tnr_vmas"
 for p, n in sorted(nr_vmas_map.iteritems(), key=lambda (k,v): (v,k)):
     print "%s\t%d" % (p, nr_vmas_map[p])
 print
