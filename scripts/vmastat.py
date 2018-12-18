@@ -58,7 +58,7 @@ print "nr_procs: %d" % l
 print "nr_total_vmas: %d" % sum(nr_vmas_sorted)
 print "nr_anon_vmas: %d" % nr_anon_vmas
 print "nr_file_vmas: %d" % nr_file_vmas
-if len(procs) == 1:
+if len(procs) <= 1:
     exit(0)
 print "average_nr_vmas: %d" % (sum(nr_vmas_sorted) / l)
 print "min\t25th\t50th\t75th\tmax"
