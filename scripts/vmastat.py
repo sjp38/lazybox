@@ -19,6 +19,9 @@ for l in res.split('\n'):
         cmd = fields[1]
     procs.append("%s(%s)" % (pid, cmd))
 
+nr_anon_vmas = 0
+nr_file_vmas = 0
+
 nr_vmas_map = {}
 for p in procs:
     pid = p.split('(')[0]
@@ -27,6 +30,13 @@ for p in procs:
             nr_vmas = 0
             for l in f:
                 nr_vmas += 1
+                fields = l.split()
+                if len(fields) < 6:
+                    nr_anon_vmas += 1
+                    continue
+                if not fields[5] in ['[stack]', '[vvar]', '[vdso]',
+                        '[vsyscall]']:
+                    nr_file_vmas += 1
         nr_vmas_map[p] = nr_vmas
     except:
         pass
@@ -39,6 +49,8 @@ print
 nr_vmas_sorted = sorted(nr_vmas_map.values())
 l = len(nr_vmas_sorted)
 print "nr_procs: %d" % l
+print "nr_anon_vmas: %d" % nr_anon_vmas
+print "nr_file_vmas: %d" % nr_file_vmas
 print "average_nr_vmas: %d" % (sum(nr_vmas_sorted) / l)
 print "min\t25th\t50th\t75th\tmax"
 print "%d\t%d\t%d\t%d\t%d" % (nr_vmas_sorted[0], nr_vmas_sorted[l / 4],
