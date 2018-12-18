@@ -14,8 +14,11 @@ res = subprocess.check_output("ps --no-headers -e -o pid,cmd".split())
 procs = []
 for l in res.split('\n'):
     fields = l.split()
-    if len(fields) > 0:
-        pid = fields[0]
+    if len(fields) == 0:
+        continue
+    pid = fields[0]
+    if target_pids and not pid in target_pids:
+        continue
     cmd = ""
     if len(fields) > 1:
         cmd = fields[1]
@@ -27,8 +30,6 @@ nr_file_vmas = 0
 nr_vmas_map = {}
 for p in procs:
     pid = p[0]
-    if target_pids and not pid in target_pids:
-        continue
     try:
         with open("/proc/%s/maps" % pid, 'r') as f:
             nr_vmas = 0
@@ -56,7 +57,7 @@ print "nr_procs: %d" % l
 print "nr_total_vmas: %d" % sum(nr_vmas_sorted)
 print "nr_anon_vmas: %d" % nr_anon_vmas
 print "nr_file_vmas: %d" % nr_file_vmas
-if target_pids and len(target_pids) == 1:
+if len(procs) == 1:
     exit(0)
 print "average_nr_vmas: %d" % (sum(nr_vmas_sorted) / l)
 print "min\t25th\t50th\t75th\tmax"
