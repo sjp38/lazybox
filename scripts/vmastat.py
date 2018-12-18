@@ -4,10 +4,11 @@ import argparse
 import subprocess
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--target', nargs='+', help='specify target pids')
+parser.add_argument('--target', nargs='+',
+        help='specify target pids or commands')
 parser.add_argument('--verbose', '-v', action='store_true', help='verbose output')
 args = parser.parse_args()
-target_pids = args.target
+target = args.target
 verbose = args.verbose
 
 res = subprocess.check_output("ps --no-headers -e -o pid,cmd".split())
@@ -17,11 +18,11 @@ for l in res.split('\n'):
     if len(fields) == 0:
         continue
     pid = fields[0]
-    if target_pids and not pid in target_pids:
-        continue
     cmd = ""
     if len(fields) > 1:
         cmd = fields[1]
+    if target and not pid in target and not cmd.split('/')[-1] in target:
+        continue
     procs.append([pid, cmd])
 
 nr_anon_vmas = 0
