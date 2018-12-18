@@ -53,6 +53,7 @@ print
 nr_vmas_sorted = sorted(nr_vmas_map.values())
 l = len(nr_vmas_sorted)
 print "nr_procs: %d" % l
+print "nr_total_vmas: %d" % sum(nr_vmas_sorted)
 print "nr_anon_vmas: %d" % nr_anon_vmas
 print "nr_file_vmas: %d" % nr_file_vmas
 print "average_nr_vmas: %d" % (sum(nr_vmas_sorted) / l)
