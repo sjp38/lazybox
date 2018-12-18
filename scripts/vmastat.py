@@ -4,8 +4,10 @@ import argparse
 import subprocess
 
 parser = argparse.ArgumentParser()
+parser.add_argument('--target', nargs='+', help='specify target pids')
 parser.add_argument('--verbose', '-v', action='store_true', help='verbose output')
 args = parser.parse_args()
+target_pids = args.target
 verbose = args.verbose
 
 res = subprocess.check_output("ps --no-headers -e -o pid,cmd".split())
@@ -25,6 +27,8 @@ nr_file_vmas = 0
 nr_vmas_map = {}
 for p in procs:
     pid = p.split('(')[0]
+    if target_pids and not pid in target_pids:
+        continue
     try:
         with open("/proc/%s/maps" % pid, 'r') as f:
             nr_vmas = 0
