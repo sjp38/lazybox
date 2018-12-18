@@ -19,14 +19,14 @@ for l in res.split('\n'):
     cmd = ""
     if len(fields) > 1:
         cmd = fields[1]
-    procs.append("%s(%s)" % (pid, cmd))
+    procs.append([pid, cmd])
 
 nr_anon_vmas = 0
 nr_file_vmas = 0
 
 nr_vmas_map = {}
 for p in procs:
-    pid = p.split('(')[0]
+    pid = p[0]
     if target_pids and not pid in target_pids:
         continue
     try:
@@ -41,7 +41,7 @@ for p in procs:
                 if not fields[5] in ['[stack]', '[vvar]', '[vdso]',
                         '[vsyscall]']:
                     nr_file_vmas += 1
-        nr_vmas_map[p] = nr_vmas
+        nr_vmas_map["%s (%s)" % (p[0], p[1])] = nr_vmas
     except:
         pass
 
