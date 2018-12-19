@@ -9,4 +9,10 @@ then
 	exit 1
 fi
 
+if ! dpkg -l | grep -q libnuma-dev
+then
+	echo "libnuma-dev package is not installed"
+	exit 1
+fi
+
 make -C ../mosbench/metis
