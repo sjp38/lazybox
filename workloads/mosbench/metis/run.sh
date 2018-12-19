@@ -17,4 +17,4 @@ fi
 
 NR_CORES=$1
 
-../mosbench/metis/obj/app/wrmem -p $NR_CORES
+(time ../mosbench/metis/obj/app/wrmem -p $NR_CORES) 2>&1
