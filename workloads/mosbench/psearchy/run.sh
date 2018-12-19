@@ -17,22 +17,27 @@ fi
 
 NR_CORES=$1
 
-TARGET_DIR=linux-4.19.10
+LNXSRC=linux-4.19.10
+TMPD=./tmp
+TARGET_DIR=$TMPD/$LNXSRC
 if [ ! -d $TARGET_DIR ]
 then
+	mkdir -p $TMPD
+	sudo mount -t tmpfs -o rw,size=10G tmpfs $TMPD
+	sudo chown $USER $TMPD
+
 	if [ ! -f linux-4.19.10.tar.xz ]
 	then
-		wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.19.10.tar.xz
+		wget https://cdn.kernel.org/pub/linux/kernel/v4.x/$LNXSRC.tar.xz
 	fi
-	tar xvf linux-4.19.10.tar.xz
+	tar -C $TMPD -xvf linux-4.19.10.tar.xz
 fi
 
-rm -fr /tmp/db
-mkdir /tmp/db
+rm -fr $TMPD/db
 for i in $(seq 0 $(($NR_CORES - 1)))
 do
-	mkdir /tmp/db/db$i
+	mkdir -p $TMPD/db/db$i
 done
 
 find $TARGET_DIR -type f | \
-	../mosbench/psearchy/mkdb/pedsort -t /tmp/db/db -c $NR_CORES -m 1024
+	../mosbench/psearchy/mkdb/pedsort -t $TMPD/db/db -c $NR_CORES -m 1024
