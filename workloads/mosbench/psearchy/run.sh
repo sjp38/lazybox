@@ -41,6 +41,8 @@ do
 	mkdir -p $TMPD/db/db$i
 done
 
+sync
+
 SZ_HASHTABLE=1024
 
 find $TARGET_DIR -type f | \
