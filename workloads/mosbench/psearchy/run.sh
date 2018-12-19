@@ -3,7 +3,9 @@
 BINDIR=`dirname $0`
 cd $BINDIR
 
-if [ ! -f ../mosbench/psearchy/mkdb/pedsort ]
+PEDSORT=../mosbench/psearchy/mkdb/pedsort
+
+if [ ! -f $PEDSORT ]
 then
 	echo "The execution file is not found."
 	exit 1
@@ -39,5 +41,7 @@ do
 	mkdir -p $TMPD/db/db$i
 done
 
+SZ_HASHTABLE=1024
+
 find $TARGET_DIR -type f | \
-	../mosbench/psearchy/mkdb/pedsort -t $TMPD/db/db -c $NR_CORES -m 1024
+	$PEDSORT -t $TMPD/db/db -c $NR_CORES -m $SZ_HASHTABLE
