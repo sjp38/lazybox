@@ -49,9 +49,11 @@ def set_grub_kernel(target_kernel):
     if prev_section:
         set_default = '"1>%s"' % set_default
 
-    cmd = "cp -f %s %s.bak.%s" % (GRUBCFG_PATH, "grub.cfg", bak_ts)
-    print "backup with cmd %s" % cmd
-    os.system(cmd)
+    if not nobackup:
+        cmd = "cp -f %s %s.bak.%s" % (GRUBCFG_PATH, "grub.cfg", bak_ts)
+        print "backup with cmd %s" % cmd
+        os.system(cmd)
+
     cmd = "sed -i 's/.*set default.*/set default=%s/' %s" % (
             set_default, GRUBCFG_PATH)
     print "set kernel with cmd: ", cmd
@@ -74,9 +76,10 @@ def set_rasp2_kernel(target_kernel):
     os.system(cmd)
 
 def set_grub_kernel_param(kernel_param):
-    cmd = "cp -f %s %s.bak.%s" % (GRUB_PATH, "grub", bak_ts)
-    print "backup with cmd %s" % cmd
-    os.system(cmd)
+    if not nobackup:
+        cmd = "cp -f %s %s.bak.%s" % (GRUB_PATH, "grub", bak_ts)
+        print "backup with cmd %s" % cmd
+        os.system(cmd)
 
     kernel_param = kernel_param.replace('/', '\/')
     cmd = "sed -i 's/%s*/%s\"%s\"/' %s" % ("GRUB_CMDLINE_LINUX_DEFAULT=.",
@@ -116,11 +119,14 @@ if __name__ == "__main__":
     parser.add_argument('kernel_param', nargs='*', type=str,
             metavar='k_param',
             help='parameter of the kernel to be used')
+    parser.add_argument('--nobackup', action='store_true',
+            help='Do not generate backup file')
     args = parser.parse_args()
 
     bootloader=args.bootloader
     kernel_name = args.kernel_name
     kernel_param = ' '.join(args.kernel_param)
+    nobackup = args.nobackup
 
     print "set kernel %s with parameter '%s' on %s" % (kernel_name, kernel_param, bootloader)
 
