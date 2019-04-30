@@ -8,7 +8,7 @@ set yrange [0:*]
 set style data histogram
 set style histogram cluster gap 2
 
-set term pdf font "times new roman,12"
+set term pdf font "times new roman,12" size 3,3
 set output "plot.pdf"
 
 if (!exists("DATA") || !exists("NR_COLS")) {
