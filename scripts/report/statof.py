@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 
 program_decr = """
 Make user specified status (average, min, max, stdev) from single or multiple
