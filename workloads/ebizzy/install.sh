@@ -1,5 +1,8 @@
 #!/bin/bash
 
+BINDIR=`dirname $0`
+cd $BINDIR
+
 if [ -f ebizzy-0.3/ebizzy ]
 then
 	echo "ebizzy-0.3 directory already exists!"
