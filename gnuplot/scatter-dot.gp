@@ -2,7 +2,7 @@ load "lzstyle.gp"
 
 set autoscale
 
-set term pdf font "times new roman,12"
+set term pdf font "times new roman,12" size 3,3
 set output "plot.pdf"
 
 if (!exists("DATA") || !exists("NR_IDXS")) {

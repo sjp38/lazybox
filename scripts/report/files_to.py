@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 
 program_decr = """
 Construct and show a human readable, gnuplot convertible data in table or

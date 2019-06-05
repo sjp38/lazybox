@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 
 """
 Convert record to diff from first value.  For example, files with content

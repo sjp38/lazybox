@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 
 "test multiple experiments spec files support of run_exps.py"
 
