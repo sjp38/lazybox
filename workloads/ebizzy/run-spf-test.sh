@@ -16,5 +16,6 @@ fi
 
 for t in $THREADS
 do
-	./ebizzy-0.3/ebizzy -mTt $t
+	PERF=`./ebizzy-0.3/ebizzy -mTt $t | grep records/s`
+	echo $t $PERF
 done
