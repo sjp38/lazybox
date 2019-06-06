@@ -9,7 +9,10 @@ then
 	exit 1
 fi
 
-THREADS="1 2 4 9 18 36 72"
+if [ -z $THREADS ]
+then
+	THREADS="1 2 4 9 18 36 72"
+fi
 
 for t in $THREADS
 do
