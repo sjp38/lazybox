@@ -1,4 +1,4 @@
-
+set key noenhanced
 set key tmargin center
 set key horizontal
 

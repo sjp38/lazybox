@@ -2,7 +2,7 @@
 
 import random
 
-keys = ["systemA", "systemB", "systemC"]
+keys = ["system_A", "systemB", "systemC"]
 xaxes = range(1,5)
 
 for idx, k in enumerate(keys):
