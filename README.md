@@ -187,12 +187,6 @@ $ expect remote_exps.exp \
 ```
 
 
-License
-=======
-
-GPL v3
-
-
 Author
 ======
 
