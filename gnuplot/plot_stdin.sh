@@ -3,7 +3,8 @@
 if [ $# -lt 3 ]
 then
 	echo "Usage: $0 <chart type> <x label> <y label> [logscale]"
-	echo " supported chart types are: scatter, scatter-yerr, clustered_box"
+	echo " supported chart types are:"
+	echo "         scatter, scatter-yerr, clustered_box, heatmap"
 	exit 1
 fi
 
