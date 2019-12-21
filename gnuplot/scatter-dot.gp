@@ -7,7 +7,7 @@ set output "plot.pdf"
 
 if (!exists("DATA") || !exists("NR_IDXS")) {
 	print "DATA and NR_IDXS should be passed via -e option."
-	print "(e.g., \`$ gnuplot -e \"DATA='./data'; NR_IDXS='3'\" ./example.gp\`)"
+	print "(e.g., \`$ gnuplot -e \"DATA='./data'; NR_IDXS='3'\" ./scatter-dot.gp\`)"
 	exit
 }
 
