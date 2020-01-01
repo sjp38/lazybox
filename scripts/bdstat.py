@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 """
 Report buddy allocator stat
@@ -21,6 +21,7 @@ def human_readable_size_form(nr_bytes):
 
 def pr_buddystat():
     binfo = subprocess.check_output("cat /proc/buddyinfo".split())
+    binfo = binfo.decode('utf-8')
     """
     Node 0, zone      DMA      1      1      0      0      2      1      1
     Node 0, zone    DMA32   3986   3751   3348   2811   2044   1233    760
@@ -35,8 +36,8 @@ def pr_buddystat():
         for i, freep in enumerate(fields[4:]):
             free_mem += int(freep) * 2**i * 4096
 
-        print "%s, %s" % (" ".join(fields[0:4]),
-                human_readable_size_form(free_mem))
+        print("%s, %s" % (" ".join(fields[0:4]),
+                human_readable_size_form(free_mem)))
 
 if __name__ == "__main__":
     delay = -1
@@ -48,4 +49,4 @@ if __name__ == "__main__":
         if delay == -1:
             break
         time.sleep(delay)
-        print ""
+        print("")
