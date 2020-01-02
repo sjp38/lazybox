@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 import os
 import sys
@@ -35,7 +35,7 @@ def parse_topology():
         try:
             cpuids.append(int(item[3:]))
         except ValueError:
-            print "no int"
+            print("no int")
             continue
 
     cpus = {}
@@ -54,8 +54,8 @@ def parse_topology():
             cpuinfo[field] = value
     for cpuid in sorted(cpus.keys()):
         c = cpus[cpuid]
-        print "cpuid: %s, socket: %s, core: %s" % (
-                c["cpuid"], c["physical_package_id"], c["core_id"])
+        print("cpuid: %s, socket: %s, core: %s" % (
+                c["cpuid"], c["physical_package_id"], c["core_id"]))
 
 def pr_topology(cpus):
     sockets = {}
@@ -65,7 +65,7 @@ def pr_topology(cpus):
         except KeyError as e:
             sockets[int(c["physical id"])] = [c]
     for sk in sorted(sockets.keys()):
-        print "[socket %s]" % sk
+        print("[socket %s]" % sk)
         pcores = {}
         for c in sockets[sk]:
             try:
@@ -78,11 +78,11 @@ def pr_topology(cpus):
             if idx % 8 == 7:
                 output += "\n\t"
         output += "\n"
-        print output
+        print(output)
 
 def pr_fields():
-    for f in sorted(cpus[0].keys() + ["topology"]):
-        print "'" + f + "'"
+    for f in sorted(list(cpus[0].keys()) + ["topology"]):
+        print("'" + f + "'")
 
 USAGE = "USAGE: %s <field>" % sys.argv[0]
 
@@ -90,8 +90,8 @@ if __name__ == "__main__":
     cpus = parse_cpuinfo()
 
     if len(sys.argv) < 2:
-        print USAGE
-        print "\nAvaliable fields are:"
+        print(USAGE)
+        print("\nAvaliable fields are:")
         pr_fields()
         exit(0)
     key = sys.argv[1]
@@ -101,8 +101,8 @@ if __name__ == "__main__":
         exit(0)
 
     if not key in cpus[0].keys():
-        print USAGE
-        print "\nKey '%s' is wrong.  Valid keys are:" % key
+        print(USAGE)
+        print("\nKey '%s' is wrong.  Valid keys are:" % key)
         pr_fields()
         exit(1)
 
@@ -113,4 +113,4 @@ if __name__ == "__main__":
         output += '%s, ' % cpu[key]
         if i % 8 == 7:
             output += '\n'
-    print output
+    print(output)
