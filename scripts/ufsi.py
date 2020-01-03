@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 description = """
 Unusable Free Space Index
@@ -36,13 +36,13 @@ def human_readable_size_form(nr_bytes):
     return nr_bytes
 
 if len(sys.argv) < 2:
-    print "USAGE: %s <order of desired pages>" % sys.argv[0]
-    print description
+    print("USAGE: %s <order of desired pages>" % sys.argv[0])
+    print(description)
     exit(1)
 
 order = int(sys.argv[1])
 
-binfo = subprocess.check_output("cat /proc/buddyinfo".split())
+binfo = subprocess.check_output("cat /proc/buddyinfo".split()).decode('utf-8')
 """
 Node 0, zone      DMA      1      1      0      0      2      1      1
 Node 0, zone    DMA32   3986   3751   3348   2811   2044   1233    760
@@ -74,11 +74,11 @@ for z in free_bdpages:
 SZ_PAGE = 4096
 
 for i, z in enumerate(zones):
-    print "%s: %f (total %s, usable %s)" % (' '.join(z),
+    print("%s: %f (total %s, usable %s)" % (' '.join(z),
             (free_pages[i] - usable_pages[i]) / float(free_pages[i]),
             human_readable_size_form(free_pages[i] * SZ_PAGE),
-            human_readable_size_form(usable_pages[i] * SZ_PAGE))
-print "Total: %f (total %s, usable %s)" % (
+            human_readable_size_form(usable_pages[i] * SZ_PAGE)))
+print("Total: %f (total %s, usable %s)" % (
         (sum(free_pages) - sum(usable_pages)) / float(sum(free_pages)),
         human_readable_size_form(sum(free_pages) * SZ_PAGE),
-        human_readable_size_form(sum(usable_pages) * SZ_PAGE))
+        human_readable_size_form(sum(usable_pages) * SZ_PAGE)))
