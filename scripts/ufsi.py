@@ -37,7 +37,7 @@ def human_readable_size_form(nr_bytes):
 
 parser = argparse.ArgumentParser(description=description, epilog=epilog,
         formatter_class=argparse.RawDescriptionHelpFormatter)
-parser.add_argument('order', type=int,
+parser.add_argument('order', type=int, metavar='<order>',
         help='order of desired pages')
 args = parser.parse_args()
 order = args.order
