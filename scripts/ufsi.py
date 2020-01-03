@@ -21,7 +21,6 @@ anti-fragmentation." Ottawa Linux Symposium. Vol. 1. 2006.
 """
 
 import argparse
-import subprocess
 import sys
 
 def human_readable_size_form(nr_bytes):
@@ -43,7 +42,8 @@ def main():
     args = parser.parse_args()
     order = args.order
 
-    binfo = subprocess.check_output("cat /proc/buddyinfo".split()).decode('utf-8')
+    with open('/proc/buddyinfo', 'r') as f:
+        binfo = f.read()
     """
     binfo is in below format:
 
