@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
-description = """
-Unusable Free Space Index
-
+description = "Unusable Free Space Index"
+epilog = """
 This script calculates `unusable free space index`[0] which represents degree
 of fragmentation of system for given order of pages.  The paper describes the
 value as below:
@@ -21,6 +20,7 @@ value goes to 1.
 anti-fragmentation." Ottawa Linux Symposium. Vol. 1. 2006.
 """
 
+import argparse
 import subprocess
 import sys
 
@@ -35,12 +35,12 @@ def human_readable_size_form(nr_bytes):
         nr_bytes = "%d B" % nr_bytes
     return nr_bytes
 
-if len(sys.argv) < 2:
-    print("USAGE: %s <order of desired pages>" % sys.argv[0])
-    print(description)
-    exit(1)
-
-order = int(sys.argv[1])
+parser = argparse.ArgumentParser(description=description, epilog=epilog,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+parser.add_argument('order', type=int,
+        help='order of desired pages')
+args = parser.parse_args()
+order = args.order
 
 binfo = subprocess.check_output("cat /proc/buddyinfo".split()).decode('utf-8')
 """
