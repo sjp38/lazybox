@@ -23,7 +23,28 @@ anti-fragmentation." Ottawa Linux Symposium. Vol. 1. 2006.
 import argparse
 import sys
 
-def human_readable_size_form(nr_bytes):
+class Zone:
+    name = None
+    free_pages = []
+
+    def __init__(self, name, free_pages):
+        self.name = name
+        self.free_pages = free_pages
+
+    def nr_free_pages(self):
+        ret = 0
+        for order, nr_pages in enumerate(self.free_pages):
+            ret += 2**order * nr_pages
+        return ret
+
+    def nr_usable_pages(self, order):
+        ret = 0
+        for idx, nr_pages in enumerate(self.free_pages[order:]):
+            ret += 2**(order + idx) * nr_pages
+        return ret
+
+def hrsf(nr_bytes):
+    "human readable size format"
     if nr_bytes > 2**30:
         nr_bytes = "%.2f GiB" % (nr_bytes / 2.0**30)
     elif nr_bytes > 2**20:
@@ -57,34 +78,21 @@ def main():
     free_bdpages = []
     for line in binfo.strip('\n').split('\n'):
         fields = line.split()
-        zones.append(' '.join(fields[:4]))
-        free_bdpages.append([int(x) for x in fields[4:]])
-
-    free_pages = []
-    for z in free_bdpages:
-        free = 0
-        for i, p in enumerate(z):
-            free += 2**i * p
-        free_pages.append(free)
-
-    usable_pages = []
-    for z in free_bdpages:
-        usable = 0
-        for i, p in enumerate(z[order:]):
-            usable += 2**(i+order) * p
-        usable_pages.append(usable)
+        zone = Zone(' '.join(fields[:4]), [int(x) for x in fields[4:]])
+        zones.append(zone)
 
     SZ_PAGE = 4096
 
-    for i, zone in enumerate(zones):
-        print("%s: %f (total %s, usable %s)" % (zone,
-                (free_pages[i] - usable_pages[i]) / float(free_pages[i]),
-                human_readable_size_form(free_pages[i] * SZ_PAGE),
-                human_readable_size_form(usable_pages[i] * SZ_PAGE)))
+    for zone in zones:
+        usable = zone.nr_usable_pages(order) * SZ_PAGE
+        total = zone.nr_free_pages() * SZ_PAGE
+        print("%s: %f (total %s, usable %s)" % (zone.name,
+            usable / total, hrsf(total), hrsf(usable)))
+
+    usable = sum([z.nr_usable_pages(order) for z in zones]) * SZ_PAGE
+    total = sum([z.nr_free_pages() for z in zones]) * SZ_PAGE
     print("Total: %f (total %s, usable %s)" % (
-            (sum(free_pages) - sum(usable_pages)) / float(sum(free_pages)),
-            human_readable_size_form(sum(free_pages) * SZ_PAGE),
-            human_readable_size_form(sum(usable_pages) * SZ_PAGE)))
+        usable / total, hrsf(total), hrsf(usable)))
 
 if __name__ == '__main__':
     main()
