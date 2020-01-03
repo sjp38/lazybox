@@ -57,7 +57,7 @@ def main():
     free_bdpages = []
     for line in binfo.strip('\n').split('\n'):
         fields = line.split()
-        zones.append(fields[:4])
+        zones.append(' '.join(fields[:4]))
         free_bdpages.append([int(x) for x in fields[4:]])
 
     free_pages = []
@@ -76,8 +76,8 @@ def main():
 
     SZ_PAGE = 4096
 
-    for i, z in enumerate(zones):
-        print("%s: %f (total %s, usable %s)" % (' '.join(z),
+    for i, zone in enumerate(zones):
+        print("%s: %f (total %s, usable %s)" % (zone,
                 (free_pages[i] - usable_pages[i]) / float(free_pages[i]),
                 human_readable_size_form(free_pages[i] * SZ_PAGE),
                 human_readable_size_form(usable_pages[i] * SZ_PAGE)))
