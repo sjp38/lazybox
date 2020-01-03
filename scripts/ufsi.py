@@ -35,50 +35,56 @@ def human_readable_size_form(nr_bytes):
         nr_bytes = "%d B" % nr_bytes
     return nr_bytes
 
-parser = argparse.ArgumentParser(description=description, epilog=epilog,
-        formatter_class=argparse.RawDescriptionHelpFormatter)
-parser.add_argument('order', type=int, metavar='<order>',
-        help='order of desired pages')
-args = parser.parse_args()
-order = args.order
+def main():
+    parser = argparse.ArgumentParser(description=description, epilog=epilog,
+            formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('order', type=int, metavar='<order>',
+            help='order of desired pages')
+    args = parser.parse_args()
+    order = args.order
 
-binfo = subprocess.check_output("cat /proc/buddyinfo".split()).decode('utf-8')
-"""
-Node 0, zone      DMA      1      1      0      0      2      1      1
-Node 0, zone    DMA32   3986   3751   3348   2811   2044   1233    760
-Node 0, zone   Normal   2380    928   1518   7668  12639  12078  11520
-Node 1, zone   Normal    681   2489   1869  12689  23714  23179  22081
-"""
+    binfo = subprocess.check_output("cat /proc/buddyinfo".split()).decode('utf-8')
+    """
+    binfo is in below format:
 
-zones = []
-free_bdpages = []
-for line in binfo.strip('\n').split('\n'):
-    fields = line.split()
-    zones.append(fields[:4])
-    free_bdpages.append([int(x) for x in fields[4:]])
+    Node 0, zone      DMA      1      1      0      0      2      1      1
+    Node 0, zone    DMA32   3986   3751   3348   2811   2044   1233    760
+    Node 0, zone   Normal   2380    928   1518   7668  12639  12078  11520
+    Node 1, zone   Normal    681   2489   1869  12689  23714  23179  22081
+    """
 
-free_pages = []
-for z in free_bdpages:
-    free = 0
-    for i, p in enumerate(z):
-        free += 2**i * p
-    free_pages.append(free)
+    zones = []
+    free_bdpages = []
+    for line in binfo.strip('\n').split('\n'):
+        fields = line.split()
+        zones.append(fields[:4])
+        free_bdpages.append([int(x) for x in fields[4:]])
 
-usable_pages = []
-for z in free_bdpages:
-    usable = 0
-    for i, p in enumerate(z[order:]):
-        usable += 2**(i+order) * p
-    usable_pages.append(usable)
+    free_pages = []
+    for z in free_bdpages:
+        free = 0
+        for i, p in enumerate(z):
+            free += 2**i * p
+        free_pages.append(free)
 
-SZ_PAGE = 4096
+    usable_pages = []
+    for z in free_bdpages:
+        usable = 0
+        for i, p in enumerate(z[order:]):
+            usable += 2**(i+order) * p
+        usable_pages.append(usable)
 
-for i, z in enumerate(zones):
-    print("%s: %f (total %s, usable %s)" % (' '.join(z),
-            (free_pages[i] - usable_pages[i]) / float(free_pages[i]),
-            human_readable_size_form(free_pages[i] * SZ_PAGE),
-            human_readable_size_form(usable_pages[i] * SZ_PAGE)))
-print("Total: %f (total %s, usable %s)" % (
-        (sum(free_pages) - sum(usable_pages)) / float(sum(free_pages)),
-        human_readable_size_form(sum(free_pages) * SZ_PAGE),
-        human_readable_size_form(sum(usable_pages) * SZ_PAGE)))
+    SZ_PAGE = 4096
+
+    for i, z in enumerate(zones):
+        print("%s: %f (total %s, usable %s)" % (' '.join(z),
+                (free_pages[i] - usable_pages[i]) / float(free_pages[i]),
+                human_readable_size_form(free_pages[i] * SZ_PAGE),
+                human_readable_size_form(usable_pages[i] * SZ_PAGE)))
+    print("Total: %f (total %s, usable %s)" % (
+            (sum(free_pages) - sum(usable_pages)) / float(sum(free_pages)),
+            human_readable_size_form(sum(free_pages) * SZ_PAGE),
+            human_readable_size_form(sum(usable_pages) * SZ_PAGE)))
+
+if __name__ == '__main__':
+    main()
