@@ -1,10 +1,10 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 import subprocess
 import sys
 import time
 
 for i in range(int(sys.argv[1])):
-    print i
+    print(i)
     time.sleep(1)
-print "buy buy"
+print("buy buy")
