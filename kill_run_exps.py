@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 import os
 import signal
@@ -9,22 +9,22 @@ import time
 import exp
 
 if len(sys.argv) < 2:
-    print "Usage: kill_run_exps.py <exp file path>"
+    print("Usage: kill_run_exps.py <exp file path>")
     exit(1)
 
 exp_path = sys.argv[1]
 
-print ("\n\n%s[kill_run_exps] It's time to say good-bye, run_exps %s!\n\n"
+print("\n\n%s[kill_run_exps] It's time to say good-bye, run_exps %s!\n\n"
         % (exp.ltime(), exp_path))
 
 p = subprocess.Popen("ps -ef | grep run_exps.py",
         stdout=subprocess.PIPE, shell=True)
 out, err = p.communicate()
 
-print out
+print(out)
 
 pid = 0
-out = out.split('\n')
+out = out.decode('utf-8').split('\n')
 for line in out:
     spltd = line.split()
     if len(spltd) < 8:
@@ -39,7 +39,7 @@ for line in out:
     break
 
 if pid == 0:
-    print "the process not found..."
+    print("the process not found...")
     exit(1)
 
 while True:
@@ -47,12 +47,13 @@ while True:
     try:
         os.kill(pid, signal.SIGTERM)
     except OSError as e:
-        print "error %s while sending SIGTERM" % e
+        print("error %s while sending SIGTERM" % e)
     childs = exp.childs_of(pid, False)
     if len(childs) == 0:
         break
-    print "childs of process %s still exists. send signal again after 1 sec" % pid
+    print("childs of process %s still exists. send signal again after 1 sec" %
+            pid)
     time.sleep(1)
 
-print "\n\n%s[kill_run_exps] Now run_exps %s cleaned up!\n\n" % (
-        exp.ltime(), exp_path)
+print("\n\n%s[kill_run_exps] Now run_exps %s cleaned up!\n\n" % (
+        exp.ltime(), exp_path))
