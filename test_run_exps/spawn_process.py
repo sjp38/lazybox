@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 import subprocess
 import sys
@@ -7,7 +7,7 @@ import time
 remaining_spawns = int(sys.argv[1]) - 1
 
 if remaining_spawns > 0:
-    print 'will spawn %d more child' % remaining_spawns
+    print('will spawn %d more child' % remaining_spawns)
     cmd = '%s %d' % (__file__, remaining_spawns)
     subprocess.call(cmd, shell=True)
 
