@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 """
 Stub for experiments config file generator
@@ -48,14 +48,14 @@ for arg1 in [1, 2, 3, 4, 5]:
 # !!! Do not edit code below
 for exp in exps:
     for start in exp.start_cmds:
-        print "start %s" % start
+        print("start %s" % start)
     for main in exp.main_cmds:
-        print "main %s" % main
+        print("main %s" % main)
     for back in exp.back_cmds:
-        print "back %s" % back
+        print("back %s" % back)
     for end in exp.end_cmds:
-        print "end %s" % end
+        print("end %s" % end)
     for check in exp.check_cmds:
-        print "check %s" % check
+        print("check %s" % check)
 
-    print ""
+    print('')
