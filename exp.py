@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 "Define class and functions for an experiment"
 
@@ -73,12 +73,12 @@ class Exp:
         return self.__str__()
 
     def terminate_tasks(self):
-        print ltime(), "terminate tasks of exp %s" % self
+        print(ltime(), "terminate tasks of exp %s" % self)
         for task in self.main_tasks:
             if task.popn.poll() == None:
                 kill_childs_self(task.popn.pid)
 
-        print ltime(), "kill background procs"
+        print(ltime(), "kill background procs")
         for back_proc in self.back_procs:
             if back_proc.poll() == None:
                 kill_childs_self(back_proc.pid)
@@ -87,7 +87,7 @@ class Exp:
         "Returns True if experiment executed successfully, False if not"
         self.back_procs = []
         self.main_tasks = []
-        print ltime(), "do exp %s" % self
+        print(ltime(), "do exp %s" % self)
         for start in self.start_cmds:
             subprocess.call(start, shell=True, executable="/bin/bash")
         for back in self.back_cmds:
@@ -106,7 +106,7 @@ class Exp:
             for task in self.main_tasks:
                 if task.popn.poll() == None:
                     continue
-                print ltime(), "%s(%s) terminated" % (task.cmd, task.popn.pid)
+                print(ltime(), "%s(%s) terminated" % (task.cmd, task.popn.pid))
                 task.completed = True
                 nr_completed = sum(t.completed for t in self.main_tasks)
                 if nr_completed < len(self.main_tasks):
@@ -119,9 +119,10 @@ class Exp:
 
         for check in self.check_cmds:
             ret = subprocess.call(check, shell=True, executable="/bin/bash")
-            print ltime(), "check %s return %s" % (check, ret)
+            print(ltime(), "check %s return %s" % (check, ret))
             if ret != 0:
-                print ltime(), "check %s failed with return code %s" % (check, ret)
+                print(ltime(), "check %s failed with return code %s" %
+                        (check, ret))
                 return False
         return True
 
@@ -137,7 +138,7 @@ def kill_childs_self(pid):
             # Because the processes are stopeed by SIGSTOP that sent from
             # childs_of(), we should send SIGCONT, too.  It may spawn one more
             # child while it.  But, let's just hope for now...
-            print ltime(), "kill child: ", child
+            print(ltime(), "kill child: ", child)
             os.kill(child, signal.SIGINT)
             os.kill(child, signal.SIGCONT)
             time.sleep(0.5)
@@ -145,22 +146,23 @@ def kill_childs_self(pid):
             time.sleep(0.1)
             os.kill(child, signal.SIGKILL)
         except OSError as e:
-            print ltime(), "error %s occurred while killing child %s" % (e, child)
+            print(ltime(), "error %s occurred while killing child %s" %
+                    (e, child))
     try:
-        print ltime(), "kill self: %s" % pid
+        print(ltime(), "kill self: %s" % pid)
         os.kill(pid, signal.SIGTERM)
         os.kill(pid, signal.SIGKILL)
     except OSError as e:
-        print ltime(), "error %s occurred while killing self %s" % (e, pid)
+        print(ltime(), "error %s occurred while killing self %s" % (e, pid))
 
 def all_childs(pid):
     while True:
         childs = childs_of(pid, True)
         childs_again = childs_of(pid, True)
-        print ltime(), "got childs ", childs, "for first time"
-        print ltime(), "got childs ", childs_again, "for second time"
+        print(ltime(), "got childs ", childs, "for first time")
+        print(ltime(), "got childs ", childs_again, "for second time")
         if cmp(childs, childs_again) != 0:
-            print ltime(), "childs are not identical. get childs again"
+            print(ltime(), "childs are not identical. get childs again")
             continue
         break
     return childs
@@ -171,7 +173,7 @@ def childs_of(pid, stop_childs, print_tree=True):
             stdout=subprocess.PIPE, bufsize=1)
     for line in p.stdout:
         if print_tree:
-            print ltime(), line
+            print(ltime(), line)
         spltd = line.split('(')
         for idx, entry in enumerate(spltd):
             # skip thread
