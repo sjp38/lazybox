@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 "test multiple experiments spec files support of run_exps.py"
 
@@ -9,5 +9,5 @@ lzdir = os.path.join(os.path.dirname(__file__), os.pardir)
 lzdir = os.path.abspath(lzdir)
 cmd = "%s %s %s" % (os.path.join(lzdir, "run_exps.py"),
         os.path.join(testdir, "hello"), os.path.join(testdir, "bye"))
-print "execute: ", cmd
+print("execute: ", cmd)
 os.system(cmd)
