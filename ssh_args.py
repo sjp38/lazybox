@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 "Help argument parsing for remote experiments"
 
@@ -15,8 +15,8 @@ USAGE="%s <user name> <target> <ssh port> [password]" % sys.argv[0]
 
 def parse_input(custom_usage=USAGE):
     if len(sys.argv) < 4:
-        print "usage: ", custom_usage
-        print ""
+        print("usage: ", custom_usage)
+        print("")
         exit(1)
 
     user = sys.argv[1]
