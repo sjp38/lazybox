@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 "Help performance evaluation experiments automation"
 
@@ -65,7 +65,7 @@ def parse_file(filename):
     if filename != "stdin":
         f = open(filename)
     else:
-        print "receive experiments specification from stdin"
+        print("receive experiments specification from stdin")
 
     parse_lines(f, exps, starts, mains, backs, ends, checks)
 
@@ -81,7 +81,7 @@ def sig_handler(signal, frame):
     global current_exps
     global got_sigterm
 
-    print "[run_exps] received signal %s" % signal
+    print("[run_exps] received signal %s" % signal)
     got_sigterm = True
     for exp in current_exps:
         exp.terminate_tasks()
@@ -89,7 +89,7 @@ def sig_handler(signal, frame):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print "USAGE: %s <path to experiments spec file> ..." % sys.argv[0]
+        print("USAGE: %s <path to experiments spec file> ..." % sys.argv[0])
         exit(1)
 
     signal.signal(signal.SIGINT, sig_handler)
@@ -103,7 +103,7 @@ if __name__ == "__main__":
     for exp_file in sys.argv[1:]:
         current_exps = parse_file(exp_file)
         if dryrun:
-            print current_exps
+            print(current_exps)
             continue
 
         for exp in current_exps:
