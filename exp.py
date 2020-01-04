@@ -161,7 +161,7 @@ def all_childs(pid):
         childs_again = childs_of(pid, True)
         print(ltime(), "got childs ", childs, "for first time")
         print(ltime(), "got childs ", childs_again, "for second time")
-        if cmp(childs, childs_again) != 0:
+        if (childs>childs_again)-(childs<childs_again):
             print(ltime(), "childs are not identical. get childs again")
             continue
         break
@@ -172,6 +172,7 @@ def childs_of(pid, stop_childs, print_tree=True):
     p = subprocess.Popen('pstree -p %s' % pid, shell=True,
             stdout=subprocess.PIPE, bufsize=1)
     for line in p.stdout:
+        line = line.decode('utf-8')
         if print_tree:
             print(ltime(), line)
         spltd = line.split('(')
