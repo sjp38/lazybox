@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 import os
 import sys
@@ -20,5 +20,5 @@ if password == "__lb_registered":
 else:
     cmd = "expect ./remote_exps.exp %s %s %s %s %s %s" % (
             user, target, port, password, lbpath, exp)
-print "[remote_exp.py] do cmd $ ", cmd
+print("[remote_exp.py] do cmd $ ", cmd)
 os.system(cmd)
