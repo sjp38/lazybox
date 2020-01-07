@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 import argparse
 import subprocess
@@ -12,6 +12,7 @@ target = args.target
 verbose = args.verbose
 
 res = subprocess.check_output("ps --no-headers -e -o pid,cmd".split())
+res = res.decode('utf-8')
 procs = []
 for l in res.split('\n'):
     fields = l.split()
@@ -48,20 +49,20 @@ for p in procs:
         pass
 
 if verbose:
-    print "proc\tnr_vmas"
-    for p, n in sorted(nr_vmas_map.iteritems(), key=lambda (k,v): (v,k)):
-        print "%s\t%d" % (p, nr_vmas_map[p])
-    print
+    print("proc\tnr_vmas")
+    for p, n in sorted(nr_vmas_map.iteritems(), key=lambda k,v: (v,k)):
+        print("%s\t%d" % (p, nr_vmas_map[p]))
+    print('')
 
 nr_vmas_sorted = sorted(nr_vmas_map.values())
 l = len(nr_vmas_sorted)
-print "nr_procs: %d" % l
-print "nr_total_vmas: %d" % sum(nr_vmas_sorted)
-print "nr_anon_vmas: %d" % nr_anon_vmas
-print "nr_file_vmas: %d" % nr_file_vmas
+print("nr_procs: %d" % l)
+print("nr_total_vmas: %d" % sum(nr_vmas_sorted))
+print("nr_anon_vmas: %d" % nr_anon_vmas)
+print("nr_file_vmas: %d" % nr_file_vmas)
 if len(procs) <= 1:
     exit(0)
-print "average_nr_vmas: %d" % (sum(nr_vmas_sorted) / l)
-print "min\t25th\t50th\t75th\tmax"
-print "%d\t%d\t%d\t%d\t%d" % (nr_vmas_sorted[0], nr_vmas_sorted[l / 4],
-        nr_vmas_sorted[l / 4], nr_vmas_sorted[l / 4 * 3], nr_vmas_sorted[-1])
+print("average_nr_vmas: %d" % (sum(nr_vmas_sorted) / l))
+print("min\t25th\t50th\t75th\tmax")
+print("%d\t%d\t%d\t%d\t%d" % (nr_vmas_sorted[0], nr_vmas_sorted[l // 4],
+        nr_vmas_sorted[l // 4], nr_vmas_sorted[l // 4 * 3], nr_vmas_sorted[-1]))
