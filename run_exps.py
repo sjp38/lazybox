@@ -62,8 +62,6 @@ def parse_lines(f):
     return exps
 
 def parse_file(filename):
-    exps = []
-
     f = sys.stdin
     if filename != 'stdin':
         f = open(filename)
