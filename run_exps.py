@@ -12,6 +12,7 @@ import os
 import signal
 import sys
 import time
+
 from exp import Exp
 
 RETRY_LIMIT = 10
@@ -22,7 +23,14 @@ BACK = "back "
 END = "end "
 CHECK = "check "
 
-def parse_lines(f, exps, starts, mains, backs, ends, checks):
+def parse_lines(f):
+    exps = []
+    starts = []
+    mains = []
+    backs = []
+    ends = []
+    checks = []
+
     prevline = ''
     for line in f:
         if line.startswith('#'):
@@ -53,24 +61,20 @@ def parse_lines(f, exps, starts, mains, backs, ends, checks):
             checks = []
     if len(mains) != 0:
         exps.append(Exp(starts, mains, backs, ends, checks))
+    return exps
 
 def parse_file(filename):
     exps = []
-    starts = []
-    mains = []
-    backs = []
-    ends = []
-    checks = []
 
     f = sys.stdin
-    if filename != "stdin":
+    if filename != 'stdin':
         f = open(filename)
     else:
-        print("receive experiments specification from stdin")
+        print('receive experiments specification from stdin')
 
-    parse_lines(f, exps, starts, mains, backs, ends, checks)
+    exps = parse_lines(f)
 
-    if filename != "stdin":
+    if filename != 'stdin':
         f.close()
 
     return exps
@@ -82,13 +86,13 @@ def sig_handler(signal, frame):
     global current_exps
     global got_sigterm
 
-    print("[run_exps] received signal %s" % signal)
+    print('[run_exps] received signal %s' % signal)
     got_sigterm = True
     for exp in current_exps:
         exp.terminate_tasks()
     exit(1)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--dryrun', action='store_true',
             help='print what command will be executed only')
