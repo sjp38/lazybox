@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 import argparse
 import datetime
@@ -37,10 +37,10 @@ if __name__ == "__main__":
 
     if bootloader == GRUB:
         kernels = grub_kernels()
-        print "\n".join(kernels)
+        print("\n".join(kernels))
     elif bootloader == CUBOX:
-        print bootloader + " is not supported yet..."
+        print(bootloader + " is not supported yet...")
     elif bootloader == RASP2:
-        print bootloader + " is not supported yet..."
+        print(bootloader + " is not supported yet...")
     else:
-        print "Not supported bootloader %s\n" % bootloader
+        print("Not supported bootloader %s\n" % bootloader)
