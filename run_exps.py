@@ -15,15 +15,13 @@ import time
 
 from exp import Exp
 
-RETRY_LIMIT = 10
-
-START = "start "
-MAIN = "main "
-BACK = "back "
-END = "end "
-CHECK = "check "
-
 def parse_lines(f):
+    START = "start "
+    MAIN = "main "
+    BACK = "back "
+    END = "end "
+    CHECK = "check "
+
     exps = []
     starts = []
     mains = []
@@ -93,6 +91,7 @@ def sig_handler(signal, frame):
     exit(1)
 
 if __name__ == '__main__':
+    RETRY_LIMIT = 10
     parser = argparse.ArgumentParser()
     parser.add_argument('--dryrun', action='store_true',
             help='print what command will be executed only')
