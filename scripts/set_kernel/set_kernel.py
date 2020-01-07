@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 import argparse
 import datetime
@@ -27,7 +27,7 @@ def set_grub_kernel(target_kernel):
         if line.find('Previous') != -1 or line.find('Advanced') != -1:
             prev_section = True
             position = 0
-            print 'previous or advanced line found: %s' % line
+            print('previous or advanced line found: %s' % line)
             continue;
 
         tokens = line.split()
@@ -42,7 +42,7 @@ def set_grub_kernel(target_kernel):
             else:
                 position += 1
     if not found:
-        print "failed. kernel %s not found" % target_kernel
+        print("failed. kernel %s not found" % target_kernel)
         return
 
     set_default = '%s' % position
@@ -51,50 +51,50 @@ def set_grub_kernel(target_kernel):
 
     if not nobackup:
         cmd = "cp -f %s %s.bak.%s" % (GRUBCFG_PATH, "grub.cfg", bak_ts)
-        print "backup with cmd %s" % cmd
+        print("backup with cmd %s" % cmd)
         os.system(cmd)
 
     cmd = "sed -i 's/.*set default.*/set default=%s/' %s" % (
             set_default, GRUBCFG_PATH)
-    print "set kernel with cmd: ", cmd
+    print("set kernel with cmd: ", cmd)
     ret = os.system(cmd)
     if ret != 0:
-        print "FAILED to set kernel!!!"
+        print("FAILED to set kernel!!!")
 
 def set_uenv_kernel(target_kernel):
     # TODO: relative path based on assumption should be removed in future
     cmd = "./bin/change_cubox_kernel.sh %s" % target_kernel
-    print "change kernel to %s using cmd: %s\n" % (target_kernel, cmd)
+    print("change kernel to %s using cmd: %s\n" % (target_kernel, cmd))
     os.system(cmd)
 
 def set_rasp2_kernel(target_kernel):
     cmd = "cp -R /boots/%s/* /" % target_kernel
-    print "change kernel to %s using cmd %s\n" % (target_kernel, cmd)
+    print("change kernel to %s using cmd %s\n" % (target_kernel, cmd))
     os.system(cmd)
     cmd = "cp /boots/config.%s.txt /boot/config.txt" % target_kernel
-    print "change config using cmd: %s\n" % cmd
+    print("change config using cmd: %s\n" % cmd)
     os.system(cmd)
 
 def set_grub_kernel_param(kernel_param):
     if not nobackup:
         cmd = "cp -f %s %s.bak.%s" % (GRUB_PATH, "grub", bak_ts)
-        print "backup with cmd %s" % cmd
+        print("backup with cmd %s" % cmd)
         os.system(cmd)
 
     kernel_param = kernel_param.replace('/', '\/')
     cmd = "sed -i 's/%s*/%s\"%s\"/' %s" % ("GRUB_CMDLINE_LINUX_DEFAULT=.",
             "GRUB_CMDLINE_LINUX_DEFAULT=", kernel_param, GRUB_PATH)
-    print "set kernel param with cmd: ", cmd
+    print("set kernel param with cmd: ", cmd)
     os.system(cmd)
 
     cmd = "update-grub"
-    print cmd
+    print(cmd)
     os.system(cmd)
 
 def set_uenv_kernel_param(kernel_param):
     uEnv_content = "mmcargs=setenv bootargs " + kernel_param
     cmd = 'echo "%s" > %s' % (uEnv_content, UENV_PATH)
-    print "set kernel param using cmd: ", cmd
+    print("set kernel param using cmd: ", cmd)
     os.system(cmd)
 
 def set_rasp2_kernel_param(kernel_param):
@@ -104,9 +104,9 @@ def set_rasp2_kernel_param(kernel_param):
     cmdline = orig_cmdline + " " + kernel_param
     with open('/boot/cmdline.txt', 'w') as f:
         f.write(cmdline)
-    print "kernel param changed to: "
+    print("kernel param changed to: ")
     os.system("cat /boot/cmdline.txt")
-    print ""
+    print("")
 
 
 if __name__ == "__main__":
@@ -128,7 +128,8 @@ if __name__ == "__main__":
     kernel_param = ' '.join(args.kernel_param)
     nobackup = args.nobackup
 
-    print "set kernel %s with parameter '%s' on %s" % (kernel_name, kernel_param, bootloader)
+    print("set kernel %s with parameter '%s' on %s" %
+            (kernel_name, kernel_param, bootloader))
 
     if bootloader == GRUB:
         if kernel_param != "":
@@ -142,4 +143,4 @@ if __name__ == "__main__":
         set_rasp2_kernel(kernel_name)
         set_rasp2_kernel_param(kernel_param + " ")
     else:
-        print "Not supported bootloader %s\n" % bootloader
+        print("Not supported bootloader %s\n" % bootloader)
