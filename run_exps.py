@@ -7,6 +7,7 @@ __email__ = "sj38.park@gmail.com"
 __copyright__ = "Copyright (c) 2013-2015, SeongJae Park"
 __license__ = "GPLv3"
 
+import argparse
 import os
 import signal
 import sys
@@ -88,19 +89,19 @@ def sig_handler(signal, frame):
     exit(1)
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("USAGE: %s <path to experiments spec file> ..." % sys.argv[0])
-        exit(1)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dryrun', action='store_true',
+            help='print what command will be executed only')
+    parser.add_argument('exp_files', metavar='<file>', nargs='+',
+            help='experiment spec file')
+    args = parser.parse_args()
 
     signal.signal(signal.SIGINT, sig_handler)
     signal.signal(signal.SIGTERM, sig_handler)
 
-    dryrun = False
-    if "--dryrun" in sys.argv:
-        sys.argv.remove("--dryrun")
-        dryrun = True
+    dryrun = args.dryrun
 
-    for exp_file in sys.argv[1:]:
+    for exp_file in args.exp_files:
         current_exps = parse_file(exp_file)
         if dryrun:
             print(current_exps)
