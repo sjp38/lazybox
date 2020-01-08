@@ -1,9 +1,9 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 import sys
 
 if len(sys.argv) < 3:
-    print "Usage: acdf.py <data file> <target columns> <granularity>"
+    print("Usage: acdf.py <data file> <target columns> <granularity>")
 
 data_file = sys.argv[1]
 target_cols = sys.argv[2:-1]
@@ -43,4 +43,4 @@ for key in sorted(cdf):
     out_data = ""
     for val in cdf[key]:
         out_data += str(val) + ','
-    print "%s,%s" % (key, out_data)
+    print("%s,%s" % (key, out_data))
