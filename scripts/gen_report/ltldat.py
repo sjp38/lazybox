@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 "Module for little data processing"
 
@@ -108,19 +108,19 @@ def wrong_csv_format_check(csv):
     lines = [l.strip() for l in csv.split('\n')]
     fields = [f.strip() for f in lines[0].split(',')]
     if len(fields) != 2:
-        print "title line has %d (>2) fields" % len(fields)
+        print("title line has %d (>2) fields" % len(fields))
         return True
     if fields[0] != "title":
-        print "title line should have keyword 'title' but '%s'" % fields[0]
+        print("title line should have keyword 'title' but '%s'" % fields[0])
         return True
 
     nr_legends = len(lines[1].split(','))
     for idx, l in enumerate(lines[2:]):
         nr_fields = len(l.split(','))
         if nr_fields != nr_legends:
-            print "line %d has %d fields but # of legends are %d" % (
-                    2 + idx, nr_fields, nr_legends)
-            print "the line: `%s`" % l
+            print("line %d has %d fields but # of legends are %d" % (
+                    2 + idx, nr_fields, nr_legends))
+            print("the line: `%s`" % l)
             return True
     return False
 
@@ -135,26 +135,26 @@ def wrong_human_readable_txt(text):
         ridx += 1
         nr_lines = len(rec.split('\n'))
         if nr_lines == 0:
-            print "record %d has no data at all" % ridx
+            print("record %d has no data at all" % ridx)
             return True
 
         if nr_lines != nr_rows:
-            print "record %d has %d rows but first record has %d rows" % (
-                    ridx, nr_lines, nr_rows)
+            print("record %d has %d rows but first record has %d rows" % (
+                    ridx, nr_lines, nr_rows))
             return True
 
         compare_xvalues = []
         for l in rec.split('\n')[1:]:
             if len(l.split()) < 2:
-                print "each line should have at least two fields"
+                print("each line should have at least two fields")
                 return True
             if ridx == 1:
                 xvalues.append(l.split()[0].strip())
             else:
                 compare_xvalues.append(l.split()[0].strip())
         if ridx > 1 and xvalues != compare_xvalues:
-            print "xvalues of record %d is '%s' but record 0 has '%s'" % (
-                    ridx, ' '.join(compare_xvalues), ' '.join(xvalues))
+            print("xvalues of record %d is '%s' but record 0 has '%s'" % (
+                    ridx, ' '.join(compare_xvalues), ' '.join(xvalues)))
             return True
     return False
 
@@ -253,10 +253,10 @@ def split_with_key(table, keys):
     inter_map = {}
     for row in table.rows:
         key = '-'.join([str(row[key]) for key in keys])
-        if not inter_map.has_key(key):
+        if not key in inter_map:
             inter_map[key] = ATable(key, table.legend, [])
         inter_map[key].rows.append(row)
-    return inter_map.values()
+    return list(inter_map.values())
 
 def __calc_stat(vals):
     minv = min(vals)
@@ -353,11 +353,11 @@ if __name__ == "__main__":
                 [2, 3, 'b'], [2,4,'b'], [2,5,'b'], [3, 5, 'c']])
     stat_calced = calc_stat(t, ["key"])
     sorted_ = sort_with(stat_calced, ["key_avg"])
-    print t
-    print sorted_
-    print sorted_.csv()
-    print from_csv(sorted_.csv())
-    print sort_with(calc_stat(from_csv(t.csv()), ["key"]), ["key_avg"])
+    print(t)
+    print(sorted_)
+    print(sorted_.csv())
+    print(from_csv(sorted_.csv()))
+    print(sort_with(calc_stat(from_csv(t.csv()), ["key"]), ["key_avg"]))
 
     t = ATable("foo", ["thrs", "system", "value1", "value2"], [
                 [1, 'A', 10, 90],
@@ -371,43 +371,43 @@ if __name__ == "__main__":
                 [4, "sys", 90, 10],
             ])
     splits = split_with_key(t, ["system"])
-    print merge(splits)
-    print pick_fields(merge(splits).replace_legend("A-thrs", "thrs"),
-            ["thrs", "A-value1", "B-value1", "A-value2", "B-value2"])
+    print(merge(splits))
+    print(pick_fields(merge(splits).replace_legend("A-thrs", "thrs"),
+            ["thrs", "A-value1", "B-value1", "A-value2", "B-value2"]))
 
     t2 = t.append_column("avg", lambda x:
                         t.item_at(x, "value1") + t.item_at(x, "value2") / 2)
-    print t2
+    print(t2)
 
     t = ATable("foo", ["key", "val"], [[1, 3], [3, 5], [5, 7]])
     t2 = ATable("bar", ["key", "val"], [[1, 3], [2, 4], [5, 7]])
-    print t
-    print t2
+    print(t)
+    print(t2)
     compensate([t, t2], "key", -1)
-    print "compensated"
-    print t
-    print t2
+    print("compensated")
+    print(t)
+    print(t2)
 
     t = ATable("foo", ["key", "val"], [[1, 3], [3, 5]])
     t.convert_column("key", lambda r: str(t.item_at(r, "val")))
-    print t
+    print(t)
 
     t = ATable("foo", ["key", "val"], [[1, 3], [2, 4]])
     t2 = ATable("foo2", ["key", "val"], [[3,3], [4,8]])
-    print merge_vertical([t, t2])
+    print(merge_vertical([t, t2]))
 
 
     t3 = ATable("fooo", ["key", "val2"], [[3,4], [4,5]])
     compensate_columns([t, t3], -1)
-    print "column compensated"
-    print t
-    print t3
+    print("column compensated")
+    print(t)
+    print(t3)
 
     t = ATable("foo", ["key", "val"], [[1, 3], [1, 4], [1, 5], [2, 1], [2, 2]])
     stat = calc_stat(t, ["key"])
     stat = exclude_fields(stat,
             ["key_min", "key_max", "key_stdev", "key_nr_samples"])
-    print stat
+    print(stat)
 
     t = from_human_readable_records(
 """Title
@@ -422,31 +422,31 @@ legend2
 x1 val2-1
 x2 val2-2
 """)
-    print "\n"
-    print "human readable text test"
-    print "========================"
-    print ""
-    print t
-    print t.human_readable_txt()
+    print("\n")
+    print("human readable text test")
+    print("========================")
+    print("")
+    print(t)
+    print(t.human_readable_txt())
 
 
-    print "\n"
-    print "normalization test"
-    print "=================="
-    print ""
+    print("\n")
+    print("normalization test")
+    print("==================")
+    print("")
     t = ATable("foo", ["key", "sysA", "sysB"], [[1, "3", "6"], [2, "4", "7"]])
-    print t.normalize(1, [0])
+    print(t.normalize(1, [0]))
 
-    print "\n"
-    print "format csv check test"
-    print "====================="
-    print ""
+    print("\n")
+    print("format csv check test")
+    print("=====================")
+    print("")
     if wrong_csv_format_check(
             """title, fooo
             leg1, leg2, leg3
             v1, v2, v3
             v4, v5, v6"""):
-        print "FAIL"
+        print("FAIL")
         exit(1)
 
     if not wrong_csv_format_check(
@@ -454,7 +454,7 @@ x2 val2-2
             leg1, leg2, leg3
             v1, v2, v3
             v4, v5, v6"""):
-        print "FAIL"
+        print("FAIL")
         exit(1)
 
     if not wrong_csv_format_check(
@@ -462,7 +462,7 @@ x2 val2-2
             leg1, leg2, leg3
             v1, v2, v3
             v4, v5"""):
-        print "FAIL"
+        print("FAIL")
         exit(1)
     if not wrong_csv_format_check(
             """title, fooo
@@ -470,15 +470,15 @@ x2 val2-2
             v1, v2, v3
             v4, v5, v6
             """):
-        print "FAIL"
+        print("FAIL")
         exit(1)
 
-    print "PASS"
+    print("PASS")
 
-    print "\n"
-    print "human readable text format check test"
-    print "====================================="
-    print ""
+    print("\n")
+    print("human readable text format check test")
+    print("=====================================")
+    print("")
     if wrong_human_readable_txt(
             """Title
 
@@ -492,7 +492,7 @@ x2 val2-2
             x1 val2-1
             x2 val2-2
             """):
-        print "FAIL"
+        print("FAIL")
         exit(1)
     if not wrong_human_readable_txt(
             """Title
@@ -506,7 +506,7 @@ x2 val2-2
             x1 val2-1
             x2 val2-2
             """):
-        print "FAIL"
+        print("FAIL")
         exit(1)
     if not wrong_human_readable_txt(
             """Title
@@ -521,7 +521,7 @@ x2 val2-2
             x1 val2-1
             x2 val2-2
             """):
-        print "FAIL"
+        print("FAIL")
         exit(1)
     if not wrong_human_readable_txt(
             """Title
@@ -536,7 +536,7 @@ x2 val2-2
             x1 val2-1
             x3 val2-2
             """):
-        print "FAIL"
+        print("FAIL")
         exit(1)
 
-    print "PASS"
+    print("PASS")
