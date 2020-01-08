@@ -6,6 +6,15 @@ evaluation experiments. However, it can be used for automation of general
 computer program execution.
 
 
+Version Compatibility
+=====================
+
+Lazybox v1.0 has released by 2020-01-01.  Lazybox later than the version will
+not be strictly compatible with the v1.0.  Therefore, if you have scripts
+depends on Lazybox v1.0 or earlier versions, please use the older version or
+test it again with newer version.
+
+
 Abstract
 ========
 
