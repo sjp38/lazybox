@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 
+import argparse
 import sys
 
-if len(sys.argv) < 3:
-    print("Usage: acdf.py <data file> <target columns> <granularity>")
-    exit(1)
+parser = argparse.ArgumentParser()
+parser.add_argument('data_file', metavar='<file>', type=str, help='data file')
+parser.add_argument('target_column', metavar='<target column>', nargs='+',
+        type=int, help='data file')
+parser.add_argument('granularity', metavar='<granularity>', type=float,
+        help='cdf granularity')
+args = parser.parse_args()
 
-data_file = sys.argv[1]
-target_cols = sys.argv[2:-1]
-csv_gran = float(sys.argv[-1])
+data_file = args.data_file
+target_cols = args.target_column
+csv_gran = args.granularity
 
 datas = []
 counts = {}
@@ -17,8 +22,7 @@ cdf = {}
 with open(data_file, 'r') as f:
     for line in f:
         data = []
-        for target in target_cols:
-            target_col = int(target)
+        for target_col in target_cols:
             if len(line.split(',')) < target_col + 1:
                 continue
 
