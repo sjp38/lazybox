@@ -4,6 +4,7 @@ import sys
 
 if len(sys.argv) < 3:
     print("Usage: acdf.py <data file> <target columns> <granularity>")
+    exit(1)
 
 data_file = sys.argv[1]
 target_cols = sys.argv[2:-1]
