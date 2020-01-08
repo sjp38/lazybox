@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 import sys
 
@@ -11,13 +11,13 @@ with open(sys.argv[1], 'r') as f:
     for line in f:
         if line.find("Linux raspberrypi") != -1:
             if line.find("-gcma-") != -1:
-                print "gcma"
+                print("gcma")
                 cma_times_output.append("gcma")
             elif line.find("-cma-") != -1:
-                print "cma"
+                print("cma")
                 cma_times_output.append("cma")
             elif line.find("-vanilla-") != -1:
-                print "vanilla"
+                print("vanilla")
                 cma_times_output.append("vanilla")
 
         if line.find("system") != -1 and line.find("elapsed") != -1:
@@ -31,7 +31,7 @@ with open(sys.argv[1], 'r') as f:
             elapsed = elap_min * 60 + elap_sec
 
             cpu = spltd[3].split("%")[0]
-            print ",%s,%s,%s,%s" % (user, system, elapsed,cpu)
+            print(",%s,%s,%s,%s" % (user, system, elapsed,cpu))
 
         if line.find("cma_alloc()") != -1 and line.find("consumed") != -1:
             cma_alloc_secs += float(line.split()[-2]) / 1000 / 1000 / 1000
@@ -49,4 +49,4 @@ with open(sys.argv[1], 'r') as f:
             cma_chunk_alloc_secs = 0.0
 
 for line in cma_times_output:
-    print line
+    print(line)
