@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 
-import sys
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('file', metavar='<file>', help='the log file')
+args = parser.parse_args()
 
 cma_times_output = []
 
-with open(sys.argv[1], 'r') as f:
+with open(args.file, 'r') as f:
     allocs_started = False
     cma_alloc_secs = 0.0
     cma_chunk_alloc_secs = 0.0
