@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 program_decr = """
 Construct and show a human readable, gnuplot convertible data in table or
@@ -30,7 +30,7 @@ import ltldat
 
 def commonpath(paths):
     if len(paths) < 2:
-        print "[ERROR] commonpath() should receive 2 or more paths!"
+        print("[ERROR] commonpath() should receive 2 or more paths!")
         exit(1)
     splitted = [p.split('/') for p in paths]
     common = []
@@ -52,7 +52,7 @@ def commonpath(paths):
 
 def common_suffixpath(paths):
     if len(paths) < 2:
-        print "[ERROR] cut_commonsuffix() should receive 2 or more paths!"
+        print("[ERROR] cut_commonsuffix() should receive 2 or more paths!")
         exit(1)
     splitted = [p.split('/') for p in paths]
     common = []
@@ -90,7 +90,7 @@ normalize = vars(args)['normalize']
 title = os.path.basename(paths[0])
 for p in paths:
     if os.path.basename(p) != title:
-        print "All filename should be %s but %s" % (title, p)
+        print("All filename should be %s but %s" % (title, p))
         exit(1)
 
 commpath = commonpath(paths)
@@ -121,7 +121,7 @@ if form == 'table':
     table = ltldat.from_human_readable_records(text)
     if normalize:
         table = table.normalize()
-    print table.human_readable_txt()
+    print(table.human_readable_txt())
 if form == 'records':
     text = ""
     for idx, path in enumerate(paths):
@@ -134,4 +134,4 @@ if form == 'records':
                 text += line
         text += "\n\n"
 
-    print text.strip()
+    print(text.strip())
