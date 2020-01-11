@@ -16,13 +16,13 @@ Will be converted to
 ```
 """
 
-import sys
+import argparse
 
-if len(sys.argv) < 2:
-    print("Usage: %s <record file>" % sys.argv[0])
-    exit(1)
+parser = argparse.ArgumentParser()
+parser.add_argument('record_file', metavar='<file>', help='record file')
+args = parser.parse_args()
 
-filepath=sys.argv[1]
+filepath = args.record_file
 
 with open(filepath, 'r') as f:
     first_val = 0
