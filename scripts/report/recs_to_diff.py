@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 """
 Convert record to diff from first value.  For example, files with content
@@ -19,7 +19,7 @@ Will be converted to
 import sys
 
 if len(sys.argv) < 2:
-    print "Usage: %s <record file>" % sys.argv[0]
+    print("Usage: %s <record file>" % sys.argv[0])
     exit(1)
 
 filepath=sys.argv[1]
@@ -29,4 +29,4 @@ with open(filepath, 'r') as f:
     for idx, line in enumerate(f):
         if idx == 0:
             first_val = int(line.split()[1])
-        print idx, int(line.split()[1]) - first_val
+        print(idx, int(line.split()[1]) - first_val)
