@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 
+import argparse
 import sys
 
-if len(sys.argv) < 3:
-    print("Usage: %s <min> <max>" % sys.argv[0])
-    sys.exit(1)
+parser = argparse.ArgumentParser()
+parser.add_argument('min', metavar='<min>', type=int, help='minimal y value')
+parser.add_argument('max', metavar='<max>', type=int, help='maximum y value')
+args = parser.parse_args()
 
-ymin = int(sys.argv[1])
-ymax = int(sys.argv[2])
+ymin = args.min
+ymax = args.max
 
 for l in sys.stdin:
     # We support hexadecimal with prefix '0x'
