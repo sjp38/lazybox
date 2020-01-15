@@ -112,12 +112,12 @@ def set_rasp2_kernel_param(kernel_param):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--bootloader', type=str, default=GRUB,
-            choices=[GRUB, CUBOX, RASP2], metavar='bootloader',
+            choices=[GRUB, CUBOX, RASP2], metavar='<bootloader>',
             help='bootloader of the system')
-    parser.add_argument('kernel_name', type=str, metavar='k_name',
+    parser.add_argument('kernel_name', type=str, metavar='<kernel>',
             help='name of kernel to be used')
     parser.add_argument('kernel_param', nargs='*', type=str,
-            metavar='k_param',
+            metavar='<kernel parameter>',
             help='parameter of the kernel to be used')
     parser.add_argument('--nobackup', action='store_true',
             help='Do not generate backup file')
