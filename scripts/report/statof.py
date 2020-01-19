@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 program_decr = """
 Make user specified status (average, min, max, stdev) from single or multiple
@@ -34,15 +34,15 @@ def single_file_stat(path):
         for l in f:
             nrs.append(int(l.split()[1], 0))
     if target == 'avg':
-        print sum(nrs) / len(nrs)
+        print(sum(nrs) / len(nrs))
     elif target == 'min':
-        print min(nrs)
+        print(min(nrs))
     elif target == 'max':
-        print max(nrs)
+        print(max(nrs))
     elif target == 'stdev':
         avg = sum(nrs) / len(nrs)
         variance = sum([pow(v - avg, 2) for v in nrs]) / len(nrs)
-        print math.sqrt(variance)
+        print(math.sqrt(variance))
 
 def pr_stderr(msg):
     sys.stderr.write(msg + "\n")
@@ -60,7 +60,7 @@ for p in paths:
     with open(p, 'r') as f:
         datas.append(f.read().strip().split('\n'))
         if len(datas[0]) != len(datas[-1]):
-            print "[Error] Number of lines are different for %s!" % p
+            print("[Error] Number of lines are different for %s!" % p)
             exit(1)
 
 for lidx in range(len(datas[0])):
@@ -86,8 +86,8 @@ for lidx in range(len(datas[0])):
                         value, avg, float(value) / avg))
         except ValueError:
             if not all(f == fields[0] for f in fields):
-                print "[Error] different text field! %s" % fields
+                print("[Error] different text field! %s" % fields)
                 exit(1)
             value = fields[0]
         values.append(value)
-    print "\t".join([str(v) for v in values])
+    print("\t".join([str(v) for v in values]))
