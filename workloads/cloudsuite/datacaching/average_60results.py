@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 import sys
 
@@ -34,5 +34,5 @@ for i in range(len(data[0])):
     for j in range(len(data)):
         sum_ += data[j][i]
     out.append(str(sum_ / len(data)))
-print " ".join(legend)
-print ", ".join(out)
+print(" ".join(legend))
+print(", ".join(out))
