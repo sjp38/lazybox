@@ -1,9 +1,9 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 import sys
 
 if len(sys.argv) < 2:
-    print "Usage: %s <field name>" % sys.argv[0]
+    print("Usage: %s <field name>" % sys.argv[0])
     exit(1)
 
 # example input line is output of `$ perf script`.  It may looks as below.
@@ -35,5 +35,5 @@ if len(data) > 0:
     average = sum(data) / float(len(data))
     min_ = min(data)
     max_ = max(data)
-print "avg: %.3f\nmin: %d\nmax: %d\ncount: %d" % (
-        average, min_, max_, len(data))
+print("avg: %.3f\nmin: %d\nmax: %d\ncount: %d" % (
+        average, min_, max_, len(data)))
