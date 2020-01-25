@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 import sys
 
@@ -19,6 +19,6 @@ for i in range(precision):
     idx = len(data) / precision * i
     if idx == len(data):
         break
-    print "%d %.3f" % (data[idx], 100.0 / precision * i)
+    print("%d %.3f" % (data[idx], 100.0 / precision * i))
 
-print "%d %d" % (data[-1], 100)
+print("%d %d" % (data[-1], 100))
