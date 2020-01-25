@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 import os
 import sys
@@ -10,7 +10,7 @@ warmup = 10
 USAGE = "%s <repeat count> <warmup seconds> <output image path>"
 
 if len(sys.argv) < 4:
-    print "Usage: ", USAGE
+    print("Usage: ", USAGE)
     exit(1)
 
 repeat = int(sys.argv[1])
@@ -28,4 +28,4 @@ for i in range(repeat):
     os.system("dmesg | grep cma")
     os.system("dmesg -c > /dev/null")
     time.sleep(2)
-    print ""
+    print("")
