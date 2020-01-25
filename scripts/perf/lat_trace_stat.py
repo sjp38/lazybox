@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 import sys
 
@@ -13,5 +13,5 @@ if len(data) > 0:
     average = sum(data) / float(len(data))
     min_ = min(data)
     max_ = max(data)
-print "avg, min, max, count: %.3f, %d, %d, %d" % (
-        average, min_, max_, len(data))
+print("avg, min, max, count: %.3f, %d, %d, %d" % (
+        average, min_, max_, len(data)))
