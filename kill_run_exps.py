@@ -21,11 +21,12 @@ print("\n\n%s[kill_run_exps] It's time to say good-bye, run_exps %s!\n\n"
 p = subprocess.Popen("ps -ef | grep run_exps.py",
         stdout=subprocess.PIPE, shell=True)
 out, err = p.communicate()
+out = out.decode('utf-8')
 
 print(out)
 
 pid = 0
-out = out.decode('utf-8').split('\n')
+out = out.split('\n')
 for line in out:
     spltd = line.split()
     if len(spltd) < 8:
