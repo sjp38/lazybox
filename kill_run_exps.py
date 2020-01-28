@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import os
 import signal
 import subprocess
@@ -8,11 +9,11 @@ import time
 
 import exp
 
-if len(sys.argv) < 2:
-    print("Usage: kill_run_exps.py <exp file path>")
-    exit(1)
+parser = argparse.ArgumentParser()
+parser.add_argument('exp_path', metavar='<exp file>', type=str)
+args = parser.parse_args()
 
-exp_path = sys.argv[1]
+exp_path = args.exp_path
 
 print("\n\n%s[kill_run_exps] It's time to say good-bye, run_exps %s!\n\n"
         % (exp.ltime(), exp_path))
