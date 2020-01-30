@@ -4,6 +4,7 @@
 Kill a process and its entire subprocesses
 """
 
+import argparse
 import os
 import signal
 import subprocess
@@ -12,14 +13,11 @@ import time
 
 import exp
 
-if len(sys.argv) < 2:
-    print("Usage: %s <process id>" % sys.argv[0])
-    exit(1)
+parser = argparse.ArgumentParser()
+parser.add_argument('pid', metavar='<pid>', type=int,
+        help = 'process id of target')
+args = parser.parse_args()
 
-try:
-    pid = int(sys.argv[1])
-except:
-    print("Wrong pid %s" % sys.argv[1])
-    exit(1)
+pid = args.pid
 
 exp.kill_childs_self(pid)
