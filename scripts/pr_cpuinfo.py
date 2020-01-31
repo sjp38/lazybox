@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
+import argparse
 import os
-import sys
 
 def parse_cpuinfo():
     cpus = []
@@ -80,30 +80,29 @@ def pr_topology(cpus):
         output += "\n"
         print(output)
 
-def pr_fields():
+def keys():
+    keys = []
     for f in sorted(list(cpus[0].keys()) + ["topology"]):
-        print("'" + f + "'")
-
-USAGE = "USAGE: %s <field>" % sys.argv[0]
+        keys.append(f)
+    return '\n'.join(keys)
 
 if __name__ == "__main__":
     cpus = parse_cpuinfo()
 
-    if len(sys.argv) < 2:
-        print(USAGE)
-        print("\nAvaliable fields are:")
-        pr_fields()
-        exit(0)
-    key = sys.argv[1]
+    parser = argparse.ArgumentParser(epilog='available keys are:\n\n' + keys(),
+            formatter_class=argparse.RawTextHelpFormatter)
+    parser.add_argument('key', metavar='<key>',
+            help='cpu information key')
+    args = parser.parse_args()
+    key = args.key
 
     if key == "topology":
         pr_topology(cpus)
         exit(0)
 
     if not key in cpus[0].keys():
-        print(USAGE)
-        print("\nKey '%s' is wrong.  Valid keys are:" % key)
-        pr_fields()
+        print("\n'%s' is a wrong key.  Valid keys are:" % key)
+        print(keys())
         exit(1)
 
     output = ''
