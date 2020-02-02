@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import os
 import sys
@@ -8,10 +8,10 @@ sys.path.append(fpath + '/../')
 import exp
 
 if len(sys.argv) < 2:
-    print "Usage: %s <pid>" % (sys.argv[0])
+    print("Usage: %s <pid>" % (sys.argv[0]))
     exit(1)
 
 pid = int(sys.argv[1])
 
 for pid in exp.childs_of(pid, False, print_tree=False):
-    print pid
+    print(pid)
