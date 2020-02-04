@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 
+import argparse
 import sys
-
-if len(sys.argv) < 2:
-    print("Usage: %s <field name>" % sys.argv[0])
-    exit(1)
 
 # example input line is output of `$ perf script`.  It may looks as below.
 # command, pid, tid, timestamp, tracepoint name, and trace
@@ -13,7 +10,11 @@ if len(sys.argv) < 2:
 #           page=0x2f95b76 pfn=49896310 order=0 migratetype=0 \
 #           gfp_flags=GFP_NOWAIT|__GFP_NOWARN
 
-wanted = sys.argv[1]
+parser = arg.parse.ArgumentParser()
+parser.add_argument('field_name', metavar='<filed name>',
+        help='name of the field')
+args = parser.parse_args()
+wanted = args.field_name
 
 data = []
 for line in sys.stdin:
