@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-import sys
+import argparse
 
-if len(sys.argv) < 2:
-    print("Usage: %s <memfree file>" % sys.argv[0])
-    exit(1)
-
-filepath = sys.argv[1]
+parser = argparse.ArgumentParser()
+parser.add_argument('file', metavar='<memfree file>',
+        help='file containing memfree data')
+args = parser.parse_args()
+filepath = args.file
 
 free_values = []
 with open(filepath, 'r') as f:
