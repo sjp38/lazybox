@@ -4,6 +4,7 @@
 Report buddy allocator stat
 """
 
+import argparse
 import subprocess
 import sys
 import time
@@ -40,9 +41,11 @@ def pr_buddystat():
                 human_readable_size_form(free_mem)))
 
 if __name__ == "__main__":
-    delay = -1
-    if len(sys.argv) > 1:
-        delay = float(sys.argv[1])
+    parser = argparse.ArgumentParser()
+    parser.add_argument('delay', nargs='?', type=int, metavar='<delay>',
+            default=-1, help='delay between stat')
+    args = parser.parse_args()
+    delay = args.delay
 
     while True:
         pr_buddystat()
