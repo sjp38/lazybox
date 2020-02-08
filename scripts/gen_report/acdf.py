@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import argparse
-import sys
 
 parser = argparse.ArgumentParser()
 parser.add_argument('data_file', metavar='<file>', type=str, help='data file')
@@ -36,11 +35,11 @@ for data in datas:
             counts[key] = [0] * len(data)
         counts[key][idx] += 1
 
-part_sums = [0] * len(sys.argv)
+part_sums = [0] * len(target_cols)
 for key in sorted(counts):
     for idx, val in enumerate(counts[key]):
         if not cdf.has_key(key):
-            cdf[key] = [0] * (len(sys.argv) - 3)
+            cdf[key] = [0] * len(target_cols)
         cdf[key][idx] = counts[key][idx] + part_sums[idx]
         part_sums[idx] += counts[key][idx]
 
