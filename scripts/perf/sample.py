@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
+import argparse
 import sys
 
-if len(sys.argv) != 2:
-    print("Usage: %s <interval between lines>" % sys.argv[0])
-    sys.exit(1)
-interval=int(sys.argv[1])
+parser = argparse.ArgumentParser()
+parser.add_argument('interval', metavar='<interval>', type=int,
+        help='interval between lines')
+args = parser.parse_args()
+interval = args.interval
 
 i = 0
 for l in sys.stdin:
