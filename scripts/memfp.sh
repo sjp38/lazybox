@@ -20,7 +20,7 @@ do
 	PIDS=`./subprocs.py $PID`
 	for P in $PIDS
 	do
-		ps -o vsz=,rss=,pid=,cmd= -f $P
+		ps -o vsz=,rss=,pid=,cmd= --pid $P
 	done
 	sleep 1
 done
