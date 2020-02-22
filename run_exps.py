@@ -93,6 +93,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--verbose', '-v', action='store_true',
             help='Make some noisy log')
+    parser.add_argument('--silence', '-s', action='store_true',
+            help='Do not print log message at all')
     parser.add_argument('--dryrun', action='store_true',
             help='print what command will be executed only')
     parser.add_argument('exp_files', metavar='<file>', nargs='+',
@@ -105,6 +107,8 @@ if __name__ == '__main__':
     dryrun = args.dryrun
     if args.verbose:
         exp.verbose = True
+    if args.silence:
+        exp.silence = True
 
     for exp_file in args.exp_files:
         current_exps = parse_file(exp_file)

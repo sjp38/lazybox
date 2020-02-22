@@ -13,6 +13,8 @@ import signal
 import subprocess
 import time
 
+silence = False
+
 def ltime():
     return datetime.datetime.now().strftime("[%H:%M:%S] ")
 
@@ -73,12 +75,14 @@ class Exp:
         return self.__str__()
 
     def terminate_tasks(self):
-        print(ltime(), "terminate tasks of exp %s" % self)
+        if not silence:
+            print(ltime(), "terminate tasks of exp %s" % self)
         for task in self.main_tasks:
             if task.popn.poll() == None:
                 kill_childs_self(task.popn.pid)
 
-        print(ltime(), "kill background procs")
+        if not silence:
+            print(ltime(), "kill background procs")
         for back_proc in self.back_procs:
             if back_proc.poll() == None:
                 kill_childs_self(back_proc.pid)
@@ -87,7 +91,8 @@ class Exp:
         "Returns True if experiment executed successfully, False if not"
         self.back_procs = []
         self.main_tasks = []
-        print(ltime(), "do exp %s" % self)
+        if not silence:
+            print(ltime(), "do exp %s" % self)
         for start in self.start_cmds:
             subprocess.call(start, shell=True, executable="/bin/bash")
         for back in self.back_cmds:
@@ -106,7 +111,9 @@ class Exp:
             for task in self.main_tasks:
                 if task.popn.poll() == None:
                     continue
-                print(ltime(), "%s(%s) terminated" % (task.cmd, task.popn.pid))
+                if not silence:
+                    print(ltime(), "%s (%s) terminated" % (
+                        task.cmd, task.popn.pid))
                 task.completed = True
                 nr_completed = sum(t.completed for t in self.main_tasks)
                 if nr_completed < len(self.main_tasks):
@@ -119,8 +126,9 @@ class Exp:
 
         for check in self.check_cmds:
             ret = subprocess.call(check, shell=True, executable="/bin/bash")
-            print(ltime(), "check %s return %s" % (check, ret))
-            if ret != 0:
+            if not silence:
+                print(ltime(), "check %s return %s" % (check, ret))
+            if ret != 0 and not silence:
                 print(ltime(), "check %s failed with return code %s" %
                         (check, ret))
                 return False
