@@ -126,6 +126,8 @@ class Exp:
                 return False
         return True
 
+verbose = False
+
 def kill_childs_self(pid):
     childs = all_childs(pid)
     for child in reversed(childs):
@@ -138,7 +140,8 @@ def kill_childs_self(pid):
             # Because the processes are stopeed by SIGSTOP that sent from
             # childs_of(), we should send SIGCONT, too.  It may spawn one more
             # child while it.  But, let's just hope for now...
-            print(ltime(), "kill child: ", child)
+            if verbose:
+                print(ltime(), "kill child: ", child)
             os.kill(child, signal.SIGINT)
             os.kill(child, signal.SIGCONT)
             time.sleep(0.5)
@@ -149,7 +152,8 @@ def kill_childs_self(pid):
             print(ltime(), "error %s occurred while killing child %s" %
                     (e, child))
     try:
-        print(ltime(), "kill self: %s" % pid)
+        if verbose:
+            print(ltime(), "kill self: %s" % pid)
         os.kill(pid, signal.SIGTERM)
         os.kill(pid, signal.SIGKILL)
     except OSError as e:
@@ -157,10 +161,11 @@ def kill_childs_self(pid):
 
 def all_childs(pid):
     while True:
-        childs = childs_of(pid, True)
-        childs_again = childs_of(pid, True)
-        print(ltime(), "got childs ", childs, "for first time")
-        print(ltime(), "got childs ", childs_again, "for second time")
+        childs = childs_of(pid, True, verbose)
+        childs_again = childs_of(pid, True, verbose)
+        if verbose:
+            print(ltime(), "got childs ", childs, "for first time")
+            print(ltime(), "got childs ", childs_again, "for second time")
         if (childs>childs_again)-(childs<childs_again):
             print(ltime(), "childs are not identical. get childs again")
             continue
