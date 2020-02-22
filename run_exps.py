@@ -13,7 +13,7 @@ import signal
 import sys
 import time
 
-from exp import Exp
+import exp
 
 def parse_lines(f):
     START = "start "
@@ -51,14 +51,14 @@ def parse_lines(f):
         elif line.startswith(CHECK):
             checks.append(line[len(CHECK):])
         elif len(line.split()) == 0 and len(mains) > 0:
-            exps.append(Exp(starts, mains, backs, ends, checks))
+            exps.append(exp.Exp(starts, mains, backs, ends, checks))
             starts = []
             mains = []
             backs = []
             ends = []
             checks = []
     if len(mains) != 0:
-        exps.append(Exp(starts, mains, backs, ends, checks))
+        exps.append(exp.Exp(starts, mains, backs, ends, checks))
     return exps
 
 def parse_file(filename):
@@ -91,6 +91,8 @@ def sig_handler(signal, frame):
 if __name__ == '__main__':
     RETRY_LIMIT = 10
     parser = argparse.ArgumentParser()
+    parser.add_argument('--verbose', '-v', action='store_true',
+            help='Make some noisy log')
     parser.add_argument('--dryrun', action='store_true',
             help='print what command will be executed only')
     parser.add_argument('exp_files', metavar='<file>', nargs='+',
@@ -101,6 +103,8 @@ if __name__ == '__main__':
     signal.signal(signal.SIGTERM, sig_handler)
 
     dryrun = args.dryrun
+    if args.verbose:
+        exp.verbose = True
 
     for exp_file in args.exp_files:
         current_exps = parse_file(exp_file)
