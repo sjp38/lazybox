@@ -11,7 +11,7 @@ generate human readable reports.
 
 Each experiment is identified by its 'name' and 'variant'.  You should be able
 to know what workloads should run for the 'name'.  'variant' is only for
-organization of the outputs.
+additional information whilch will be used for organization of the outputs.
 
 Files for each experiment
 =========================
