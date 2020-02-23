@@ -38,13 +38,13 @@ done
 mkdir -p $ODIR
 
 runners_dir=$EXPNAME/runners
-for work_types in start main back end
+for workload_type in start main back end
 do
-	pattern='^'$work_types'_*'
-	runners=`ls $runners_dir | grep -e $pattern | sort`
+	runners_dir=$EXPNAME/runners/$workload_type
+	runners=`ls $runners_dir | sort`
 	for runner in $runners
 	do
-		echo "$work_types" $runners_dir/$runner $ODIR
+		echo "$workload_type" $runners_dir/$runner $ODIR
 	done
 done
 GROUP=`groups $USER | awk '{print $3}'`

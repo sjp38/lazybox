@@ -20,14 +20,14 @@ Nonetheless, the essential parts of each experiements should be implemented by
 users by themeselves.  They should implement some executable files and place
 those under specific directory with specific name.
 
-`<exp name>/runners/`
----------------------
+`<exp name>/runners/(start|main|back|end)/`
+------------------------------------------
 
-Place executable files each running different workload for the experiment.  The
-name of the executables should be `(start|main|back|end)_*`.  Each of the files
-will be executed as `(start|main_back_end)` workload, as defined by lazybox
-`run_exps.py`.  The files will be sorted by the name using `sort` command and
-be described to the `run_exps.py` in the order.
+Place executable files each running different workload for the experiment.
+Each of the files under each last directory (start, main, back, or end) will be
+executed as `(start|main|back|end)` workload, as defined by lazybox.  The files
+will be sorted by the name using `sort` command and be described to the
+`run_exps.py` in the order.
 
 Each of the runners receives the output directory for this run as an argument.
 The outputs containing information for the final report should be stored in the
