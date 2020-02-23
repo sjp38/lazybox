@@ -1,0 +1,61 @@
+This directory contains scripts for repeated 1) running of experiments
+constructed with a number of main workloads having multiple variants and
+several background workloads including profilers, 2) organizing the output of
+the workloads for each run, and 3) generating reports from the repeated runs.
+
+For that, this directory contains two main scripts, `run.sh` and `post.sh`.
+`run.sh` does run the required workloads and organize the outputs in a file
+under hierarchical directories.  `post.sh` get numbers by parsing the outputs,
+make stat (average, min, max, stdev) of the numbers for the repeated runs, and
+generate human readable reports.
+
+Each experiment is identified by its 'name' and 'variant'.  You should be able
+to know what workloads should run for the 'name'.  'variant' is only for
+organization of the outputs.
+
+Files for each experiment
+=========================
+
+Nonetheless, the essential parts of each experiements should be implemented by
+users by themeselves.  They should implement some executable files and place
+those under specific directory with specific name.
+
+`<exp name>/runners/`
+---------------------
+
+Place executable files each running different workload for the experiment.  The
+name of the executables should be `(start|main|back|end)_*`.  Each of the files
+will be executed as `(start|main_back_end)` workload, as defined by lazybox
+`run_exps.py`.  The files will be sorted by the name using `sort` command and
+be described to the `run_exps.py` in the order.
+
+Each of the runners receives the output directory for this run as an argument.
+The outputs containing information for the final report should be stored in the
+directory as a file.
+
+`<exp name>/parsers/`
+---------------------
+
+Place executable files each parsing different raw output files made by your
+runners (executable files under `<exp name>/runners/*`).  The name of the
+executable file should be matched with one of the raw output files.  For each
+output file, the parser matched with the name will be executed.
+
+Each of the parsers receives the path to the raw output files and the path to
+the directory that parsed outputs should be stored.  The parsed data ashould be
+placed under the directory as a file.
+
+
+`<exp name>/stats/`
+-------------------
+
+Place executable files each generating stat of the parsed outputs for each of
+the repeated runs.  The name of the executable file should be matched with one
+of the parsed output files.  For each parsed output file, the stat executable
+file matched with the name will be executed.  If not file matching with the
+name exists, average, minimum, maximu, and standard deviation of the parsed
+outputs will be generated.  If the parsed file format is different with the
+default stat assumption, stat will not be generated.
+
+Each of the stat generator receives the path to the stats directory and the
+paths to the parsed files directories.
