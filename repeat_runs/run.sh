@@ -10,6 +10,6 @@ do
 	do
 		echo "$exp $i iteration"
 		$BINDIR/_gen_exp_cfg.sh $exp $CURRENT_VARIANT | \
-		sudo $LBX/run_exps.py -s stdin
+		sudo $LBX/run_exps.py stdin
 	done
 done
