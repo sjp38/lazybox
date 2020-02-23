@@ -1,7 +1,9 @@
 #!/bin/bash
 
-LBX='../'
-ODIR_ROOT='results'
+BINDIR=`dirname $0`
+
+LBX=$BINDIR'/../'
+ODIR_ROOT=$PWD'/results'
 
 if [ -z "$CURRENT_VARIANT" ]
 then

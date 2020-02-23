@@ -4,7 +4,9 @@
 # pipe the generated configuration to the `run_exps.py` for actual run of the
 # experiment.
 
-source __common.sh
+BINDIR=`dirname $0`
+
+source $BINDIR/__common.sh
 
 if [ $# -ne 2 ]
 then
