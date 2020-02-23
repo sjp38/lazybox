@@ -14,3 +14,5 @@ if [ -z "$REPEATS" ]
 then
 	REPEATS=1
 fi
+
+PARSED='parsed'
