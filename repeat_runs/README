@@ -64,7 +64,6 @@ paths to the parsed files directories.
 TODO
 ====
 
-- Implement parsing
 - Implement stat
 - Add report making
 - Add pre-requisites check
