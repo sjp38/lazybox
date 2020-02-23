@@ -59,3 +59,12 @@ default stat assumption, stat will not be generated.
 
 Each of the stat generator receives the path to the stats directory and the
 paths to the parsed files directories.
+
+
+TODO
+====
+
+- Implement parsing
+- Implement stat
+- Add report making
+- Add pre-requisites check
