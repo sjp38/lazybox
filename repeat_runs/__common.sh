@@ -1,6 +1,7 @@
 #!/bin/bash
 
 LBX='../'
+ODIR_ROOT='results'
 
 if [ -z "$CURRENT_VARIANT" ]
 then
