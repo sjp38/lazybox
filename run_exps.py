@@ -65,8 +65,6 @@ def parse_file(filename):
     f = sys.stdin
     if filename != 'stdin':
         f = open(filename)
-    else:
-        print('receive experiments specification from stdin')
 
     exps = parse_lines(f)
 
