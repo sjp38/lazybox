@@ -33,8 +33,9 @@ will be sorted by the name using `sort` command and be described to the
 `run_exps.py` in the order.
 
 Each of the runners receives the output directory for this run as an argument.
-The outputs containing information for the final report should be stored in the
-directory as a file.
+The output directory is `<exp name>/<variant>/0(0-9)`.  Thus, you can know
+current exp name and variant using the argument.  The outputs containing
+information for the final report should be stored in the directory as a file.
 
 `<exp name>/parsers/`
 ---------------------
