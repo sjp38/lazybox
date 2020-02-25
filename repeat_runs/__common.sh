@@ -5,10 +5,12 @@ BINDIR=`dirname $0`
 LBX=$BINDIR'/../'
 ODIR_ROOT=$PWD'/results'
 
-if [ "$CFG" ]
+if [ -z "$CFG" ]
 then
-	source $CFG
+	CFG=$BINDIR/examples/example.config
 fi
+
+source $CFG
 
 if [ -z "$VARIANTS" ]
 then
