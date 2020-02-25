@@ -37,6 +37,9 @@ The output directory is `<exp name>/<variant>/0(0-9)`.  Thus, you can know
 current exp name and variant using the argument.  The outputs containing
 information for the final report should be stored in the directory as a file.
 
+You can add custom runners by defining `(start|main|back|end)_RUNNERS`
+variables.  Each variable should contain each type of workloads.
+
 `<exp name>/parsers/`
 ---------------------
 
