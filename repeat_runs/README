@@ -50,6 +50,9 @@ Each of the parsers receives the path to the raw output files and the path to
 the directory that parsed outputs should be stored.  The parsed data ashould be
 placed under the directory as a file.
 
+You can change this directory to any other path by defining `parsers_dir` in
+your config file.
+
 
 `<exp name>/stats/`
 -------------------

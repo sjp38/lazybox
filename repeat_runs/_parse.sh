@@ -10,7 +10,10 @@ then
 	exit 1
 fi
 
-parsers_dir=$1'/parsers/'
+if [ -z "$parsers_dir" ]
+then
+	parsers_dir=$1'/parsers/'
+fi
 raw_outputs_dir=$2
 parsed_dir=$raw_outputs_dir/$PARSED
 
