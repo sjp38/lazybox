@@ -38,13 +38,23 @@ done
 mkdir -p $ODIR
 
 runners_dir=$EXPNAME/runners
-for workload_type in start main back end
+for runner_type in "start" "main" "back" "end"
 do
-	runners_dir=$EXPNAME/runners/$workload_type
+	custom_runners_varname=$runner_type"_RUNNERS"
+	for runner in ${!custom_runners_varname}
+	do
+		echo "$runner_type $runner $ODIR"
+	done
+
+	runners_dir=$EXPNAME/runners/$runner_type
+	if [ ! -d $runners_dir ]
+	then
+		continue
+	fi
 	runners=`ls $runners_dir | sort`
 	for runner in $runners
 	do
-		echo "$workload_type" $runners_dir/$runner $ODIR
+		echo "$runner_type" $runners_dir/$runner $ODIR
 	done
 done
 GROUP=`groups $USER | awk '{print $3}'`
