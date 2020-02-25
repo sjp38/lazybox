@@ -10,11 +10,9 @@ make stat (average, min, max, stdev) of the numbers for the repeated runs, and
 generate human readable reports.
 
 Each experiment is identified by its 'name' and 'variant'.  One experiment
-could contain multiple variants.  By knowing each 'variant', you should be able
-to identify what workloads should run under what condition and what outputs
-should be generated.  For example, if you are evaluating performance of several
-versions of kernel using several workloads, the combination of each workload
-and each kernel version will be the variants.
+could contain multiple variants.  By knowing the 'name' and 'variant', you
+should be able to identify what workloads should run under what condition and
+what outputs should be generated.
 
 Files for each experiment
 =========================
