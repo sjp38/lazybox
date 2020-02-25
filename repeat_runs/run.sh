@@ -8,8 +8,11 @@ for i in $(seq $REPEATS)
 do
 	for exp in $EXPERIMENTS
 	do
-		echo "$exp $i iteration"
-		$BINDIR/_gen_exp_cfg.sh $exp $CURRENT_VARIANT | \
-		sudo $LBX/run_exps.py stdin
+		for var in $VARIANTS
+		do
+			echo "$i time $exp/$var"
+			$BINDIR/_gen_exp_cfg.sh $exp $var | \
+			sudo $LBX/run_exps.py stdin
+		done
 	done
 done

@@ -5,9 +5,9 @@ BINDIR=`dirname $0`
 LBX=$BINDIR'/../'
 ODIR_ROOT=$PWD'/results'
 
-if [ -z "$CURRENT_VARIANT" ]
+if [ -z "$VARIANTS" ]
 then
-	CURRENT_VARIANT="orig"
+	VARIANTS="orig"
 fi
 
 if [ -z "$REPEATS" ]
