@@ -51,8 +51,7 @@ do
 	then
 		continue
 	fi
-	runners=`ls $runners_dir | sort`
-	for runner in $runners
+	for runner in `ls $runners_dir | sort`
 	do
 		echo "$runner_type" $runners_dir/$runner $ODIR
 	done
