@@ -14,3 +14,12 @@ do
 		done
 	done
 done
+
+for exp in $EXPERIMENTS
+do
+	for v in $VARIANTS
+	do
+		ODIR=$ODIR_ROOT/$exp/$v
+		$BINDIR/_stat.sh $exp $ODIR
+	done
+done
