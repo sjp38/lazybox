@@ -43,8 +43,9 @@ variables.  Each variable should contain each type of workloads.
 
 Place executable files each parsing different raw output files made by your
 runners (executable files under `<exp name>/runners/*`).  The name of the
-executable file should be matched with one of the raw output files.  For each
-output file, the parser matched with the name will be executed.
+executable file should be matched with one of the raw output files, but can
+have any suffix.  For each output file, the parser matched with the name will
+be executed.
 
 Each of the parsers receives the path to the raw output files and the path to
 the directory that parsed outputs should be stored.  The parsed data ashould be
@@ -54,24 +55,20 @@ You can change this directory to any other path by defining `parsers_dir` in
 your config file.
 
 
-`<exp name>/stats/`
--------------------
+`<exp name>/statists/`
+----------------------
 
 Place executable files each generating stat of the parsed outputs for each of
 the repeated runs.  The name of the executable file should be matched with one
-of the parsed output files.  For each parsed output file, the stat executable
-file matched with the name will be executed.  If not file matching with the
-name exists, average, minimum, maximu, and standard deviation of the parsed
-outputs will be generated.  If the parsed file format is different with the
-default stat assumption, stat will not be generated.
+of the parsed output files, but can have any suffix.  For each parsed output
+file, the stat executable file matched with the name will be executed.
 
-Each of the stat generator receives the path to the stats directory and the
-paths to the parsed files directories.
+Each of the stat generator receives the path of the directory that their
+statistics should be saved, and the paths to the parsed files directories.
 
 
 TODO
 ====
 
-- Implement stat
 - Add report making
 - Add pre-requisites check
