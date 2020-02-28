@@ -13,6 +13,8 @@ import signal
 import subprocess
 import time
 
+silence = False
+
 def ltime():
     return datetime.datetime.now().strftime("[%H:%M:%S] ")
 
@@ -73,12 +75,14 @@ class Exp:
         return self.__str__()
 
     def terminate_tasks(self):
-        print(ltime(), "terminate tasks of exp %s" % self)
+        if not silence:
+            print(ltime(), "terminate tasks of exp %s" % self)
         for task in self.main_tasks:
             if task.popn.poll() == None:
                 kill_childs_self(task.popn.pid)
 
-        print(ltime(), "kill background procs")
+        if not silence:
+            print(ltime(), "kill background procs")
         for back_proc in self.back_procs:
             if back_proc.poll() == None:
                 kill_childs_self(back_proc.pid)
@@ -87,7 +91,8 @@ class Exp:
         "Returns True if experiment executed successfully, False if not"
         self.back_procs = []
         self.main_tasks = []
-        print(ltime(), "do exp %s" % self)
+        if not silence:
+            print(ltime(), "do exp %s" % self)
         for start in self.start_cmds:
             subprocess.call(start, shell=True, executable="/bin/bash")
         for back in self.back_cmds:
@@ -106,7 +111,9 @@ class Exp:
             for task in self.main_tasks:
                 if task.popn.poll() == None:
                     continue
-                print(ltime(), "%s(%s) terminated" % (task.cmd, task.popn.pid))
+                if not silence:
+                    print(ltime(), "%s (%s) terminated" % (
+                        task.cmd, task.popn.pid))
                 task.completed = True
                 nr_completed = sum(t.completed for t in self.main_tasks)
                 if nr_completed < len(self.main_tasks):
@@ -119,12 +126,15 @@ class Exp:
 
         for check in self.check_cmds:
             ret = subprocess.call(check, shell=True, executable="/bin/bash")
-            print(ltime(), "check %s return %s" % (check, ret))
-            if ret != 0:
+            if not silence:
+                print(ltime(), "check %s return %s" % (check, ret))
+            if ret != 0 and not silence:
                 print(ltime(), "check %s failed with return code %s" %
                         (check, ret))
                 return False
         return True
+
+verbose = False
 
 def kill_childs_self(pid):
     childs = all_childs(pid)
@@ -138,7 +148,8 @@ def kill_childs_self(pid):
             # Because the processes are stopeed by SIGSTOP that sent from
             # childs_of(), we should send SIGCONT, too.  It may spawn one more
             # child while it.  But, let's just hope for now...
-            print(ltime(), "kill child: ", child)
+            if verbose:
+                print(ltime(), "kill child: ", child)
             os.kill(child, signal.SIGINT)
             os.kill(child, signal.SIGCONT)
             time.sleep(0.5)
@@ -149,7 +160,8 @@ def kill_childs_self(pid):
             print(ltime(), "error %s occurred while killing child %s" %
                     (e, child))
     try:
-        print(ltime(), "kill self: %s" % pid)
+        if verbose:
+            print(ltime(), "kill self: %s" % pid)
         os.kill(pid, signal.SIGTERM)
         os.kill(pid, signal.SIGKILL)
     except OSError as e:
@@ -157,10 +169,11 @@ def kill_childs_self(pid):
 
 def all_childs(pid):
     while True:
-        childs = childs_of(pid, True)
-        childs_again = childs_of(pid, True)
-        print(ltime(), "got childs ", childs, "for first time")
-        print(ltime(), "got childs ", childs_again, "for second time")
+        childs = childs_of(pid, True, verbose)
+        childs_again = childs_of(pid, True, verbose)
+        if verbose:
+            print(ltime(), "got childs ", childs, "for first time")
+            print(ltime(), "got childs ", childs_again, "for second time")
         if (childs>childs_again)-(childs<childs_again):
             print(ltime(), "childs are not identical. get childs again")
             continue
