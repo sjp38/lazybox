@@ -2,6 +2,18 @@
 
 """
 Convert records to table
+
+Format of records:
+    <name of record1>
+    <key>[:] <value>
+    <key2>[:] <value2>
+    ...
+    <keyn>[:] <value3>
+    <blank line>
+    ...
+
+    <name of record2>
+    ...
 """
 
 import sys
