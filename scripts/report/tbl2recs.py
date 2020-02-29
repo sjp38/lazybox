@@ -1,16 +1,38 @@
 #!/usr/bin/env python3
 
-import os
+"""
+Transfer table to records
+"""
+
 import sys
 
-# Assumes table format of files_to.py only.
+def main():
+    names = None
+    recs = []
+    keys = []
+    for line in sys.stdin:
+        line = line.strip()
+        if not names:
+            names = line.split()[1:]
+            continue
+        for idx, field in enumerate(line.split()):
+            if idx == 0:
+                key = field
+                keys.append(key)
+                continue
+            if len(recs) < idx:
+                rec = {}
+                recs.append(rec)
+            else:
+                rec = recs[idx - 1]
+            rec[key] = field
 
-data = sys.stdin.read().strip().split('\n')[1:]
-legends = data[0].split()[1:]
-for idx, leg in enumerate(legends):
-    print(leg)
-    for line in data[1:]:
-        fields = line.split()
-        print("%s\t%s" % (fields[0], fields[idx + 1]))
-    if idx < len(legends) - 1:
-        print("\n")
+    for idx, rec in enumerate(recs):
+        print(names[idx])
+        for key in keys:
+            print('%s\t%s' % (key, rec[key]))
+        if idx != len(recs) - 1:
+            print('\n')
+
+if __name__ == '__main__':
+    main()
