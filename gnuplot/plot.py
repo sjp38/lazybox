@@ -12,7 +12,7 @@ def main():
             help='read data from stdin')
     parser.add_argument('--file', '-f', metavar='<file>', help='data file')
     parser.add_argument('--type', '-t', choices=['scatter', 'clustered_boxes'],
-            help='plot type')
+            default='scatter', help='plot type')
     parser.add_argument('--ytitle', '-y', metavar='<title>',
             help='y axis title')
     parser.add_argument('--xtitle', '-x', metavar='<title>',
@@ -33,6 +33,8 @@ def main():
         print("Unuspported output type '%s'." % out_extension)
         exit(-1)
 
+    plot_type = args.type
+
     if args.stdin:
         f = sys.stdin
     elif args.file:
@@ -52,8 +54,14 @@ def main():
     cmdlines.append("""
     load "lzstyle.gp";
 
-    set autoscale;
+    set autoscale;""")
 
+    if plot_type == 'clustered_boxes':
+        cmdlines.append("""
+        set style data histogram;
+        set style histogram cluster gap 2;""")
+
+    cmdlines.append("""
     set term %s;
     set output '%s';
     """ % (out_extension, output))
@@ -70,9 +78,14 @@ def main():
     if log:
         cmdlines.append("set logscale %s;" % log)
 
-    cmdlines.append("""
-    plot for [idx=0:%s] '%s' index idx using 1:2 with linespoints title columnheader(1);
-    """ % (nr_recs, tmp_path))
+    if plot_type == 'scatter':
+        cmdlines.append("""
+        plot for [idx=0:%s] '%s' index idx using 1:2 with linespoints title columnheader(1);
+        """ % (nr_recs, tmp_path))
+    elif plot_type == 'clustered_boxes':
+        cmdlines.append("""
+        plot '%s' using 2:xtic(1) title column, for [i=3:%s] '' using i title column;
+        """ % (tmp_path, nr_cols))
 
     gnuplot_cmd = '\n'.join(cmdlines)
 
