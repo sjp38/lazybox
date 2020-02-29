@@ -22,11 +22,13 @@ def get_args():
             help='plot x axis in logscale')
     parser.add_argument('--ylog', action='store_true',
             help='plot y axis in logscale')
+    parser.add_argument('--xtics_rotate', metavar='<degree>', type=int,
+            help='xtics rotate degree')
     parser.add_argument('out', metavar='<file>', help='output file')
     return parser.parse_args()
 
 def gen_gp_cmd(data_path, nr_recs, nr_cols, plot_type, output, xtitle, ytitle,
-        xlog, ylog):
+        xlog, ylog, xtics_rotate):
     cmdlines = []
     cmdlines.append("""
     load "lzstyle.gp";
@@ -42,6 +44,10 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, plot_type, output, xtitle, ytitle,
     set term %s;
     set output '%s';
     """ % (output.split('.')[-1], output))
+
+    if xtics_rotate:
+        cmdlines.append("set xtics rotate by %d;" % xtics_rotate)
+
     if xtitle:
         cmdlines.append("set xlabel '%s';" % xtitle)
     if ytitle:
@@ -74,7 +80,7 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, plot_type, output, xtitle, ytitle,
 
     return '\n'.join(cmdlines)
 
-def plot(data, plot_type, output, xtitle, ytitle, xlog, ylog):
+def plot(data, plot_type, output, xtitle, ytitle, xlog, ylog, xtics_rotate):
     tmp_path = tempfile.mkstemp()[1]
     with open(tmp_path, 'w') as f:
         f.write(data)
@@ -83,7 +89,7 @@ def plot(data, plot_type, output, xtitle, ytitle, xlog, ylog):
     nr_recs = len(data.split('\n\n')) - 1
 
     gnuplot_cmd = gen_gp_cmd(tmp_path, nr_recs, nr_cols, plot_type, output,
-            xtitle, ytitle, xlog, ylog)
+            xtitle, ytitle, xlog, ylog, xtics_rotate)
 
     subprocess.call(['gnuplot', '-e', gnuplot_cmd])
     os.remove(tmp_path)
@@ -109,7 +115,8 @@ def main():
     data = f.read()
     f.close()
 
-    plot(data, plot_type, output, args.xtitle, args.ytitle, args.xlog, args.ylog)
+    plot(data, plot_type, output, args.xtitle, args.ytitle,
+            args.xlog, args.ylog, args.xtics_rotate)
 
 if __name__ == '__main__':
     main()
