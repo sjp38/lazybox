@@ -3,16 +3,22 @@
 """
 Convert records to table
 
-Format of records:
-    <name of record1>
-    <key>[:] <value>
-    <key2>[:] <value2>
-    ...
-    <keyn>[:] <value3>
-    <blank line>
-    ...
+For example, converts
 
-    <name of record2>
+    name1
+    key1 val11
+    key2 val21
+
+
+    name2
+    key1 val12
+    key2 val22
+
+to
+
+    <...> name1 name2
+    key1  val11 val12
+    key2  val21 val22
     ...
 """
 
