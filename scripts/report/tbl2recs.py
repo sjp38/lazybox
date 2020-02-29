@@ -2,6 +2,24 @@
 
 """
 Transfer table to records
+
+For example, converts
+
+    <...> name1 name2
+    key1  val11 val12
+    key2  val21 val22
+    ...
+
+to
+
+    name1
+    key1    val11
+    key2    val21
+
+
+    name2
+    key1    val12
+    key2    val22
 """
 
 import sys
