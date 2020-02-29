@@ -3,10 +3,6 @@
 import os
 import sys
 
-fpath = os.path.realpath(os.path.dirname(__file__))
-sys.path.append(fpath + '/../gen_report')
-import ltldat
-
 # Assumes table format of files_to.py only.
 
 data = sys.stdin.read().strip().split('\n')[1:]
