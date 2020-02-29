@@ -58,9 +58,9 @@ def main():
     set output '%s';
     """ % (out_extension, output))
     if args.xtitle:
-        cmdlines.append('set xlabel %s' % args.xtitle)
+        cmdlines.append("set xlabel '%s';" % args.xtitle)
     if args.ytitle:
-        cmdlines.append('set ylabel %s' % args.ytitle)
+        cmdlines.append("set ylabel '%s';" % args.ytitle)
 
     log = ''
     if args.xlog:
