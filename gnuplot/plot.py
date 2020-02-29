@@ -11,7 +11,8 @@ def get_args():
     parser.add_argument('--stdin', '-s', action='store_true',
             help='read data from stdin')
     parser.add_argument('--file', '-f', metavar='<file>', help='data file')
-    parser.add_argument('--type', '-t', choices=['scatter', 'clustered_boxes'],
+    parser.add_argument('--type', '-t',
+            choices=['scatter', 'scatter-yerr', 'clustered_boxes'],
             default='scatter', help='plot type')
     parser.add_argument('--ytitle', '-y', metavar='<title>',
             help='y axis title')
@@ -54,7 +55,13 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, plot_type, output, xtitle, ytitle,
     if log:
         cmdlines.append("set logscale %s;" % log)
 
-    if plot_type == 'scatter':
+    if plot_type == 'scatter-yerr':
+        cmdlines.append("""
+        plot '%s' using 1:2:3 linestyle 1 with yerrorbars notitle, \
+        for [idx=0:%s] '%s' index idx using 1:2 with linespoints \
+                title columnheader(1);
+        """ % (data_path, nr_recs, data_path))
+    elif plot_type == 'scatter':
         cmdlines.append("""
         plot for [idx=0:%s] '%s' index idx using 1:2 with linespoints \
                 title columnheader(1);
