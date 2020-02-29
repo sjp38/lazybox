@@ -24,8 +24,8 @@ def get_args():
     parser.add_argument('out', metavar='<file>', help='output file')
     return parser.parse_args()
 
-def gen_gp_cmd(data_path, nr_recs, nr_cols, plot_type, out_extension, output,
-        xtitle, ytitle, xlog, ylog):
+def gen_gp_cmd(data_path, nr_recs, nr_cols, plot_type, output, xtitle, ytitle,
+        xlog, ylog):
     cmdlines = []
     cmdlines.append("""
     load "lzstyle.gp";
@@ -40,7 +40,7 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, plot_type, out_extension, output,
     cmdlines.append("""
     set term %s;
     set output '%s';
-    """ % (out_extension, output))
+    """ % (output.split('.')[-1], output))
     if xtitle:
         cmdlines.append("set xlabel '%s';" % xtitle)
     if ytitle:
@@ -56,14 +56,30 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, plot_type, out_extension, output,
 
     if plot_type == 'scatter':
         cmdlines.append("""
-        plot for [idx=0:%s] '%s' index idx using 1:2 with linespoints title columnheader(1);
+        plot for [idx=0:%s] '%s' index idx using 1:2 with linespoints \
+                title columnheader(1);
         """ % (nr_recs, data_path))
     elif plot_type == 'clustered_boxes':
         cmdlines.append("""
-        plot '%s' using 2:xtic(1) title column, for [i=3:%s] '' using i title column;
-        """ % (tmp_path, nr_cols))
+        plot '%s' using 2:xtic(1) title column, for [i=3:%s] '' \
+                using i title column;
+        """ % (data_path, nr_cols))
 
     return '\n'.join(cmdlines)
+
+def plot(data, plot_type, output, xtitle, ytitle, xlog, ylog):
+    tmp_path = tempfile.mkstemp()[1]
+    with open(tmp_path, 'w') as f:
+        f.write(data)
+
+    nr_cols = len(data.split('\n')[0].split())
+    nr_recs = len(data.split('\n\n')) - 1
+
+    gnuplot_cmd = gen_gp_cmd(tmp_path, nr_recs, nr_cols, plot_type, output,
+            xtitle, ytitle, xlog, ylog)
+
+    subprocess.call(['gnuplot', '-e', gnuplot_cmd])
+    os.remove(tmp_path)
 
 def main():
     args = get_args()
@@ -86,19 +102,7 @@ def main():
     data = f.read()
     f.close()
 
-    tmp_path = tempfile.mkstemp()[1]
-    with open(tmp_path, 'w') as f:
-        f.write(data)
-
-    nr_cols = len(data.split('\n')[0].split())
-    nr_recs = len(data.split('\n\n')) - 1
-
-    gnuplot_cmd = gen_gp_cmd(tmp_path, nr_recs, nr_cols, plot_type,
-            out_extension, output, args.xtitle, args.ytitle, args.xlog,
-            args.ylog)
-
-    subprocess.call(['gnuplot', '-e', gnuplot_cmd])
-    os.remove(tmp_path)
+    plot(data, plot_type, output, args.xtitle, args.ytitle, args.xlog, args.ylog)
 
 if __name__ == '__main__':
     main()
