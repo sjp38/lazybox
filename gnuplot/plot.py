@@ -68,7 +68,7 @@ def main():
     if args.ylog:
         log += 'y'
     if log:
-        cmdlines.append("set logscale %s" % log)
+        cmdlines.append("set logscale %s;" % log)
 
     cmdlines.append("""
     plot for [idx=0:%s] '%s' index idx using 1:2 with linespoints title columnheader(1);
