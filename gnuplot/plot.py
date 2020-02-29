@@ -12,7 +12,8 @@ def get_args():
             help='read data from stdin')
     parser.add_argument('--file', '-f', metavar='<file>', help='data file')
     parser.add_argument('--type', '-t',
-            choices=['scatter', 'scatter-yerr', 'clustered_boxes'],
+            choices=['scatter', 'scatter-yerr',
+                'clustered_boxes', 'clustered_boxes-yerr'],
             default='scatter', help='plot type')
     parser.add_argument('--ytitle', '-y', metavar='<title>',
             help='y axis title')
@@ -39,6 +40,10 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, plot_type, output, xtitle, ytitle,
         cmdlines.append("""
         set style data histogram;
         set style histogram cluster gap 2;""")
+    elif plot_type == 'clustered_boxes-yerr':
+        cmdlines.append("""
+        set style data histogram;
+        set style histogram cluster gap 2 errorbars;""")
 
     cmdlines.append("""
     set term %s;
@@ -72,6 +77,11 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, plot_type, output, xtitle, ytitle,
         plot for [idx=0:%s] '%s' index idx using 1:2 with linespoints \
                 title columnheader(1);
         """ % (nr_recs, data_path))
+    elif plot_type == 'clustered_boxes-yerr':
+        nr_realcols = (nr_cols - 1) / 2
+        cmdlines.append("""
+        plot for [i=2:%d:2] '%s' using i:i+1:xtic(1) title col(i);
+        """ % (nr_cols - 1, data_path))
     elif plot_type == 'clustered_boxes':
         cmdlines.append("""
         plot '%s' using 2:xtic(1) title column, for [i=3:%s] '' \
