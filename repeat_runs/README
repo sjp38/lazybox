@@ -1,13 +1,11 @@
-This directory contains scripts for repeated 1) running of experiments
-constructed with a number of main workloads having multiple variants and
-several background workloads including profilers, 2) organizing the output of
-the workloads for each run, and 3) generating reports from the repeated runs.
+This directory contains scripts for 1) repeated runs of various experiments and
+2) summary of the multiple outputs.
 
-For that, this directory contains two main scripts, `run.sh` and `post.sh`.
-`run.sh` does run the required workloads and organize the outputs in a file
-under hierarchical directories.  `post.sh` get numbers by parsing the outputs,
-make stat (average, min, max, stdev) of the numbers for the repeated runs, and
-generate human readable reports.
+For each of the purposes, you can use `run.sh` and `post.sh`, repectively.
+`run.sh` repeatedly runs the required experiments for user-specified times and
+stores the outputs from each data in files under hierarchical directories.
+`post.sh` refines the raw outputs and make statistics (average, min, max,
+stdev) of each of the refined data.
 
 Each experiment is identified by its 'name' and 'variant'.  One experiment
 could contain multiple variants.  By knowing the 'name' and 'variant', you
