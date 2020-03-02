@@ -46,7 +46,7 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, plot_type, output, xtitle, ytitle,
         set style histogram cluster gap 2 errorbars;""")
 
     cmdlines.append("""
-    set term %s;
+    set term %s noenhanced;
     set output '%s';
     """ % (output.split('.')[-1], output))
 
