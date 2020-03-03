@@ -82,26 +82,20 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
         cmds += ['set logscale %s;' % log]
 
     if plot_type == 'scatter-yerr':
-        cmds.append("""
-        plot "%s" using 1:2:3 linestyle 1 with yerrorbars notitle, \
-        for [idx=0:%s] "%s" index idx using 1:2 with linespoints \
-                title columnheader(1);
-        """ % (data_path, nr_recs, data_path))
+        cmd = 'plot "%s" using 1:2:3 linestyle 1 with yerrorbars notitle, ' % data_path
+        cmd += 'for [idx=0:%s] "%s" index idx using 1:2 with linespoints ' % (nr_recs, data_path)
+        cmd += 'title columnheader(1);'
     elif plot_type == 'scatter':
-        cmds.append("""
-        plot for [idx=0:%s] "%s" index idx using 1:2 with linespoints \
-                title columnheader(1);
-        """ % (nr_recs, data_path))
+        cmd = 'plot for [idx=0:%s] "%s" index idx using 1:2 with linespoints ' % (nr_recs, data_path)
+        cmd += 'title columnheader(1);'
     elif plot_type == 'clustered_boxes-yerr':
         nr_realcols = (nr_cols - 1) / 2
-        cmds.append("""
-        plot for [i=2:%d:2] "%s" using i:i+1:xtic(1) title col(i);
-        """ % (nr_cols - 1, data_path))
+        cmd = 'plot for [i=2:%d:2] "%s" using i:i+1:xtic(1) title col(i);' % (
+                nr_cols - 1, data_path)
     elif plot_type == 'clustered_boxes':
-        cmds.append("""
-        plot "%s" using 2:xtic(1) title column, for [i=3:%s] '' \
-                using i title column;
-        """ % (data_path, nr_cols))
+        cmd = 'plot "%s" using 2:xtic(1) title column, for [i=3:%s] ""' % (data_path, nr_cols)
+        cmd += 'using i title column;'
+    cmds.append(cmd)
 
     return '\n'.join(cmds)
 
