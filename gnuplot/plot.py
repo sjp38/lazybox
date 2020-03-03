@@ -30,33 +30,33 @@ def get_args():
 
 def gen_gp_cmd(data_path, nr_recs, nr_cols, plot_type, output, xtitle, ytitle,
         xlog, ylog, xtics_rotate):
-    cmdlines = []
-    cmdlines.append("""
+    cmds = []
+    cmds.append("""
     load "lzstyle.gp";
 
     set autoscale;""")
 
     if plot_type == 'clustered_boxes':
-        cmdlines.append("""
+        cmds.append("""
         set style data histogram;
         set style histogram cluster gap 2;""")
     elif plot_type == 'clustered_boxes-yerr':
-        cmdlines.append("""
+        cmds.append("""
         set style data histogram;
         set style histogram cluster gap 2 errorbars;""")
 
-    cmdlines.append("""
+    cmds.append("""
     set term %s noenhanced;
     set output '%s';
     """ % (output.split('.')[-1], output))
 
     if xtics_rotate:
-        cmdlines.append("set xtics rotate by %d;" % xtics_rotate)
+        cmds.append("set xtics rotate by %d;" % xtics_rotate)
 
     if xtitle:
-        cmdlines.append("set xlabel '%s';" % xtitle)
+        cmds.append("set xlabel '%s';" % xtitle)
     if ytitle:
-        cmdlines.append("set ylabel '%s';" % ytitle)
+        cmds.append("set ylabel '%s';" % ytitle)
 
     log = ''
     if xlog:
@@ -64,31 +64,31 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, plot_type, output, xtitle, ytitle,
     if ylog:
         log += 'y'
     if log:
-        cmdlines.append("set logscale %s;" % log)
+        cmds.append("set logscale %s;" % log)
 
     if plot_type == 'scatter-yerr':
-        cmdlines.append("""
+        cmds.append("""
         plot '%s' using 1:2:3 linestyle 1 with yerrorbars notitle, \
         for [idx=0:%s] '%s' index idx using 1:2 with linespoints \
                 title columnheader(1);
         """ % (data_path, nr_recs, data_path))
     elif plot_type == 'scatter':
-        cmdlines.append("""
+        cmds.append("""
         plot for [idx=0:%s] '%s' index idx using 1:2 with linespoints \
                 title columnheader(1);
         """ % (nr_recs, data_path))
     elif plot_type == 'clustered_boxes-yerr':
         nr_realcols = (nr_cols - 1) / 2
-        cmdlines.append("""
+        cmds.append("""
         plot for [i=2:%d:2] '%s' using i:i+1:xtic(1) title col(i);
         """ % (nr_cols - 1, data_path))
     elif plot_type == 'clustered_boxes':
-        cmdlines.append("""
+        cmds.append("""
         plot '%s' using 2:xtic(1) title column, for [i=3:%s] '' \
                 using i title column;
         """ % (data_path, nr_cols))
 
-    return '\n'.join(cmdlines)
+    return '\n'.join(cmds)
 
 def plot(data, plot_type, output, xtitle, ytitle, xlog, ylog, xtics_rotate):
     tmp_path = tempfile.mkstemp()[1]
