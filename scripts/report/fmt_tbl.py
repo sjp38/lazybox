@@ -6,13 +6,28 @@ Format table in easy-to-read format
 
 import sys
 
+def fmt_pr_tbl(rows, field_lengths):
+    for row in rows:
+        formatted_fields = []
+        for idx, field in enumerate(row):
+            field_len = field_lengths[idx]
+            spaces = ' ' * (field_len - len(field))
+            formatted_fields.append('%s%s' % (field, spaces))
+        print(' '.join(formatted_fields))
+
 def fmt_tbl(lines):
     rows = []
     field_lengths = []
 
     for line in lines:
         line = line.strip()
-        if line == '' or line.startswith('#'):
+        if line == '':
+            fmt_pr_tbl(rows, field_lengths)
+            print('')
+            rows = []
+            field_lengths = []
+            continue
+        if line.startswith('#'):
             continue
         fields = line.split()
         rows.append(fields)
@@ -25,14 +40,7 @@ def fmt_tbl(lines):
                 continue
             if len(field) > field_lengths[idx]:
                 field_lengths[idx] = len(field)
-
-    for row in rows:
-        formatted_fields = []
-        for idx, field in enumerate(row):
-            field_len = field_lengths[idx]
-            spaces = ' ' * (field_len - len(field))
-            formatted_fields.append('%s%s' % (field, spaces))
-        print(' '.join(formatted_fields))
+    fmt_pr_tbl(rows, field_lengths)
 
 def main():
     fmt_tbl(sys.stdin)
