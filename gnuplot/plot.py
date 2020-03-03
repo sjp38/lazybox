@@ -31,6 +31,8 @@ def get_args():
     parser.add_argument('--gnuplot_cmds', action='store_true',
             help='print gnuplot commands')
     parser.add_argument('--title', metavar='<title>', help='title of plot')
+    parser.add_argument('--xrange', metavar='<range>', help='x-axis range')
+    parser.add_argument('--yrange', metavar='<range>', help='y-axis range')
     parser.add_argument('out', metavar='<file>', help='output file')
     return parser.parse_args()
 
@@ -40,6 +42,8 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
     title = args.title
     xtitle = args.xtitle
     ytitle = args.ytitle
+    xrange_ = args.xrange
+    yrange = args.yrange
     xlog = args.xlog
     ylog = args.ylog
     xtics_rotate = args.xtics_rotate
@@ -76,6 +80,11 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
         cmds += ['set xlabel "%s";' % xtitle]
     if ytitle:
         cmds += ['set ylabel "%s";' % ytitle]
+
+    if xrange_:
+        cmds += ['set xrange %s;' % xrange_]
+    if yrange:
+        cmds += ['set yrange %s;' % yrange]
 
     log = ''
     if xlog:
