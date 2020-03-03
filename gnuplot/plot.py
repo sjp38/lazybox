@@ -30,12 +30,14 @@ def get_args():
             help='size of plotted image')
     parser.add_argument('--gnuplot_cmds', action='store_true',
             help='print gnuplot commands')
+    parser.add_argument('--title', metavar='<title>', help='title of plot')
     parser.add_argument('out', metavar='<file>', help='output file')
     return parser.parse_args()
 
 def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
     plot_type = args.type
     output = args.out
+    title = args.title
     xtitle = args.xtitle
     ytitle = args.ytitle
     xlog = args.xlog
@@ -68,6 +70,8 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
     if xtics_rotate:
         cmds += ['set xtics rotate by %d;' % xtics_rotate]
 
+    if title:
+        cmds += ['set title "%s";' % title]
     if xtitle:
         cmds += ['set xlabel "%s";' % xtitle]
     if ytitle:
