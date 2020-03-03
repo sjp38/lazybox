@@ -8,6 +8,7 @@ import tempfile
 
 def get_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument('out', metavar='<file>', help='output file')
     parser.add_argument('--stdin', '-s', action='store_true',
             help='read data from stdin')
     parser.add_argument('--file', '-f', metavar='<file>', help='data file')
@@ -15,25 +16,24 @@ def get_args():
             choices=['scatter', 'scatter-yerr',
                 'clustered_boxes', 'clustered_boxes-yerr'],
             default='scatter', help='plot type')
-    parser.add_argument('--ytitle', '-y', metavar='<title>',
-            help='y axis title')
+    parser.add_argument('--font', metavar='<font>', help='font and size')
+    parser.add_argument('--size', metavar='<width,height>',
+            help='size of plotted image')
+    parser.add_argument('--title', metavar='<title>', help='title of plot')
     parser.add_argument('--xtitle', '-x', metavar='<title>',
             help='x axis title')
+    parser.add_argument('--ytitle', '-y', metavar='<title>',
+            help='y axis title')
+    parser.add_argument('--xrange', metavar='<range>', help='x-axis range')
+    parser.add_argument('--yrange', metavar='<range>', help='y-axis range')
     parser.add_argument('--xlog', action='store_true',
             help='plot x axis in logscale')
     parser.add_argument('--ylog', action='store_true',
             help='plot y axis in logscale')
     parser.add_argument('--xtics_rotate', metavar='<degree>', type=int,
             help='xtics rotate degree')
-    parser.add_argument('--font', metavar='<font>', help='font and size')
-    parser.add_argument('--size', metavar='<width,height>',
-            help='size of plotted image')
     parser.add_argument('--gnuplot_cmds', action='store_true',
             help='print gnuplot commands')
-    parser.add_argument('--title', metavar='<title>', help='title of plot')
-    parser.add_argument('--xrange', metavar='<range>', help='x-axis range')
-    parser.add_argument('--yrange', metavar='<range>', help='y-axis range')
-    parser.add_argument('out', metavar='<file>', help='output file')
     return parser.parse_args()
 
 def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
