@@ -28,6 +28,8 @@ def get_args():
     parser.add_argument('--font', metavar='<font>', help='font and size')
     parser.add_argument('--size', metavar='<width,height>',
             help='size of plotted image')
+    parser.add_argument('--gnuplot_cmds', action='store_true',
+            help='print gnuplot commands')
     parser.add_argument('out', metavar='<file>', help='output file')
     return parser.parse_args()
 
@@ -104,6 +106,8 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
     return '\n'.join(cmds)
 
 def plot(data, args):
+    show_gpcmds = args.gnuplot_cmds
+
     tmp_path = tempfile.mkstemp()[1]
     with open(tmp_path, 'w') as f:
         f.write(data)
@@ -112,6 +116,8 @@ def plot(data, args):
     nr_recs = len(data.split('\n\n')) - 1
 
     gnuplot_cmd = gen_gp_cmd(tmp_path, nr_recs, nr_cols, args)
+    if show_gpcmds:
+        print(gnuplot_cmd)
 
     subprocess.call(['gnuplot', '-e', gnuplot_cmd])
     os.remove(tmp_path)
