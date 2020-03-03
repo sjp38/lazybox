@@ -31,8 +31,17 @@ def get_args():
     parser.add_argument('out', metavar='<file>', help='output file')
     return parser.parse_args()
 
-def gen_gp_cmd(data_path, nr_recs, nr_cols, plot_type, output, xtitle, ytitle,
-        xlog, ylog, xtics_rotate, font, size):
+def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
+    plot_type = args.type
+    output = args.out
+    xtitle = args.xtitle
+    ytitle = args.ytitle
+    xlog = args.xlog
+    ylog = args.ylog
+    xtics_rotate = args.xtics_rotate
+    font = args.font
+    size = args.size
+
     cmds = []
     cmds += ['load "%s/lzstyle.gp";' % os.path.dirname(__file__)]
     cmds += ['set autoscale;']
@@ -94,8 +103,7 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, plot_type, output, xtitle, ytitle,
 
     return '\n'.join(cmds)
 
-def plot(data, plot_type, output, xtitle, ytitle, xlog, ylog, xtics_rotate,
-        font, size):
+def plot(data, args):
     tmp_path = tempfile.mkstemp()[1]
     with open(tmp_path, 'w') as f:
         f.write(data)
@@ -103,8 +111,7 @@ def plot(data, plot_type, output, xtitle, ytitle, xlog, ylog, xtics_rotate,
     nr_cols = len(data.split('\n')[0].split())
     nr_recs = len(data.split('\n\n')) - 1
 
-    gnuplot_cmd = gen_gp_cmd(tmp_path, nr_recs, nr_cols, plot_type, output,
-            xtitle, ytitle, xlog, ylog, xtics_rotate, font, size)
+    gnuplot_cmd = gen_gp_cmd(tmp_path, nr_recs, nr_cols, args)
 
     subprocess.call(['gnuplot', '-e', gnuplot_cmd])
     os.remove(tmp_path)
@@ -121,8 +128,6 @@ def main():
         print("Unuspported output type '%s'." % out_extension)
         exit(-1)
 
-    plot_type = args.type
-
     if args.stdin:
         f = sys.stdin
     elif args.file:
@@ -130,8 +135,7 @@ def main():
     data = f.read()
     f.close()
 
-    plot(data, plot_type, output, args.xtitle, args.ytitle,
-            args.xlog, args.ylog, args.xtics_rotate, args.font, args.size)
+    plot(data, args)
 
 if __name__ == '__main__':
     main()
