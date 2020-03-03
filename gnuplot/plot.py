@@ -25,11 +25,14 @@ def get_args():
             help='plot y axis in logscale')
     parser.add_argument('--xtics_rotate', metavar='<degree>', type=int,
             help='xtics rotate degree')
+    parser.add_argument('--font', metavar='<font>', help='font and size')
+    parser.add_argument('--size', metavar='<width,height>',
+            help='size of plotted image')
     parser.add_argument('out', metavar='<file>', help='output file')
     return parser.parse_args()
 
 def gen_gp_cmd(data_path, nr_recs, nr_cols, plot_type, output, xtitle, ytitle,
-        xlog, ylog, xtics_rotate):
+        xlog, ylog, xtics_rotate, font, size):
     cmds = []
     cmds.append("""
     load "%s/lzstyle.gp";
@@ -45,10 +48,17 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, plot_type, output, xtitle, ytitle,
         set style data histogram;
         set style histogram cluster gap 2 errorbars;""")
 
+    cmd="set term %s noenhanced" % output.split('.')[-1]
+    if font:
+        cmd += " font '%s'" % font
+    if size:
+        cmd += " size %s" % size
+    cmd += ";"
+    cmds.append(cmd)
+
     cmds.append("""
-    set term %s noenhanced;
     set output '%s';
-    """ % (output.split('.')[-1], output))
+    """ % output)
 
     if xtics_rotate:
         cmds.append("set xtics rotate by %d;" % xtics_rotate)
@@ -90,7 +100,8 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, plot_type, output, xtitle, ytitle,
 
     return '\n'.join(cmds)
 
-def plot(data, plot_type, output, xtitle, ytitle, xlog, ylog, xtics_rotate):
+def plot(data, plot_type, output, xtitle, ytitle, xlog, ylog, xtics_rotate,
+        font, size):
     tmp_path = tempfile.mkstemp()[1]
     with open(tmp_path, 'w') as f:
         f.write(data)
@@ -99,7 +110,7 @@ def plot(data, plot_type, output, xtitle, ytitle, xlog, ylog, xtics_rotate):
     nr_recs = len(data.split('\n\n')) - 1
 
     gnuplot_cmd = gen_gp_cmd(tmp_path, nr_recs, nr_cols, plot_type, output,
-            xtitle, ytitle, xlog, ylog, xtics_rotate)
+            xtitle, ytitle, xlog, ylog, xtics_rotate, font, size)
 
     subprocess.call(['gnuplot', '-e', gnuplot_cmd])
     os.remove(tmp_path)
@@ -126,7 +137,7 @@ def main():
     f.close()
 
     plot(data, plot_type, output, args.xtitle, args.ytitle,
-            args.xlog, args.ylog, args.xtics_rotate)
+            args.xlog, args.ylog, args.xtics_rotate, args.font, args.size)
 
 if __name__ == '__main__':
     main()
