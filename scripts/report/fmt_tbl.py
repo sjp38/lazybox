@@ -6,10 +6,11 @@ Format table in easy-to-read format
 
 import sys
 
-def main():
+def fmt_tbl(lines):
     rows = []
     field_lengths = []
-    for line in sys.stdin:
+
+    for line in lines:
         line = line.strip()
         if line == '' or line.startswith('#'):
             continue
@@ -32,6 +33,9 @@ def main():
             spaces = ' ' * (field_len - len(field))
             formatted_fields.append('%s%s' % (field, spaces))
         print(' '.join(formatted_fields))
+
+def main():
+    fmt_tbl(sys.stdin)
 
 if __name__ == '__main__':
     main()
