@@ -32,9 +32,9 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, plot_type, output, xtitle, ytitle,
         xlog, ylog, xtics_rotate):
     cmds = []
     cmds.append("""
-    load "lzstyle.gp";
+    load "%s/lzstyle.gp";
 
-    set autoscale;""")
+    set autoscale;""" % os.path.dirname(__file__))
 
     if plot_type == 'clustered_boxes':
         cmds.append("""
