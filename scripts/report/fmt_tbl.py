@@ -45,5 +45,18 @@ def fmt_tbl(lines):
 def main():
     fmt_tbl(sys.stdin)
 
+def test():
+    test_input = """
+1 2 3
+4  5  6
+7	8	  9
+abc de 10
+
+
+12 345 89
+# comment
+1 2 3"""
+    fmt_tbl(test_input.split('\n'))
+
 if __name__ == '__main__':
     main()
