@@ -8,13 +8,15 @@ import argparse
 import sys
 
 def fmt_pr_tbl(rows, field_lengths):
+    seperator = ' ' * nr_min_spaces
     for row in rows:
         formatted_fields = []
         for idx, field in enumerate(row):
             field_len = field_lengths[idx]
             spaces = ' ' * (field_len - len(field))
             formatted_fields.append('%s%s' % (field, spaces))
-        print(' '.join(formatted_fields))
+
+        print(seperator.join(formatted_fields))
 
 def fmt_tbl(lines):
     rows = []
@@ -44,21 +46,27 @@ def fmt_tbl(lines):
     fmt_pr_tbl(rows, field_lengths)
 
 def main():
+    global nr_min_spaces
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--file', metavar='<file>',
             help='input file')
     parser.add_argument('--stdin', action='store_true',
             help='read data from stdin')
     parser.add_argument('--example', action='store_true', help='show example')
+    parser.add_argument('--spaces', type=int, default=1,
+            help='minimum number of spaces between fields')
 
     args = parser.parse_args()
+
+    nr_min_spaces = args.spaces
 
     if not args.file and not args.stdin and not args.example:
         print('no input')
         exit(1)
 
     if args.example:
-        test()
+        test(args.spaces)
         return
 
     if args.file:
