@@ -4,6 +4,7 @@
 Format table in easy-to-read format
 """
 
+import argparse
 import sys
 
 def fmt_pr_tbl(rows, field_lengths):
@@ -43,7 +44,29 @@ def fmt_tbl(lines):
     fmt_pr_tbl(rows, field_lengths)
 
 def main():
-    fmt_tbl(sys.stdin)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--file', metavar='<file>',
+            help='input file')
+    parser.add_argument('--stdin', action='store_true',
+            help='read data from stdin')
+    parser.add_argument('--example', action='store_true', help='show example')
+
+    args = parser.parse_args()
+
+    if not args.file and not args.stdin and not args.example:
+        print('no input')
+        exit(1)
+
+    if args.example:
+        test()
+        return
+
+    if args.file:
+        with open(args.file, 'r') as f:
+            lines = f.read().split('\n')
+    elif args.stdin:
+        lines = sys.stdin
+    fmt_tbl(lines)
 
 def test():
     test_input = """
