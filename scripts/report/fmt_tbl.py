@@ -54,7 +54,7 @@ def main():
     parser.add_argument('--stdin', action='store_true',
             help='read data from stdin')
     parser.add_argument('--example', action='store_true', help='show example')
-    parser.add_argument('--spaces', type=int, default=1,
+    parser.add_argument('--spaces', type=int, default=2,
             help='minimum number of spaces between fields')
 
     args = parser.parse_args()
