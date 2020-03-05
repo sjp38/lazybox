@@ -49,10 +49,8 @@ def main():
     global nr_min_spaces
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--file', metavar='<file>',
+    parser.add_argument('file', metavar='<file>', nargs='?',
             help='input file')
-    parser.add_argument('--stdin', action='store_true',
-            help='read data from stdin')
     parser.add_argument('--example', action='store_true', help='show example')
     parser.add_argument('--spaces', type=int, default=2,
             help='minimum number of spaces between fields')
@@ -61,10 +59,6 @@ def main():
 
     nr_min_spaces = args.spaces
 
-    if not args.file and not args.stdin and not args.example:
-        print('no input')
-        exit(1)
-
     if args.example:
         test(args.spaces)
         return
@@ -72,7 +66,7 @@ def main():
     if args.file:
         with open(args.file, 'r') as f:
             lines = f.read().split('\n')
-    elif args.stdin:
+    else:
         lines = sys.stdin
     fmt_tbl(lines)
 
