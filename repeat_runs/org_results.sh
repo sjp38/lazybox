@@ -27,13 +27,20 @@ do
 	for v in $VARIANTS
 	do
 		src=$ODIR_ROOT/$exp/$v
+		if [ "$OP" = "rm" ]
+		then
+			echo "rm -fr $src"
+			rm -fr $src
+			continue
+		fi
+
 		dst=$DEST/$exp/$v
-		echo "$OP $src $dst"
 		mkdir -p $dst
 		if [ "$OP" = "cp" ]
 		then
 			OP="cp -R"
 		fi
-		$OP $src/* $dst/
+		echo "$OP $src/* $dst/"
+		$OP $src/* $dst
 	done
 done
