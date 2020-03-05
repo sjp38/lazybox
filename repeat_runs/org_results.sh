@@ -3,7 +3,7 @@
 # organize results: move, copy (merge), rm.
 # source is current ODIR_ROOT.
 
-if [ $# -lt 1 ]
+if [ $# -lt 1 ] || ( [ "$1" != "mv" ] && [ "$1" != "cp" ] && [ "$1" != "rm" ] )
 then
 	echo "Usage: $0 (mv|cp|rm) [destination results dir]"
 	exit 1
