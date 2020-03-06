@@ -9,8 +9,6 @@ import tempfile
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('out', metavar='<file>', help='output file')
-    parser.add_argument('--stdin', '-s', action='store_true',
-            help='read data from stdin')
     parser.add_argument('--file', '-f', metavar='<file>', help='data file')
     parser.add_argument('--type', '-t',
             choices=['scatter', 'scatter-yerr',
@@ -136,18 +134,14 @@ def plot(data, args):
 def main():
     args = get_args()
 
-    if not args.stdin and not args.file:
-        print('no data source specified')
-
     output = args.out
     out_extension = output.split('.')[-1]
     if not out_extension in ['pdf', 'jpeg', 'png', 'svg']:
         print("Unuspported output type '%s'." % out_extension)
         exit(-1)
 
-    if args.stdin:
-        f = sys.stdin
-    elif args.file:
+    f = sys.stdin
+    if args.file:
         f = open(args.file, 'r')
     data = f.read()
     f.close()
