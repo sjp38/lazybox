@@ -52,7 +52,7 @@ def main():
     parser.add_argument('file', metavar='<file>', nargs='?',
             help='input file')
     parser.add_argument('--example', action='store_true', help='show example')
-    parser.add_argument('--spaces', type=int, default=2,
+    parser.add_argument('--spaces', type=int, default=1,
             help='minimum number of spaces between fields')
 
     args = parser.parse_args()
