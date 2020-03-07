@@ -15,3 +15,8 @@ then
 fi
 
 source $CFG
+
+if [ "$1" ]
+then
+	EXPERIMENTS=$1
+fi
