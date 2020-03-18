@@ -10,7 +10,7 @@ do
 	do
 		for var in $VARIANTS
 		do
-			echo "$i time $exp/$var"
+			echo "$i iter of $exp/$var"
 			$BINDIR/_gen_exp_cfg.sh $exp $var | \
 			sudo $LBX/run_exps.py stdin
 		done
