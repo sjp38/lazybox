@@ -18,7 +18,8 @@ fi
 EXPNAME=$1
 VARIANCE=$2
 
-ODIR=$ODIR_ROOT/$EXPNAME/$VARIANCE
+exp_basename=`basename $EXPNAME`
+ODIR=$ODIR_ROOT/$exp_basename/$VARIANCE
 
 MAX_REPEAT=10
 for (( unqid=1; unqid <= $MAX_REPEAT; unqid+=1 ))

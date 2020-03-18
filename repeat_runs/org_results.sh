@@ -24,9 +24,10 @@ source $BINDIR/__common.sh
 
 for exp in $EXPERIMENTS
 do
+	exp_basename=`basename $exp`
 	for v in $VARIANTS
 	do
-		src=$ODIR_ROOT/$exp/$v
+		src=$ODIR_ROOT/$exp_basename/$v
 		if [ "$OP" = "rm" ]
 		then
 			echo "rm -fr $src"
@@ -34,7 +35,7 @@ do
 			continue
 		fi
 
-		dst=$DEST/$exp/$v
+		dst=$DEST/$exp_basename/$v
 		mkdir -p $dst
 		if [ "$OP" = "cp" ]
 		then
