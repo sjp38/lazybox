@@ -1,7 +1,7 @@
 This directory contains scripts for 1) repeated runs of various experiments and
 2) summary of the multiple outputs.
 
-For each of the purposes, you can use `run.sh` and `post.sh`, repectively.
+For each of the purposes, you can use `run.sh` and `post.sh`, respectively.
 `run.sh` repeatedly runs the required experiments for user-specified times and
 stores the outputs from each data in files under hierarchical directories.
 `post.sh` refines the raw outputs and make statistics (average, min, max,
@@ -16,8 +16,8 @@ Files for each experiment
 =========================
 
 Nonetheless, the essential parts of each experiements should be implemented by
-users by themeselves.  They should implement some executable files and place
-those under specific directory with specific name.
+users.  They should implement some executable files and place those under
+specific directory with specific name.
 
 `<exp name>/runners/(start|main|back|end)/`
 ------------------------------------------
