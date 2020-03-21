@@ -13,7 +13,10 @@ def fmt_pr_tbl(rows, field_lengths):
         formatted_fields = []
         for idx, field in enumerate(row):
             field_len = field_lengths[idx]
-            spaces = ' ' * (field_len - len(field))
+            if idx < len(row) - 1:
+                spaces = ' ' * (field_len - len(field))
+            else:
+                spaces = ''
             formatted_fields.append('%s%s' % (field, spaces))
 
         print(seperator.join(formatted_fields))
