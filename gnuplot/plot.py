@@ -117,7 +117,7 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
 def plot(data, args):
     show_gpcmds = args.gnuplot_cmds
 
-    tmp_path = tempfile.mkstemp()[1]
+    tmp_path = tempfile.mkstemp(prefix='lbx-', suffix='.data')[1]
     with open(tmp_path, 'w') as f:
         f.write(data)
 
