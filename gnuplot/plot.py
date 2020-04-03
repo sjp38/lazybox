@@ -8,7 +8,8 @@ import tempfile
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('out', metavar='<file>', help='output file')
+    parser.add_argument('out', metavar='<file>', help='output file',
+            default='plot.pdf', nargs='?')
     parser.add_argument('--file', '-f', metavar='<file>', help='data file')
     parser.add_argument('--type', '-t',
             choices=['scatter', 'scatter-yerr',
