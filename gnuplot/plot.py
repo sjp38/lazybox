@@ -13,7 +13,7 @@ def get_args():
     parser.add_argument('--file', '-f', metavar='<file>', help='data file')
     parser.add_argument('--type', '-t',
             choices=['scatter', 'scatter-yerr',
-                'clustered_boxes', 'clustered_boxes-yerr'],
+                'clustered_boxes', 'clustered_boxes-yerr', 'heatmap'],
             default='scatter', help='plot type')
     parser.add_argument('--font', metavar='<font>', help='font and size')
     parser.add_argument('--size', metavar='<width,height>',
@@ -111,6 +111,8 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
         cmd = 'plot "%s" using 2:xtic(1) title column, for [i=3:%s] ""' % (
                 data_path, nr_cols)
         cmd += 'using i title column;'
+    elif plot_type == 'heatmap':
+        cmd = 'plot "%s" using 1:2:3 with image title ""' % (data_path)
     cmds.append(cmd)
 
     return '\n'.join(cmds)
