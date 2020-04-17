@@ -11,7 +11,7 @@ do
 	for file in type size ways_of_associativity number_of_sets \
 		coherency_line_size;
 	do
-		printf "$file: %s\n" `cat $CACHEDIR$level/$file`
+		printf "$file: %s\n" "$(cat $CACHEDIR$level/$file)"
 	done
 
 	printf "\n\n"
