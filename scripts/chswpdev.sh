@@ -9,4 +9,4 @@ fi
 SWPDEV=$1
 
 sudo swapoff -a
-sudo swapon $SWPDEV
+sudo swapon "$SWPDEV"
