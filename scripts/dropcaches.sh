@@ -12,9 +12,9 @@ fi
 
 ARG=$1
 
-if [ $ARG -lt 1 ] || [ $ARG -gt 3 ]
+if [ "$ARG" -lt 1 ] || [ "$ARG" -gt 3 ]
 then
 	usage
 fi
 
-echo $ARG > /proc/sys/vm/drop_caches
+echo "$ARG" > /proc/sys/vm/drop_caches
