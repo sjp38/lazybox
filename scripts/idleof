@@ -11,7 +11,7 @@ while true
 do
 	CMD="w | grep -P \"^$1( |\$)\" | awk '{print \$5}'"
 	echo "By $(date)"
-	eval $CMD
+	eval "$CMD"
 	echo ""
-	sleep $2
+	sleep "$2"
 done
