@@ -8,19 +8,19 @@ then
 	exit 1
 fi
 
-BINDIR=`dirname $0`
-cd $BINDIR
+BINDIR=$(dirname "$0")
+cd "$BINDIR" || exit
 
 COMM=$1
-PID=`pgrep -f "$COMM" | head -n 1 | awk '{print $1}'`
+PID=$(pgrep -f "$COMM" | head -n 1 | awk '{print $1}')
 
 echo "vsz	rss	pid	cmd"
 while true;
 do
-	PIDS=`./subprocs.py $PID`
+	PIDS=$(./subprocs.py "$PID")
 	for P in $PIDS
 	do
-		ps -o vsz=,rss=,pid=,cmd= --pid $P
+		ps -o vsz=,rss=,pid=,cmd= --pid "$P"
 	done
 	sleep 1
 done
