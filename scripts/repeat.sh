@@ -12,9 +12,9 @@ cmd=$3
 
 iter=0
 
-while [ $iter -lt $count ] || [ $count -eq -1 ]
+while [ $iter -lt "$count" ] || [ "$count" -eq -1 ]
 do
 	$cmd
-	sleep $delay
-	iter=$(($iter + 1))
+	sleep "$delay"
+	iter=$((iter + 1))
 done
