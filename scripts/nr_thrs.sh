@@ -8,4 +8,4 @@ fi
 
 pid=$1
 
-cat /proc/$pid/status | grep "^Threads" | awk '{print $2}'
+grep "^Threads" /proc/"$pid"/status | awk '{print $2}'
