@@ -12,19 +12,19 @@ TIMEOUT=$3
 
 while true;
 do
-	if [ $SECONDS -gt $TIMEOUT ]
+	if [ $SECONDS -gt "$TIMEOUT" ]
 	then
 		echo "Timeout! $SECONDS > $TIMEOUT"
 		exit 1
 	fi
-	if ping $ADDR -c 1 > /dev/null
+	if ping "$ADDR" -c 1 > /dev/null
 	then
-		if [ $ONOFF = "on" ]
+		if [ "$ONOFF" = "on" ]
 		then
 			break
 		fi
 	else
-		if [ $ONOFF = "off" ]
+		if [ "$ONOFF" = "off" ]
 		then
 			break
 		fi
