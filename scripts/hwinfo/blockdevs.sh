@@ -7,9 +7,9 @@ then
 fi
 
 IFS=$'\n'
-for l in `lsblk -o MODEL,SIZE -n | sort`
+for l in $(lsblk -o MODEL,SIZE -n | sort)
 do
-	echo $l | awk '{
+	echo "$l" | awk '{
 		if (NF < 2) {
 			next
 		}
