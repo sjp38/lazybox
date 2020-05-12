@@ -1,18 +1,18 @@
 #!/bin/bash
 
-BINDIR=`dirname $0`
+BINDIR=$(dirname "$0")
 
-cd $BINDIR
+cd "$BINDIR" || exit 1
 
-MODEL=`./cpumodel.sh`
-SOCKS=`./nr_cpusocks.sh`
-CORES=`./nr_cpuspersock.sh`
-THRS=`./nr_thrspercpu.sh`
-TOTAL_THRS=`./nr_hwthrs.sh`
+MODEL=$(./cpumodel.sh)
+SOCKS=$(./nr_cpusocks.sh)
+CORES=$(./nr_cpuspersock.sh)
+THRS=$(./nr_thrspercpu.sh)
+TOTAL_THRS=$(./nr_hwthrs.sh)
 
 DETAIL="$SOCKS socks / $CORES cores / $THRS hyper-thr / $TOTAL_THRS thrs"
-echo CPU: $MODEL "($DETAIL)"
-echo MEM: `./sz_mem.sh`
+echo CPU: "$MODEL ($DETAIL)"
+echo MEM: "$(./sz_mem.sh)"
 
 function linestocsv() {
 	IFS=$'\n'
@@ -21,7 +21,7 @@ function linestocsv() {
 	do
 		RES=$RES$l", "
 	done
-	if [ $RES ]
+	if [ "$RES" ]
 	then
 		echo "${RES::-2}"
 	fi
@@ -29,8 +29,8 @@ function linestocsv() {
 }
 
 printf "NICs: "
-linestocsv "`./nics.sh`"
+linestocsv "$(./nics.sh)"
 printf "IPs: "
-linestocsv "`./ipaddrs.sh`"
+linestocsv "$(./ipaddrs.sh)"
 printf "STORAGEs: "
-linestocsv "`./blockdevs.sh`"
+linestocsv "$(./blockdevs.sh)"
