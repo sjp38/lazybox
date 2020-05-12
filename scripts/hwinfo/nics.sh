@@ -19,7 +19,7 @@ function ethernets() {
 }
 
 IFS=$'\n'
-for l in `ethernets`
+for l in $(ethernets)
 do
-	echo $l x `lspci | grep $l | wc -l`
+	echo "$l" x "$(lspci | grep -c "$l")"
 done
