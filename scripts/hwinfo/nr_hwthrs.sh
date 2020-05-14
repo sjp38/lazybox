@@ -1,3 +1,3 @@
 #!/bin/bash
 
-grep "^processor" /proc/cpuinfo | wc -l
+grep -c "^processor" /proc/cpuinfo
