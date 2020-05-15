@@ -9,5 +9,5 @@ fi
 BACKUP=$1
 MYSQLDATA=/usr/local/mysql/data
 
-sudo cp -R $MYSQLDATA $BACKUP
+sudo cp -R $MYSQLDATA "$BACKUP"
 sync
