@@ -10,6 +10,6 @@ BACKUP=$1
 MYSQLDATA=/usr/local/mysql/data
 
 sudo rm -fr $MYSQLDATA
-sudo cp -R $BACKUP $MYSQLDATA
+sudo cp -R "$BACKUP" "$MYSQLDATA"
 sudo chown -R mysql $MYSQLDATA
 sync
