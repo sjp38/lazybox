@@ -16,4 +16,4 @@ if [ $# -eq 1 ]
 then
 	additionaloption=$1
 fi
-perf record -e lb:swpin -e lb:swpout $additionaloption
+perf record -e lb:swpin -e lb:swpout "$additionaloption"
