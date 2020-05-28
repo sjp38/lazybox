@@ -27,4 +27,4 @@ kretprobe:$TARGET / @start[tid()] /
 	@start[tid()] = nil;
 }'"
 
-eval $cmd
+eval "$cmd"
