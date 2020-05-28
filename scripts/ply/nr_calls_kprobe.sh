@@ -20,4 +20,4 @@ cmd="sudo ply -c \
 	@[func()].count()
 }'"
 
-eval $cmd
+eval "$cmd"
