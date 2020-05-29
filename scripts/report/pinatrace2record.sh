@@ -8,8 +8,8 @@ fi
 
 F=$1
 
-cat $F | awk '{
+awk '{
 	if ($1 != "#eof" && $1 != "#" && NF > 3) {
 		print NR " " $3
 	}
-}'
+}' "$F"
