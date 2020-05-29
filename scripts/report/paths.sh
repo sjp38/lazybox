@@ -21,4 +21,4 @@ do
 	paths="$paths $prefix$m$suffix"
 done
 
-echo $paths
+echo "$paths"
