@@ -4,9 +4,9 @@
 # pipe the generated configuration to the `run_exps.py` for actual run of the
 # experiment.
 
-BINDIR=`dirname $0`
+BINDIR=$(dirname "$0")
 
-source $BINDIR/__common.sh
+source "$BINDIR/__common.sh"
 
 if [ $# -ne 2 ]
 then
@@ -15,17 +15,17 @@ then
 fi
 
 
-EXPNAME=$1
-VARIANCE=$2
+EXPNAME="$1"
+VARIANCE="$2"
 
-exp_basename=`basename $EXPNAME`
+exp_basename=$(basename "$EXPNAME")
 ODIR=$ODIR_ROOT/$exp_basename/$VARIANCE
 
 MAX_REPEAT=10
-for (( unqid=1; unqid <= $MAX_REPEAT; unqid+=1 ))
+for (( unqid=1; unqid <= MAX_REPEAT; unqid+=1 ))
 do
-	CANDIDATE=$ODIR/`printf "%02d" $unqid`
-	if [ ! -d $CANDIDATE ]
+	CANDIDATE=$ODIR/$(printf "%02d" $unqid)
+	if [ ! -d "$CANDIDATE" ]
 	then
 		ODIR=$CANDIDATE
 		break
@@ -36,7 +36,7 @@ do
 		exit 1
 	fi
 done
-mkdir -p $ODIR
+mkdir -p "$ODIR"
 
 runners_dir=$EXPNAME/runners
 for runner_type in "start" "main" "back" "end"
@@ -48,14 +48,14 @@ do
 	done
 
 	runners_dir=$EXPNAME/runners/$runner_type
-	if [ ! -d $runners_dir ]
+	if [ ! -d "$runners_dir" ]
 	then
 		continue
 	fi
-	for runner in `ls $runners_dir | sort`
+	for runner in $(ls "$runners_dir" | sort)
 	do
-		echo "$runner_type" $runners_dir/$runner $ODIR
+		echo "$runner_type $runners_dir/$runner $ODIR"
 	done
 done
-GROUP=`groups $USER | awk '{print $3}'`
+GROUP=$(groups "$USER" | awk '{print $3}')
 echo "end chown -R $USER:$GROUP $ODIR_ROOT"
