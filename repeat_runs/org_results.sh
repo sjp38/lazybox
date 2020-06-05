@@ -18,30 +18,30 @@ then
 	exit 1
 fi
 
-BINDIR=`dirname $0`
+BINDIR=$(dirname "$0")
 
 source $BINDIR/__common.sh
 
 for exp in $EXPERIMENTS
 do
-	exp_basename=`basename $exp`
+	exp_basename=$(basename "$exp")
 	for v in $VARIANTS
 	do
-		src=$ODIR_ROOT/$exp_basename/$v
+		src="$ODIR_ROOT/$exp_basename/$v"
 		if [ "$OP" = "rm" ]
 		then
 			echo "rm -fr $src"
-			rm -fr $src
+			rm -fr "$src"
 			continue
 		fi
 
 		dst=$DEST/$exp_basename/$v
-		mkdir -p $dst
+		mkdir -p "$dst"
 		if [ "$OP" = "cp" ]
 		then
 			OP="cp -R"
 		fi
 		echo "$OP $src/* $dst/"
-		$OP $src/* $dst
+		$OP "$src/"* "$dst"
 	done
 done
