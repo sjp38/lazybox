@@ -12,7 +12,7 @@ def get_args():
             default='plot.pdf', nargs='?')
     parser.add_argument('--file', '-f', metavar='<file>', help='data file')
     parser.add_argument('--type', '-t',
-            choices=['scatter', 'scatter-yerr',
+            choices=['scatter', 'scatter-yerr', 'labeled-lines',
                 'clustered_boxes', 'clustered_boxes-yerr', 'heatmap'],
             default='scatter', help='plot type')
     parser.add_argument('--font', metavar='<font>', help='font and size')
@@ -101,6 +101,10 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
         cmd += 'title columnheader(1);'
     elif plot_type == 'scatter':
         cmd = 'plot for [i=0:%s] "%s" index i using 1:2 with linespoints ' % (
+                nr_recs, data_path)
+        cmd += 'title columnheader(1);'
+    elif plot_type == 'labeled-lines':
+        cmd = 'plot for [i=0:%s] "%s" index i using 2:xtic(1) with lines ' % (
                 nr_recs, data_path)
         cmd += 'title columnheader(1);'
     elif plot_type == 'clustered_boxes-yerr':
