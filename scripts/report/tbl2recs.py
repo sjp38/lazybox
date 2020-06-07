@@ -30,6 +30,8 @@ def main():
     keys = []
     for line in sys.stdin:
         line = line.strip()
+        if line.startswith('#'):
+            continue
         if not names:
             names = line.split()[1:]
             continue
