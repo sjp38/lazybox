@@ -15,6 +15,7 @@ def get_args():
             choices=['scatter', 'scatter-yerr', 'labeled-lines',
                 'clustered_boxes', 'clustered_boxes-yerr', 'heatmap'],
             default='scatter', help='plot type')
+    parser.add_argument('--pointsize', metavar='<size>', help='size of point')
     parser.add_argument('--font', metavar='<font>', help='font and size')
     parser.add_argument('--size', metavar='<width,height>',
             help='size of plotted image')
@@ -37,6 +38,7 @@ def get_args():
 
 def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
     plot_type = args.type
+    pointsize = args.pointsize
     output = args.out
     title = args.title
     xtitle = args.xtitle
@@ -69,6 +71,9 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
     cmds.append(cmd)
 
     cmds += ['set output "%s";' % output]
+
+    if pointsize:
+        cmds += ['set pointsize %s;' % pointsize]
 
     if xtics_rotate:
         cmds += ['set xtics rotate by %d;' % xtics_rotate]
@@ -104,8 +109,8 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
                 nr_recs, data_path)
         cmd += 'title columnheader(1);'
     elif plot_type == 'labeled-lines':
-        cmd = 'plot for [i=0:%s] "%s" index i using 2:xtic(1) with lines ' % (
-                nr_recs, data_path)
+        cmd = 'plot for [i=0:%s] "%s" ' % (nr_recs, data_path)
+        cmd += 'index i using 2:xtic(1) with linespoints '
         cmd += 'title columnheader(1);'
     elif plot_type == 'clustered_boxes-yerr':
         nr_realcols = (nr_cols - 1) / 2
