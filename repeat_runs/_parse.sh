@@ -1,8 +1,8 @@
 #!/bin/bash
 
-BINDIR=`dirname $0`
+BINDIR=$(dirname "$0")
 
-source $BINDIR/__common.sh
+source "$BINDIR/__common.sh"
 
 if [ $# -ne 2 ]
 then
@@ -12,19 +12,19 @@ fi
 
 if [ -z "$parsers_dir" ]
 then
-	parsers_dir=$1'/parsers/'
+	parsers_dir="$1/parsers/"
 fi
 raw_outputs_dir=$2
-parsed_dir=$raw_outputs_dir/$PARSED
+parsed_dir="$raw_outputs_dir/$PARSED"
 
-mkdir -p $parsed_dir
+mkdir -p "$parsed_dir"
 
-for raw_output in `ls $raw_outputs_dir`
+for raw_output in $(ls "$raw_outputs_dir")
 do
-	echo $raw_outputs_dir $raw_output
-	parsers=`ls $parsers_dir | grep -e '^'$raw_output'*'`
+	echo "$raw_outputs_dir $raw_output"
+	parsers=$(ls "$parsers_dir" | grep -e '^'"$raw_output"'*')
 	for parser in $parsers
 	do
-		$parsers_dir/$parser $raw_outputs_dir $parsed_dir
+		"$parsers_dir"/"$parser" "$raw_outputs_dir" "$parsed_dir"
 	done
 done
