@@ -211,12 +211,11 @@ def plot(data, args):
         data = tbl_to_recs(data)
         data_fmt = 'recs'
 
-    if data_fmt == 'recs' and plot_type in ['clustered_boxes',
-            'clustered_boxes-yerr', 'heatmap']:
+    if data_fmt == 'recs' and plot_type in ['clustered_boxes-yerr',
+            'heatmap']:
         print('data format should be table for %s plot type' % plot_type)
         exit(1)
-    elif data_fmt == 'table' and plot_type in ['scatter', 'scatter-yerr',
-            'labeled_lines']:
+    elif data_fmt == 'table' and plot_type == 'scatter-yerr':
         print('data format should be recs for %s plot type' % plot_type)
         exit(1)
 
