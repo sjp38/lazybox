@@ -207,7 +207,7 @@ def plot(data, args):
     if data_fmt == 'recs' and plot_type == 'clustered_boxes':
         data = recs_to_tbl(data)
         data_fmt = 'table'
-    elif data_fmt == 'table' and plot_type == 'labeled-lines':
+    elif data_fmt == 'table' and plot_type in ['scatter', 'labeled-lines']:
         data = tbl_to_recs(data)
         data_fmt = 'recs'
 
