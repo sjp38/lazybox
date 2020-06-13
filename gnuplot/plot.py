@@ -11,6 +11,8 @@ def get_args():
     parser.add_argument('out', metavar='<file>', help='output file',
             default='plot.pdf', nargs='?')
     parser.add_argument('--file', '-f', metavar='<file>', help='data file')
+    parser.add_argument('--data_fmt', choices=['recs', 'table'],
+            help='format of the data')
     parser.add_argument('--xtime_fmt', metavar='<date format>',
             help='set xdata as time of the format')
     parser.add_argument('--type', '-t',
@@ -135,6 +137,17 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
 
 def plot(data, args):
     show_gpcmds = args.gnuplot_cmds
+    data_fmt = args.data_fmt
+    plot_type = args.type
+
+    if data_fmt == 'recs' and plot_type in ['clustered_boxes',
+            'clustered_boxes-yerr', 'heatmap']:
+        print('data format should be table for %s plot type' % plot_type)
+        exit(1)
+    elif data_fmt == 'table' and plot_type in ['scatter', 'scatter-yerr',
+            'labeled_lines']:
+        print('data format should be recs for %s plot type' % plot_type)
+        exit(1)
 
     tmp_path = tempfile.mkstemp(prefix='lbx-', suffix='.data')[1]
     with open(tmp_path, 'w') as f:
