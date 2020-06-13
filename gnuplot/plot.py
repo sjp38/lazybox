@@ -173,6 +173,32 @@ def recs_to_tbl(data):
 
     return '\n'.join(rows)
 
+def tbl_to_recs(data):
+    recs = OrderedDict()
+
+    for line in data.split('\n'):
+        if not line:
+            continue
+        if line.startswith('#'):
+            continue
+        fields = line.split()
+        if len(recs) == 0:
+            for f in fields[1:]:
+                recs[f] = OrderedDict()
+            continue
+        labels = list(recs.keys())
+        for idx, l in enumerate(labels):
+            recs[l][fields[0]] = fields[idx + 1]
+
+    rows = []
+    for label in recs:
+        rows.append(label)
+        for x in recs[label]:
+            rows.append('%s\t%s' % (x, recs[label][x]))
+        rows.append('')
+        rows.append('')
+    return '\n'.join(rows).strip()
+
 def plot(data, args):
     show_gpcmds = args.gnuplot_cmds
     data_fmt = args.data_fmt
@@ -181,6 +207,9 @@ def plot(data, args):
     if data_fmt == 'recs' and plot_type == 'clustered_boxes':
         data = recs_to_tbl(data)
         data_fmt = 'table'
+    elif data_fmt == 'table' and plot_type == 'labeled-lines':
+        data = tbl_to_recs(data)
+        data_fmt = 'recs'
 
     if data_fmt == 'recs' and plot_type in ['clustered_boxes',
             'clustered_boxes-yerr', 'heatmap']:
