@@ -11,6 +11,8 @@ def get_args():
     parser.add_argument('out', metavar='<file>', help='output file',
             default='plot.pdf', nargs='?')
     parser.add_argument('--file', '-f', metavar='<file>', help='data file')
+    parser.add_argument('--xtime_fmt', metavar='<date format>',
+            help='set xdata as time of the format')
     parser.add_argument('--type', '-t',
             choices=['scatter', 'scatter-yerr', 'labeled-lines',
                 'clustered_boxes', 'clustered_boxes-yerr', 'heatmap'],
@@ -37,6 +39,7 @@ def get_args():
     return parser.parse_args()
 
 def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
+    xtime_fmt = args.xtime_fmt
     plot_type = args.type
     pointsize = args.pointsize
     output = args.out
@@ -71,6 +74,10 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
     cmds.append(cmd)
 
     cmds += ['set output "%s";' % output]
+
+    if xtime_fmt:
+        cmds += ['set xdata time;']
+        cmds += ['set timefmt "%s";' % xtime_fmt]
 
     if pointsize:
         cmds += ['set pointsize %s;' % pointsize]
