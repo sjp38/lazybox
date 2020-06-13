@@ -6,6 +6,8 @@ import subprocess
 import sys
 import tempfile
 
+from collections import OrderedDict
+
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('out', metavar='<file>', help='output file',
@@ -135,10 +137,50 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
 
     return '\n'.join(cmds)
 
+def recs_to_tbl(data):
+    recs = OrderedDict()
+
+    paragraphs = data.split('\n\n')
+    for p in paragraphs:
+        label = None
+        rec = OrderedDict()
+        for line in p.split('\n'):
+            if not line:
+                continue
+            if line.startswith('#'):
+                continue
+            if not label:
+                label = line.strip()
+                continue
+
+            fields = line.split()
+            if len(fields) != 2:
+                print('record of fields != 2: %s' % line)
+                exit(1)
+            rec[fields[0]] = fields[1]
+
+        recs[label] = rec
+
+    rows = []
+    rows.append('\t'.join(['xxx'] + list(recs.keys())))
+
+    ref_rec_label = list(recs.keys())[0]
+    for x in recs[ref_rec_label].keys():
+        row = [x]
+        for label in recs.keys():
+            row.append(recs[label][x])
+        rows.append('\t'.join(row))
+
+    return '\n'.join(rows)
+
 def plot(data, args):
     show_gpcmds = args.gnuplot_cmds
     data_fmt = args.data_fmt
     plot_type = args.type
+
+    if data_fmt == 'recs' and plot_type == 'clustered_boxes':
+        data = recs_to_tbl(data)
+        data_fmt = 'table'
 
     if data_fmt == 'recs' and plot_type in ['clustered_boxes',
             'clustered_boxes-yerr', 'heatmap']:
