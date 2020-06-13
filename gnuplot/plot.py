@@ -111,14 +111,14 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
         cmd = 'plot "%s" using 1:2:3 linestyle 1 with yerrorbars notitle, ' % (
                 data_path)
         cmd += 'for [i=0:%s] "%s" index i using 1:2 with linespoints ' % (
-                nr_recs, data_path)
+                nr_recs - 1, data_path)
         cmd += 'title columnheader(1);'
     elif plot_type == 'scatter':
         cmd = 'plot for [i=0:%s] "%s" index i using 1:2 with linespoints ' % (
-                nr_recs, data_path)
+                nr_recs - 1, data_path)
         cmd += 'title columnheader(1);'
     elif plot_type == 'labeled-lines':
-        cmd = 'plot for [i=0:%s] "%s" ' % (nr_recs, data_path)
+        cmd = 'plot for [i=0:%s] "%s" ' % (nr_recs - 1, data_path)
         cmd += 'index i using 2:xtic(1) with linespoints '
         cmd += 'title columnheader(1);'
     elif plot_type == 'clustered_boxes-yerr':
@@ -154,7 +154,7 @@ def plot(data, args):
         f.write(data)
 
     nr_cols = len(data.split('\n')[0].split())
-    nr_recs = len(data.split('\n\n')) - 1
+    nr_recs = len(data.split('\n\n'))
 
     gnuplot_cmd = gen_gp_cmd(tmp_path, nr_recs, nr_cols, args)
     if show_gpcmds:
