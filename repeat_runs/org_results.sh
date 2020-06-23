@@ -41,7 +41,29 @@ do
 		then
 			OP="cp -R"
 		fi
-		echo "$OP $src/* $dst/"
-		$OP "$src/"* "$dst"
+
+		merged=0
+		for s in $(find $src -name "[0-9][0-9]")
+		do
+			uid=$(basename $s)
+			candidate="$dst/$uid"
+			while [ -d "$candidate" ]
+			do
+				merged=1
+				uid=$((10#$uid + 1))
+				uid=$(printf "%02d" $uid)
+				candidate="$dst/$uid"
+			done
+			echo "cp -R $s $candidate"
+			cp -R "$s" "$candidate"
+		done
+
+		if [ $merged -ne 0 ]
+		then
+			continue
+		fi
+
+		echo "cp -R $src/* $dst/"
+		cp -R "$src/"* "$dst"
 	done
 done
