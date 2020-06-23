@@ -21,7 +21,7 @@ VARIANCE="$2"
 exp_basename=$(basename "$EXPNAME")
 ODIR=$ODIR_ROOT/$exp_basename/$VARIANCE
 
-MAX_REPEAT=10
+MAX_REPEAT=99
 for (( unqid=1; unqid <= MAX_REPEAT; unqid+=1 ))
 do
 	CANDIDATE=$ODIR/$(printf "%02d" $unqid)
