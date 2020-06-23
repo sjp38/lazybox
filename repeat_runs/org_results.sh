@@ -53,6 +53,11 @@ do
 				uid=$((10#$uid + 1))
 				uid=$(printf "%02d" $uid)
 				candidate="$dst/$uid"
+				if [ $uid -gt 99 ]
+				then
+					echo "uid > 99!"
+					exit 1
+				fi
 			done
 			echo "cp -R $s $candidate"
 			cp -R "$s" "$candidate"
