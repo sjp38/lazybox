@@ -30,19 +30,24 @@ paths = vars(args)['files']
 
 def single_file_stat(path):
     nrs = []
+    key = ""
+    to_print = [key]
     with open(path, 'r') as f:
         for l in f:
+            if not key:
+                key = l.split()[0]
             nrs.append(float(l.split()[1]))
     if target == 'avg':
-        print(sum(nrs) / len(nrs))
+        to_print.append(sum(nrs) / len(nrs))
     elif target == 'min':
-        print(min(nrs))
+        to_print.append(min(nrs))
     elif target == 'max':
-        print(max(nrs))
+        to_print.append(max(nrs))
     elif target == 'stdev':
         avg = sum(nrs) / len(nrs)
         variance = sum([pow(v - avg, 2) for v in nrs]) / len(nrs)
-        print(math.sqrt(variance))
+        to_print.append(math.sqrt(variance))
+    print('\t'.join(to_print))
 
 def pr_stderr(msg):
     sys.stderr.write(msg + "\n")
