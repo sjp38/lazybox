@@ -9,7 +9,7 @@ do
 	exp_basename=$(basename "$exp")
 	for v in $VARIANTS
 	do
-		for d in "$ODIR_ROOT/$exp_basename/$v/"0*
+		for d in "$ODIR_ROOT/$exp_basename/$v/"[0-9][0-9]
 		do
 			"$BINDIR"/_parse.sh "$exp" "$d"
 		done
