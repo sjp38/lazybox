@@ -30,12 +30,13 @@ paths = vars(args)['files']
 
 def single_file_stat(path):
     nrs = []
-    key = ""
-    to_print = [key]
+    key = ''
+    to_print = []
     with open(path, 'r') as f:
         for l in f:
             if not key:
                 key = l.split()[0]
+                to_print.append(key)
             nrs.append(float(l.split()[1]))
     if target == 'avg':
         to_print.append(sum(nrs) / len(nrs))
@@ -47,7 +48,7 @@ def single_file_stat(path):
         avg = sum(nrs) / len(nrs)
         variance = sum([pow(v - avg, 2) for v in nrs]) / len(nrs)
         to_print.append(math.sqrt(variance))
-    print('\t'.join(to_print))
+    print('\t'.join([str(x) for x in to_print]))
 
 def pr_stderr(msg):
     sys.stderr.write(msg + "\n")
