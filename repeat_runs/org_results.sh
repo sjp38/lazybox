@@ -20,7 +20,7 @@ fi
 
 BINDIR=$(dirname "$0")
 
-source $BINDIR/__common.sh
+source "$BINDIR/__common.sh"
 
 for exp in $EXPERIMENTS
 do
@@ -43,9 +43,9 @@ do
 		fi
 
 		merged=0
-		for s in $(find $src -name "[0-9][0-9]")
+		for s in $(find "$src" -name "[0-9][0-9]")
 		do
-			uid=$(basename $s)
+			uid=$(basename "$s")
 			candidate="$dst/$uid"
 			while [ -d "$candidate" ]
 			do
