@@ -16,25 +16,25 @@ then
 	exit 1
 fi
 
-BINDIR=`dirname $0`
-STATOF=$BINDIR/../scripts/report/statof.py
-SAMPLE=$BINDIR/../scripts/perf/sample.py
-PLOT=$BINDIR/plot_stdin.sh
-YZOOM=$BINDIR/../scripts/report/yzoom.py
+BINDIR=$(dirname $0)
+STATOF="$BINDIR/../scripts/report/statof.py"
+SAMPLE="$BINDIR/../scripts/perf/sample.py"
+PLOT="$BINDIR/plot_stdin.sh"
+YZOOM="$BINDIR/../scripts/report/yzoom.py"
 
-F=$1
-NR_XSEGS=$2
-NR_YSEGS=$3
+F="$1"
+NR_XSEGS="$2"
+NR_YSEGS="$3"
 
-FSAMPLED=$F.sampled
+FSAMPLED="$F.sampled"
 
-NRDAT=`cat $F | wc -l`
+NRDAT=$(cat $F | wc -l)
 
 SEG_WIDTH=1000
 
 cat $F | $SAMPLE $(($NRDAT / $NR_XSEGS / $SEG_WIDTH)) > $FSAMPLED
-MIN=`$STATOF min $FSAMPLED`
-MAX=`$STATOF max $FSAMPLED`
+MIN=$($STATOF min $FSAMPLED)
+MAX=$($STATOF max $FSAMPLED)
 
 SEG_HEIGHT=$(( ($MAX - $MIN) / $NR_YSEGS ))
 
@@ -47,7 +47,7 @@ do
 			tail -n $SEG_WIDTH | \
 			$YZOOM $(( ($NR_YSEGS - $j) * $SEG_HEIGHT )) \
 			$(( ($NR_YSEGS - $j + 1) * $SEG_HEIGHT )) > $DAT
-		if [ `cat $DAT | wc -l` -eq 0 ]
+		if [ $(cat $DAT | wc -l) -eq 0 ]
 		then
 			continue
 		fi
