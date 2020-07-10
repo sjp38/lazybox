@@ -28,7 +28,7 @@ NR_YSEGS="$3"
 
 FSAMPLED="$F.sampled"
 
-NRDAT=$(cat $F | wc -l)
+NRDAT=$(wc -l < $F)
 
 SEG_WIDTH=1000
 
@@ -47,7 +47,7 @@ do
 			tail -n $SEG_WIDTH | \
 			$YZOOM $(( ($NR_YSEGS - $j) * $SEG_HEIGHT )) \
 			$(( ($NR_YSEGS - $j + 1) * $SEG_HEIGHT )) > $DAT
-		if [ $(cat $DAT | wc -l) -eq 0 ]
+		if [ $(wc -l < $DAT) -eq 0 ]
 		then
 			continue
 		fi
