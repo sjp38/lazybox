@@ -13,8 +13,8 @@ fi
 
 if [ -d $TARGET_DIR ]
 then
-	cd $TARGET_DIR
-	if [ $TARGET_REV == $(git rev-parse HEAD) ]
+	cd $TARGET_DIR || (echo "cd $TARGET_DIR failed"; exit 1)
+	if [ $TARGET_REV == "$(git rev-parse HEAD)" ]
 	then
 		echo "Already fetched.  Nothing to do."
 		exit 0
@@ -25,5 +25,5 @@ then
 fi
 
 git clone $REPO $TARGET_DIR
-cd $TARGET_DIR
+cd $TARGET_DIR || (echo "cd $TARGET_DIR failed"; exit 1)
 git checkout $TARGET_REV
