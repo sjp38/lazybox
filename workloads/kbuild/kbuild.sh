@@ -1,14 +1,14 @@
 #!/bin/bash
 
-WORKING_DIR=`dirname $0`
+WORKING_DIR=$(dirname "$0")
 
 echo "[[ kernbuild start ]]"
-echo "kernel version: `uname -r`"
-echo "kernel param: \"`cat /proc/cmdline`\""
-echo "date: `date`"
+echo "kernel version: $(uname -r)"
+echo "kernel param: \"$(cat /proc/cmdline)\""
+echo "date: $(date)"
 echo ""
 
-pushd $WORKING_DIR
+pushd "$WORKING_DIR"
 
 KSRC_FTP_DIR="http://ftp.kernel.org/pub/linux/kernel/v4.x/"
 KVER="linux-4.0"
@@ -16,8 +16,8 @@ KSRC_FILE=$KVER".tar.xz"
 KSRC_FTP=$KSRC_FTP_DIR$KSRC_FILE
 if [ ! -f $KSRC_FILE ]
 then
-	echo "curl "$KSRC_FTP" > $KSRC_FILE"
-	curl $KSRC_FTP > $KSRC_FILE
+	echo "curl $KSRC_FTP > $KSRC_FILE"
+	curl "$KSRC_FTP" > "$KSRC_FILE"
 	echo "curled!"
 fi
 
@@ -27,7 +27,7 @@ then
 	tar Jxf $KSRC_FILE -C build_dir/
 fi
 
-NR_CPU=`grep -c "processor" /proc/cpuinfo`
+NR_CPU=$(grep -c "processor" /proc/cpuinfo)
 
 pushd build_dir/$KVER
 
