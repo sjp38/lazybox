@@ -5,7 +5,6 @@ WORKING_DIR=$(dirname "$0")
 pushd "$WORKING_DIR"
 
 DATA_FILE="2000MiB_file"
-STRESS_FILE="stress"
 
 if [ ! -f $DATA_FILE ]
 then
