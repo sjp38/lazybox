@@ -1,7 +1,7 @@
 #!/bin/bash
 
-BINDIR=`dirname $0`
-cd $BINDIR
+BINDIR=$(dirname "$0")
+cd "$BINDIR" || exit 1
 
 if [ ! -f ../mosbench/metis/obj/app/wrmem ]
 then
@@ -17,4 +17,4 @@ fi
 
 NR_CORES=$1
 
-(time ../mosbench/metis/obj/app/wrmem -p $NR_CORES) 2>&1
+(time ../mosbench/metis/obj/app/wrmem -p "$NR_CORES") 2>&1
