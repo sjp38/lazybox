@@ -1,7 +1,7 @@
 #!/bin/bash
 
-BINDIR=`dirname $0`
-cd $BINDIR
+BINDIR=$(dirname "$0")
+cd "$BINDIR" || exit 1
 
 if [ ! -d ../mosbench/metis ]
 then
