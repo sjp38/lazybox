@@ -23,8 +23,8 @@ Users could use this file for their purpose by following steps:
 
 __author__ = "SeongJae Park"
 __email__ = "sj38.park@gmail.com"
-__copyright__ = "Copyright (c) 2013-2015, SeongJae Park"
-__license__ = "GPLv3"
+__copyright__ = "Copyright (c) 2013-2020, SeongJae Park"
+__license__ = "GPLv2"
 
 import exp
 

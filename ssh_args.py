@@ -4,8 +4,8 @@
 
 __author__ = "SeongJae Park"
 __email__ = "sj38.park@gmail.com"
-__copyright__ = "Copyright (c) 2015-2016, SeongJae Park"
-__license__ = "GPLv3"
+__copyright__ = "Copyright (c) 2015-2020, SeongJae Park"
+__license__ = "GPLv2"
 
 import getpass
 import os
