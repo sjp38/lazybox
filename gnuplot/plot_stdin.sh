@@ -33,5 +33,5 @@ then
 fi
 
 $BINDIR/plot.py --file $TMPFILE --type $CHART_TYPE \
-	--xtitle $XLABEL --ytitle $YLABEL  $LOGSCALE
+	--xtitle "$XLABEL" --ytitle "$YLABEL"  $LOGSCALE
 rm $TMPFILE
