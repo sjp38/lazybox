@@ -8,7 +8,7 @@ then
 	exit 1
 fi
 
-BINDIR=`dirname $0`
+BINDIR=$(dirname "$0")
 
 CHART_TYPE=$1
 XLABEL=$2
@@ -17,9 +17,9 @@ LOGSCALE=$4
 
 export GNUPLOT_LIB=$BINDIR
 
-TMPFILE=`mktemp /tmp/lbx-gnuplot.XXX`
+TMPFILE=$(mktemp /tmp/lbx-gnuplot.XXX)
 
-cat /dev/stdin > $TMPFILE
+cat /dev/stdin > "$TMPFILE"
 
 if [ "$LOGSCALE" = "x" ]
 then
@@ -32,6 +32,6 @@ then
 	LOGSCALE="--xlog --ylog"
 fi
 
-$BINDIR/plot.py --file $TMPFILE --type $CHART_TYPE \
-	--xtitle "$XLABEL" --ytitle "$YLABEL"  $LOGSCALE
-rm $TMPFILE
+"$BINDIR/plot.py" --file "$TMPFILE" --type "$CHART_TYPE" \
+	--xtitle "$XLABEL" --ytitle "$YLABEL"  "$LOGSCALE"
+rm "$TMPFILE"
