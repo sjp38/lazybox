@@ -1,7 +1,7 @@
 #!/bin/bash
 
-BINDIR=`dirname $0`
-cd $BINDIR
+BINDIR=$(dirname "$0")
+cd "$BINDIR" || exit 1
 
 PEDSORT=../mosbench/psearchy/mkdb/pedsort
 
@@ -26,7 +26,7 @@ if [ ! -d $TARGET_DIR ]
 then
 	mkdir -p $TMPD
 	sudo mount -t tmpfs -o rw,size=10G tmpfs $TMPD
-	sudo chown $USER $TMPD
+	sudo chown "$USER" "$TMPD"
 
 	if [ ! -f linux-4.19.10.tar.xz ]
 	then
@@ -35,10 +35,10 @@ then
 	tar -C $TMPD -xvf linux-4.19.10.tar.xz
 fi
 
-rm -fr $TMPD/db
-for i in $(seq 0 $(($NR_CORES - 1)))
+rm -fr "$TMPD/db"
+for i in $(seq 0 $((NR_CORES - 1)))
 do
-	mkdir -p $TMPD/db/db$i
+	mkdir -p "$TMPD/db/db$i"
 done
 
 sync
@@ -46,4 +46,4 @@ sync
 SZ_HASHTABLE=1024
 
 find $TARGET_DIR -type f | \
-	$PEDSORT -t $TMPD/db/db -c $NR_CORES -m $SZ_HASHTABLE
+	$PEDSORT -t "$TMPD/db/db" -c "$NR_CORES" -m "$SZ_HASHTABLE"
