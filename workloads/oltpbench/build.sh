@@ -1,7 +1,7 @@
 #!/bin/bash
 
-BINDIR=`dirname $0`
-pushd $BINDIR
+BINDIR=$(dirname "$0")
+pushd "$BINDIR"
 
 if [ ! -d src ]
 then
@@ -9,7 +9,7 @@ then
 	./fetch-src.sh
 fi
 
-cd src/
+cd src/ || exit 1
 ant
 
 popd
