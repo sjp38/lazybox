@@ -2,8 +2,13 @@
 
 CACHEDIR=/sys/devices/system/cpu/cpu0/cache/index
 
-for level in 0 1 2 3;
+for (( level=0; ; level++ ))
 do
+	if [ ! -d "$CACHEDIR$level" ]
+	then
+		break
+	fi
+
 	echo "Level $level"
 	echo "======="
 	echo ""
