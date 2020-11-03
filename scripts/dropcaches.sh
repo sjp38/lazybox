@@ -1,7 +1,12 @@
 #!/bin/bash
 
 function usage() {
-	echo "Usage: $0 <1-3>"
+	echo "Usage: $0 <target>"
+	echo
+	echo "TARGET"
+	echo "    1: Free pagecache"
+	echo "    2: Free dentries and inodes"
+	echo "    3: Free pagecache, dentries, and inodes"
 	exit 1
 }
 
