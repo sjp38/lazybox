@@ -9,17 +9,17 @@ fi
 delay=$1
 count=$2
 
-for ((i = 0; i != $count; i++))
+for ((i = 0; i != count; i++))
 do
-	read cpu user nice system idle iowait irq softirq steal \
+	read -r cpu user nice system idle iowait irq softirq steal \
 		guest guest_nice < /proc/stat
 	old_active=$((user + nice + system + irq + softirq + steal + \
 		guest + guest_nice))
 	old_total=$((old_active + idle + iowait))
 
-	sleep $delay
+	sleep "$delay"
 
-	read cpu user nice system idle iowait irq softirq steal \
+	read -r cpu user nice system idle iowait irq softirq steal \
 		guest guest_nice < /proc/stat
 	now_active=$((user + nice + system + irq + softirq + steal + \
 		guest + guest_nice))
