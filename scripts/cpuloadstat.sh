@@ -13,6 +13,11 @@ for ((i = 0; i != count; i++))
 do
 	read -r cpu user nice system idle iowait irq softirq steal \
 		guest guest_nice < /proc/stat
+	if [ "$cpu" != "cpu" ]
+	then
+		echo "/proc/stat has unexpected format"
+		exit 1
+	fi
 	old_active=$((user + nice + system + irq + softirq + steal + \
 		guest + guest_nice))
 	old_total=$((old_active + idle + iowait))
@@ -21,6 +26,11 @@ do
 
 	read -r cpu user nice system idle iowait irq softirq steal \
 		guest guest_nice < /proc/stat
+	if [ "$cpu" != "cpu" ]
+	then
+		echo "/proc/stat has unexpected format"
+		exit 1
+	fi
 	now_active=$((user + nice + system + irq + softirq + steal + \
 		guest + guest_nice))
 	now_total=$((now_active + idle + iowait))
