@@ -11,20 +11,24 @@ fi
 TARGET=$1
 
 echo "Press Ctrl-C to finish tracing and show results"
-echo "Format: <tid>	<execution time (nanoseconds)>"
+echo "Format:  <tid> <execution time>"
 echo
 
-cmd="sudo ply -c \
+cmd="sudo ply \
 'kprobe:$TARGET
 {
-	@start[tid()] = nsecs();
+	start[kpid] = time;
 }
 
-kretprobe:$TARGET / @start[tid()] /
+kretprobe:$TARGET / start[kpid] /
 {
-	latency = nsecs() - @start[tid()];
-	@xtimes[tid()] = @xtimes[tid()] + latency;
-	@start[tid()] = nil;
+	latency[kpid] = time - start[kpid];
+	if (xtimes[kpid])
+		xtimes[kpid] = xtimes[kpid] + latency[kpid];
+	else
+		xtimes[kpid] = latency[kpid];
+	delete latency[kpid];
+	delete start[kpid];
 }'"
 
 eval "$cmd"
