@@ -14,10 +14,10 @@ echo "Press Ctrl-C to finish tracing and show results"
 echo "Format: <function>	<number of calls>"
 echo
 
-cmd="sudo ply -c \
+cmd="sudo ply \
 'kprobe:$TARGET
 {
-	@[func()].count()
+	@[caller] = count();
 }'"
 
 eval "$cmd"
