@@ -18,12 +18,14 @@ cmd="sudo ply \
 'kprobe:$FUNCTION
 {
 	start[kpid] = time;
+	callers[kpid] = caller;
 }
 
 kretprobe:$FUNCTION / start[kpid] /
 {
-	@[\"latency\"] = quantize(time - start[kpid]);
+	@latencies[callers[kpid]] = quantize(time - start[kpid]);
 	delete start[kpid];
+	delete callers[kpid];
 }'"
 
 eval "$cmd"
