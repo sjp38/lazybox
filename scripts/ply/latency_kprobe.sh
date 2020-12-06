@@ -14,16 +14,16 @@ echo "Press Ctrl-C to finish tracing and show results"
 echo "Format: <latency range (nanoseconds)> <distribution>"
 echo
 
-cmd="sudo ply -A -c \
+cmd="sudo ply \
 'kprobe:$FUNCTION
 {
-	@start[tid()] = nsecs()
+	start[kpid] = time;
 }
 
-kretprobe:$FUNCTION / @start[tid()] /
+kretprobe:$FUNCTION / start[kpid] /
 {
-	@latency.quantize(nsecs() - @start[tid()]);
-	@start[tid()] = nil;
+	@[\"latency\"] = quantize(time - start[kpid]);
+	delete start[kpid];
 }'"
 
 eval "$cmd"
