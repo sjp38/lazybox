@@ -13,5 +13,5 @@ definition=$1
 echo "Press Ctrl-C to finish tracing and show result"
 echo "Format: <callstack>	<number of calls>"
 echo
-cmd="sudo ply -c 'kprobe:$definition{ @[stack()].count() }'"
+cmd="sudo ply 'kprobe:$definition {@[stack] = count();}'"
 eval "$cmd"
