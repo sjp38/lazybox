@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Print latency of a function having kprobe and kretprobe
+# Print latencies of a process context function having kprobe and kretprobe
 
 if [ $# -ne 1 ]
 then
@@ -11,7 +11,7 @@ fi
 FUNCTION=$1
 
 echo "Press Ctrl-C to finish tracing and show results"
-echo "Format: <latency range (nanoseconds)> <distribution>"
+echo "Format: <latency range)> <distribution>"
 echo
 
 cmd="sudo ply \

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# Print total execution time of functions having kprobe and kretprobe
+# Print per-process execution time of a process context function having kprobe
+# and kretprobe
 
 if [ $# -ne 1 ]
 then

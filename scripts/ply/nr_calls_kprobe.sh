@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Print number of executions of kprobes
+# Print number of executions of a function
 
 if [ $# -ne 1 ]
 then
