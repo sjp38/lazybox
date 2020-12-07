@@ -2,22 +2,20 @@
 
 # Print number of executions of a function
 
-if [ $# -ne 1 ]
+if [ $# -eq 0 ]
 then
-	echo "Usage: $0 <function name>"
+	echo "Usage: $0 <function name> ..."
 	exit 1
 fi
 
-TARGET=$1
-
-echo "Press Ctrl-C to finish tracing and show results"
-echo "Format: <function>	<number of calls>"
+echo "# Press Ctrl-C to finish tracing and show results"
 echo
 
-cmd="sudo ply \
-'kprobe:$TARGET
-{
-	@[caller] = count();
-}'"
+plycmd=""
+for fn in "${@:1}"
+do
+	plycmd+="kprobe:$fn {@[caller] = count();} "
+done
 
+cmd="sudo ply '$plycmd'"
 eval "$cmd"
