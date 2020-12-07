@@ -2,16 +2,22 @@
 
 # Print callstacks and number of fires of a kprobe point
 
-if [ $# -ne 1 ]
+if [ $# -eq 0 ]
 then
-	echo "Usage: $0 <kernel function name>"
+	echo "Usage: $0 <kernel function name>..."
 	exit 1
 fi
-
-definition=$1
 
 echo "Press Ctrl-C to finish tracing and show result"
 echo "Format: <callstack>	<number of calls>"
 echo
-cmd="sudo ply 'kprobe:$definition {@[stack] = count();}'"
+
+plycmd=""
+
+for fn in "${@:1}"
+do
+	plycmd+="kprobe:$fn {@[stack] = count();} "
+done
+
+cmd="sudo ply '$plycmd'"
 eval "$cmd"
