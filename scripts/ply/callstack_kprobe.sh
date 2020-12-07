@@ -8,8 +8,7 @@ then
 	exit 1
 fi
 
-echo "Press Ctrl-C to finish tracing and show result"
-echo "Format: <callstack>	<number of calls>"
+echo "# Press Ctrl-C to finish tracing and show result"
 echo
 
 plycmd=""
