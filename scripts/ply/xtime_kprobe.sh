@@ -3,33 +3,29 @@
 # Print per-process execution time of a process context function having kprobe
 # and kretprobe
 
-if [ $# -ne 1 ]
+if [ $# -eq 0 ]
 then
-	echo "Usage: $0 <target>"
+	echo "Usage: $0 <function name> ..."
 	exit 1
 fi
 
-TARGET=$1
-
 echo "Press Ctrl-C to finish tracing and show results"
-echo "Format:  <tid> <execution time>"
-echo
 
-cmd="sudo ply \
-'kprobe:$TARGET
-{
-	start[kpid] = time;
-}
+plycmd=""
+for fn in "${@:1}"
+do
+	plycmd+="kprobe:$fn {start[kpid] = time;}"
+	plycmd+="
+	kretprobe:$fn / start[kpid] / {
+		latency[kpid] = time - start[kpid];
+		if ($fn[kpid])
+			$fn[kpid] = $fn[kpid] + latency[kpid];
+		else
+			$fn[kpid] = latency[kpid];
+		delete latency[kpid];
+		delete start[kpid];
+	} "
+done
 
-kretprobe:$TARGET / start[kpid] /
-{
-	latency[kpid] = time - start[kpid];
-	if (xtimes[kpid])
-		xtimes[kpid] = xtimes[kpid] + latency[kpid];
-	else
-		xtimes[kpid] = latency[kpid];
-	delete latency[kpid];
-	delete start[kpid];
-}'"
-
+cmd="sudo ply '$plycmd'"
 eval "$cmd"
