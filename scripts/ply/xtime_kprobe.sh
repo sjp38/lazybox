@@ -9,8 +9,6 @@ then
 	exit 1
 fi
 
-echo "Press Ctrl-C to finish tracing and show results"
-
 plycmd=""
 for fn in "${@:1}"
 do
