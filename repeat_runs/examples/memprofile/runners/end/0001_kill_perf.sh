@@ -1,3 +1,3 @@
 #!/bin/bash
 
-kill -SIGINT `pidof perf`
+kill -SIGINT "$(pidof perf)"
