@@ -6,7 +6,7 @@ import subprocess
 import sys
 import tempfile
 
-import data_format
+import transform_data_format
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -143,10 +143,10 @@ def plot(data, args):
     plot_type = args.type
 
     if data_fmt == 'recs' and plot_type == 'clustered_boxes':
-        data = data_format.recs_to_tbl(data)
+        data = transform_data_format.recs_to_tbl(data)
         data_fmt = 'table'
     elif data_fmt == 'table' and plot_type in ['scatter', 'labeled-lines']:
-        data = data_format.tbl_to_recs(data)
+        data = transform_data_format.tbl_to_recs(data)
         data_fmt = 'recs'
     elif data_fmt == 'table' and plot_type == 'scatter-yerr':
         data = tbl_to_yerr_recs(data)
