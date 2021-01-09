@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+import argparse
+import sys
+
 from collections import OrderedDict
 
 def recs_to_tbl(data):
@@ -99,3 +102,26 @@ def tbl_to_yerr_recs(data):
         rows.append('')
         rows.append('')
     return '\n'.join(rows).strip()
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('from_format', metavar='<input format>',
+            choices=['recs', 'recs-yerr', 'table'],
+            help='input data format')
+    parser.add_argument('to', metavar='<output format>',
+            choices=['recs', 'recs-yerr', 'table'],
+            help='input data format')
+    args = parser.parse_args()
+
+    input_data = sys.stdin.read()
+    if args.from_format == 'recs' and args.to == 'table':
+        print(recs_to_tbl(input_data))
+    elif args.from_format == 'table' and args.to == 'recs':
+        print(tbl_to_recs(input_data))
+    elif args.from_format == 'table' and args.to == 'recs-yerr':
+        print(tbl_to_yerr_recs(input_data))
+    else:
+        print('not supported transformation')
+
+if __name__ == '__main__':
+    main()
