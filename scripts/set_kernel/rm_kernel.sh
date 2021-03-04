@@ -6,10 +6,12 @@ then
 	exit 1
 fi
 
-rm "/boot/vmlinuz-$1"
-rm "/boot/initrd.img-$1"
-rm "/boot/System.map-$1"
-rm "/boot/config-$1"
-rm -fr "/lib/modules/$1"
-rm "/var/lib/initramfs-tools/$1"
+ver=$1
+
+rm "/boot/vmlinuz-$ver"
+rm "/boot/initrd.img-$ver"
+rm "/boot/System.map-$ver"
+rm "/boot/config-$ver"
+rm -fr "/lib/modules/$ver"
+rm "/var/lib/initramfs-tools/$ver"
 update-grub2
