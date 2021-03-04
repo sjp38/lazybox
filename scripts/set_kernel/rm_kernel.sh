@@ -6,6 +6,12 @@ then
 	exit 1
 fi
 
+if [ "$EUID" -ne 0 ]
+then
+	echo "run as root, please"
+	exit 1
+fi
+
 ver=$1
 
 rm "/boot/vmlinuz-$ver"
