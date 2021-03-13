@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if [ $# -ne 1 ];
+if [ $# -lt 1 ];
 then
-	echo "Usage: $0 <target kernel version>"
+	echo "Usage: $0 <target kernel version>..."
 	exit 1
 fi
 
@@ -12,12 +12,13 @@ then
 	exit 1
 fi
 
-ver=$1
-
-rm "/boot/vmlinuz-$ver"
-rm "/boot/initrd.img-$ver"
-rm "/boot/System.map-$ver"
-rm "/boot/config-$ver"
-rm -fr "/lib/modules/$ver"
-rm "/var/lib/initramfs-tools/$ver"
+for ver in "${@:1}"
+do
+	rm "/boot/vmlinuz-$ver"
+	rm "/boot/initrd.img-$ver"
+	rm "/boot/System.map-$ver"
+	rm "/boot/config-$ver"
+	rm -fr "/lib/modules/$ver"
+	rm "/var/lib/initramfs-tools/$ver"
+done
 update-grub2
