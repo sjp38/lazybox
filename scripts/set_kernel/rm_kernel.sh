@@ -14,6 +14,12 @@ fi
 
 for ver in "${@:1}"
 do
+	if [ ! -e "/boot/vmlinuz-$ver" ]
+	then
+		echo "vmlinuz-$ver not found"
+		continue
+	fi
+
 	rm "/boot/vmlinuz-$ver"
 	rm "/boot/initrd.img-$ver"
 	rm "/boot/System.map-$ver"
