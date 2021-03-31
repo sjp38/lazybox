@@ -87,12 +87,12 @@ def main():
         usable = zone.nr_usable_pages(order) * SZ_PAGE
         total = zone.nr_free_pages() * SZ_PAGE
         print("%s: %f (total %s, usable %s)" % (zone.name,
-            usable / total, hrsf(total), hrsf(usable)))
+            (total - usable) / total, hrsf(total), hrsf(usable)))
 
     usable = sum([z.nr_usable_pages(order) for z in zones]) * SZ_PAGE
     total = sum([z.nr_free_pages() for z in zones]) * SZ_PAGE
     print("Total: %f (total %s, usable %s)" % (
-        usable / total, hrsf(total), hrsf(usable)))
+        (total - usable) / total, hrsf(total), hrsf(usable)))
 
 if __name__ == '__main__':
     main()
