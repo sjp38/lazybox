@@ -38,7 +38,6 @@ do
 done
 mkdir -p "$ODIR"
 
-runners_dir=$EXPNAME/runners
 for runner_type in "start" "main" "back" "end"
 do
 	custom_runners_varname=$runner_type"_RUNNERS"
