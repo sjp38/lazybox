@@ -54,6 +54,10 @@ do
 	fi
 	for runner in $(ls "$runners_dir" | sort)
 	do
+		if [[ "$runner" = "_"* ]]
+		then
+			continue
+		fi
 		echo "$runner_type $runners_dir/$runner $ODIR"
 	done
 done
