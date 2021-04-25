@@ -5,6 +5,7 @@ import os
 import subprocess
 import sys
 import tempfile
+from collections import OrderedDict
 
 import transform_data_format
 
@@ -185,16 +186,22 @@ def plot_stdio(args):
     data = f.read()
     f.close()
 
+    title = None
     min_y = None
     max_y = None
-    values = []
+    records = OrderedDict()
     for line in data.strip().split('\n'):
         line = line.strip()
         if line.startswith('#'):
             continue
         fields = line.split()
+        if len(fields) == 1:
+            title = fields[0]
+            records[title] = []
+            continue
         if len(fields) < 2:
             continue
+
         try:
             x = int(fields[0])
             y = int(fields[1])
@@ -206,18 +213,21 @@ def plot_stdio(args):
         if not max_y or max_y < y:
             max_y = y
 
-        values.append([x, y])
+        records[title].append([x, y])
 
     width = max_y - min_y
     nr_cols = 80
     width_col = width / 80
 
-    for pair in values:
-        x = pair[0]
-        y = pair[1]
+    for title, values in records.items():
+        print(title)
+        for pair in values:
+            x = pair[0]
+            y = pair[1]
 
-        cols = int((y - min_y) / width_col)
-        print('-' * (cols + 1))
+            cols = int((y - min_y) / width_col)
+            print('-' * (cols + 1))
+        print()
 
 def main():
     args = get_args()
