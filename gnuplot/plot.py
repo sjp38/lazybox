@@ -217,7 +217,7 @@ def plot_stdio(args):
 
     width = max_y - min_y
     nr_cols = 80
-    width_col = width / 80
+    width_col = width / nr_cols
 
     for title, values in records.items():
         print(title)
@@ -226,6 +226,7 @@ def plot_stdio(args):
             y = pair[1]
 
             cols = int((y - min_y) / width_col)
+            print(x,y)
             print('-' * (cols + 1))
         print()
 
