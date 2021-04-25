@@ -219,6 +219,9 @@ def plot_stdio(args):
     nr_cols = 80
     width_col = width / nr_cols
 
+    print('# plotting %s-%s in %d columns (%s per column)' %
+            (min_y, max_y, nr_cols, width_col))
+
     for title, values in records.items():
         print(title)
         for pair in values:
