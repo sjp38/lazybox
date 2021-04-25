@@ -174,10 +174,59 @@ def plot(data, args):
     subprocess.call(['gnuplot', '-e', gnuplot_cmd])
     os.remove(tmp_path)
 
+def plot_stdio(args):
+    if args.data_fmt != 'recs':
+        print('stdio supports record data only')
+        exit(1)
+
+    f = sys.stdin
+    if args.file:
+        f = open(args.file, 'r')
+    data = f.read()
+    f.close()
+
+    min_y = None
+    max_y = None
+    values = []
+    for line in data.strip().split('\n'):
+        line = line.strip()
+        if line.startswith('#'):
+            continue
+        fields = line.split()
+        if len(fields) < 2:
+            continue
+        try:
+            x = int(fields[0])
+            y = int(fields[1])
+        except ValueError:
+            continue
+
+        if not min_y or min_y > y:
+            min_y = y
+        if not max_y or max_y < y:
+            max_y = y
+
+        values.append([x, y])
+
+    width = max_y - min_y
+    nr_cols = 80
+    width_col = width / 80
+
+    for pair in values:
+        x = pair[0]
+        y = pair[1]
+
+        cols = int((y - min_y) / width_col)
+        print('-' * (cols + 1))
+
 def main():
     args = get_args()
 
     output = args.out
+
+    if output == 'stdio':
+        return plot_stdio(args)
+
     out_extension = output.split('.')[-1]
     if not out_extension in ['pdf', 'jpeg', 'png', 'svg']:
         print("Unuspported output type '%s'." % out_extension)
