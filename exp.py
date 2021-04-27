@@ -199,6 +199,10 @@ def childs_of(pid, stop_childs, print_tree=True):
             if not child_id.isdigit():
                 continue
             if stop_childs:
-                os.kill(int(child_id), signal.SIGSTOP)
+                try:
+                    os.kill(int(child_id), signal.SIGSTOP)
+                except OSError as e:
+                    print(ltime(), "error %s occurred while stopping child %s"
+                            % (e, child_id))
             childs.append(int(child_id))
     return childs
