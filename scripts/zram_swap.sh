@@ -1,11 +1,8 @@
 #!/bin/bash
 
-echo $#
-
 if [ $# -ne 1 ]
 then
-	echo "Illegal number of parameters."
-	echo "usage: $0 <size of zram device>"
+	echo "Usage: $0 <size of zram device>"
 	exit 1
 fi
 
