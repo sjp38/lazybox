@@ -21,7 +21,7 @@ mkdir -p "$parsed_dir"
 
 for raw_output in $(ls "$raw_outputs_dir")
 do
-	echo "$raw_outputs_dir $raw_output"
+	echo "parse $raw_outputs_dir $raw_output"
 	parsers=$(ls "$parsers_dir" | grep -e '^'"$raw_output"'*')
 	for parser in $parsers
 	do

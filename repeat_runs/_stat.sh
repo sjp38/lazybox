@@ -33,7 +33,7 @@ mkdir -p "$stat_odir"
 
 for parsed_file in $(ls "$parsed_dir_1")
 do
-	echo "$parsed_dir_1 $parsed_file"
+	echo "stat $parsed_dir_1 $parsed_file"
 	statists=$(ls "$statists_dir" | grep -e '^'$parsed_file'*')
 	for statist in $statists
 	do
