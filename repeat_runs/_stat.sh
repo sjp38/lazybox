@@ -31,9 +31,9 @@ parsed_dir_1=$(echo "$parsed_dirs" | awk '{print $1}')
 stat_odir=$2'/stat/'
 mkdir -p "$stat_odir"
 
+echo "stat $parsed_dir_1"
 for parsed_file in $(ls "$parsed_dir_1")
 do
-	echo "stat $parsed_dir_1 $parsed_file"
 	statists=$(ls "$statists_dir" | grep -e '^'$parsed_file'*')
 	for statist in $statists
 	do
