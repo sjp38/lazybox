@@ -2,4 +2,4 @@
 
 LAZYBOX=$HOME/lazybox
 
-$LAZYBOX/scripts/memfp.sh "sleep 5" >> $1/memfps
+"$LAZYBOX/scripts/memfp.sh" "sleep 5" >> "$1/memfps"
