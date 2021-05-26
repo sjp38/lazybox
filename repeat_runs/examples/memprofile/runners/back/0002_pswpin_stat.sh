@@ -2,6 +2,6 @@
 
 while :
 do
-	cat /proc/vmstat | grep pswpin >> $1/pswpin;
-	sleep 1;
+	grep pswpin /proc/vmstat >> "$1/pswpin"
+	sleep 1
 done
