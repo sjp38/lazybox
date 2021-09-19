@@ -244,7 +244,7 @@ def plot_stdout(args):
 
             len_bar = int((y - min_y) / sz_col)
             len_spaces = max_len_bar - len_bar
-            bar = '|%s%s|' % ('-' * len_bar, ' ' * len_spaces)
+            bar = '|%s%s|' % ('*' * len_bar, ' ' * len_spaces)
             print('%s %s %s' % (x_str, y_str, bar))
         print()
 
