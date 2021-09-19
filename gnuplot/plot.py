@@ -223,12 +223,8 @@ def plot_stdout(args):
 
         records[title].append([x, y])
 
-    width = max_y - min_y
-    nr_cols = 80 - max_x_len - max_y_len - 2
-    width_col = width / nr_cols
-
-    print('# plotting %s-%s in %d columns (%s per column)' %
-            (min_y, max_y, nr_cols, width_col))
+    max_len_bar = 80 - max_x_len - max_y_len - 2
+    sz_col = (max_y - min_y) / max_len_bar
 
     for title, values in records.items():
         print(title)
@@ -241,10 +237,12 @@ def plot_stdout(args):
             y_str = '%s' % y
             y_str += ' ' * (max_y_len - len(y_str))
 
-            cols = '-' * int((y - min_y) / width_col)
+            cols = '-' * int((y - min_y) / sz_col)
             print('%s %s %s' % (x_str, y_str, cols))
         print()
-    print('# each column of the bar is %s' % width_col)
+
+    print('# %s-%s in max %d columns bar (%s per column)' %
+            (min_y, max_y, max_len_bar, sz_col))
 
 def main():
     args = get_args()
