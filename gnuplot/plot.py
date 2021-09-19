@@ -190,6 +190,8 @@ def plot_stdout(args):
     title = None
     min_y = None
     max_y = None
+    max_x_len = 0
+    max_y_len = 0
     records = OrderedDict()
     for line in data.strip().split('\n'):
         line = line.strip()
@@ -209,6 +211,13 @@ def plot_stdout(args):
         except ValueError:
             continue
 
+        x_len = len(x)
+        if x_len > max_x_len:
+            max_x_len = x_len
+        y_len = len('%s' % y)
+        if y_len > max_y_len:
+            max_y_len = y_len
+
         if not min_y or min_y > y:
             min_y = y
         if not max_y or max_y < y:
@@ -217,7 +226,7 @@ def plot_stdout(args):
         records[title].append([x, y])
 
     width = max_y - min_y
-    nr_cols = 80
+    nr_cols = 80 - max_x_len - max_y_len - 2
     width_col = width / nr_cols
 
     print('# plotting %s-%s in %d columns (%s per column)' %
@@ -229,8 +238,13 @@ def plot_stdout(args):
             x = pair[0]
             y = pair[1]
 
+            x_str = '%s' % x
+            x_str += ' ' * (max_x_len - len(x_str))
+            y_str = '%s' % y
+            y_str += ' ' * (max_y_len - len(y_str))
+
             cols = '-' * int((y - min_y) / width_col)
-            print(x, y, cols)
+            print('%s %s %s' % (x_str, y_str, cols))
         print()
     print('# each column of the bar is %s' % width_col)
 
