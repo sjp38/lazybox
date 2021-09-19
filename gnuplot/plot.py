@@ -176,15 +176,16 @@ def plot(data, args):
     os.remove(tmp_path)
 
 def plot_stdio(args):
-    if args.data_fmt != 'recs':
-        print('stdio supports record data only')
-        exit(1)
-
     f = sys.stdin
     if args.file:
         f = open(args.file, 'r')
     data = f.read()
     f.close()
+
+    if args.data_fmt == 'table':
+        data = transform_data_format.tbl_to_recs(data)
+
+    print(data)
 
     title = None
     min_y = None
@@ -203,7 +204,7 @@ def plot_stdio(args):
             continue
 
         try:
-            x = int(fields[0])
+            x = fields[0]
             y = int(fields[1])
         except ValueError:
             continue
