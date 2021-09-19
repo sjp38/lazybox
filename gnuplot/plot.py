@@ -229,9 +229,8 @@ def plot_stdio(args):
             x = pair[0]
             y = pair[1]
 
-            cols = int((y - min_y) / width_col)
-            print(x,y)
-            print('-' * (cols + 1))
+            cols = '-' * int((y - min_y) / width_col)
+            print(x, y, cols)
         print()
 
 def main():
