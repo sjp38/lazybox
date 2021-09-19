@@ -232,6 +232,7 @@ def plot_stdio(args):
             cols = '-' * int((y - min_y) / width_col)
             print(x, y, cols)
         print()
+    print('# each column of the bar is %s' % width_col)
 
 def main():
     args = get_args()
