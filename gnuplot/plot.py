@@ -185,8 +185,6 @@ def plot_stdout(args):
     if args.data_fmt == 'table':
         data = transform_data_format.tbl_to_recs(data)
 
-    print(data)
-
     title = None
     min_y = None
     max_y = None
