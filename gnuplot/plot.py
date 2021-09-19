@@ -41,6 +41,9 @@ def get_args():
             help='xtics rotate degree')
     parser.add_argument('--gnuplot_cmds', action='store_true',
             help='print gnuplot commands')
+
+    parser.add_argument('--stdout_cols', type=int, default=80,
+            help='max number of columns for stdout plot')
     return parser.parse_args()
 
 def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
@@ -223,7 +226,7 @@ def plot_stdout(args):
 
         records[title].append([x, y])
 
-    max_len_bar = 80 - max_x_len - max_y_len - 2
+    max_len_bar = args.stdout_cols - max_x_len - max_y_len - 2
     sz_col = (max_y - min_y) / max_len_bar
 
     for title, values in records.items():
