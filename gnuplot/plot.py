@@ -175,7 +175,7 @@ def plot(data, args):
     subprocess.call(['gnuplot', '-e', gnuplot_cmd])
     os.remove(tmp_path)
 
-def plot_stdio(args):
+def plot_stdout(args):
     f = sys.stdin
     if args.file:
         f = open(args.file, 'r')
@@ -239,8 +239,8 @@ def main():
 
     output = args.out
 
-    if output == 'stdio':
-        return plot_stdio(args)
+    if output == 'stdout':
+        return plot_stdout(args)
 
     out_extension = output.split('.')[-1]
     if not out_extension in ['pdf', 'jpeg', 'png', 'svg']:
