@@ -178,13 +178,7 @@ def plot(data, args):
     subprocess.call(['gnuplot', '-e', gnuplot_cmd])
     os.remove(tmp_path)
 
-def plot_stdout(args):
-    f = sys.stdin
-    if args.file:
-        f = open(args.file, 'r')
-    data = f.read()
-    f.close()
-
+def plot_stdout(data, args):
     if args.data_fmt == 'table':
         data = transform_data_format.tbl_to_recs(data)
 
@@ -256,19 +250,19 @@ def main():
 
     output = args.out
 
-    if output == 'stdout':
-        return plot_stdout(args)
-
-    out_extension = output.split('.')[-1]
-    if not out_extension in ['pdf', 'jpeg', 'png', 'svg']:
-        print("Unuspported output type '%s'." % out_extension)
-        exit(-1)
-
     f = sys.stdin
     if args.file:
         f = open(args.file, 'r')
     data = f.read()
     f.close()
+
+    if output == 'stdout':
+        return plot_stdout(data, args)
+
+    out_extension = output.split('.')[-1]
+    if not out_extension in ['pdf', 'jpeg', 'png', 'svg']:
+        print("Unuspported output type '%s'." % out_extension)
+        exit(-1)
 
     plot(data, args)
 
