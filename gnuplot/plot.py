@@ -44,6 +44,8 @@ def get_args():
 
     parser.add_argument('--stdout_cols', type=int, default=80,
             help='max number of columns for stdout plot')
+    parser.add_argument('--stdout_val_type', choices=['bytes', 'seconds'],
+            help='type of the value')
     return parser.parse_args()
 
 def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
@@ -178,6 +180,42 @@ def plot(data, args):
     subprocess.call(['gnuplot', '-e', gnuplot_cmd])
     os.remove(tmp_path)
 
+def bytes_to_txt(val):
+    if val < 1<<10:
+        return '%.3f B' % val
+    if val < 1<<20:
+        return '%.3f KiB' % (val / (1<<10))
+    if val < 1<<30:
+        return '%.3f MiB' % (val / (1<<20))
+    if val < 1<<40:
+        return '%.3f GiB' % (val / (1<<30))
+    return '%.3f PiB' % (val / (1<<40))
+
+def seconds_to_txt(val):
+    txt = ''
+    days = val / 24 * 3600
+    if days:
+        txt = '%dd' % days
+        val -= days * 24 *3600
+
+    hours = val / 3600
+    if hours:
+        txt += '%dh' % hours
+        val -= hours * 3600
+    mins = val / 60
+    if mins:
+        txt += '%dm' % mins
+        val -= mins * 60
+    txt+='%ds' % val
+
+def format_val_txt(val, val_type):
+    'Transform value to human-readable text'
+    if val_type == 'bytes':
+        return bytes_to_txt(val)
+    elif val_type == 'seconds':
+        return seconds_to_txt(val)
+    return '%s' % val
+
 def plot_stdout(data, args):
     if args.data_fmt == 'table':
         data = transform_data_format.tbl_to_recs(data)
@@ -233,7 +271,7 @@ def plot_stdout(data, args):
 
             x_str = '%s' % x
             x_str += ' ' * (max_x_len - len(x_str))
-            y_str = '%s' % y
+            y_str = format_val_txt(y, args.stdout_val_type)
             y_str += ' ' * (max_y_len - len(y_str))
 
             len_bar = int((y - min_y) / sz_col)
