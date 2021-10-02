@@ -248,7 +248,7 @@ def plot_stdout(data, args):
         x_len = len(x)
         if x_len > max_x_len:
             max_x_len = x_len
-        y_len = len('%s' % y)
+        y_len = len(format_val_txt(y, args.stdout_val_type))
         if y_len > max_y_len:
             max_y_len = y_len
 
