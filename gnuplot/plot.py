@@ -193,20 +193,21 @@ def bytes_to_txt(val):
 
 def seconds_to_txt(val):
     txt = ''
-    days = val / 24 * 3600
+    days = val // (24 * 3600)
     if days:
         txt = '%dd' % days
         val -= days * 24 *3600
 
-    hours = val / 3600
+    hours = val // 3600
     if hours:
         txt += '%dh' % hours
         val -= hours * 3600
-    mins = val / 60
+    mins = val // 60
     if mins:
         txt += '%dm' % mins
         val -= mins * 60
     txt+='%ds' % val
+    return txt
 
 def format_val_txt(val, val_type):
     'Transform value to human-readable text'
