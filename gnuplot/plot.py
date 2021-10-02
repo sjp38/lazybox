@@ -282,7 +282,9 @@ def plot_stdout(data, args):
         print()
 
     print('# %s-%s in max %d columns bar (%.3f per column)' %
-            (min_y, max_y, max_len_bar, sz_col))
+            (format_val_txt(min_y, args.stdout_val_type),
+                format_val_txt(max_y, args.stdout_val_type),
+                max_len_bar, sz_col))
 
 def main():
     args = get_args()
