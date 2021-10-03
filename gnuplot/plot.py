@@ -5,7 +5,6 @@ import os
 import subprocess
 import sys
 import tempfile
-from collections import OrderedDict
 
 import plot_stdout
 import transform_data_format
