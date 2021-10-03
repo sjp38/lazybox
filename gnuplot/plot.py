@@ -192,20 +192,26 @@ def bytes_to_txt(val):
     return '%.3f PiB' % (val / (1<<40))
 
 def seconds_to_txt(val):
+    minute = 60
+    hour = minute * 60
+    day = hour * 24
+
     txt = ''
-    days = val // (24 * 3600)
+    days = val // day
     if days:
         txt = '%dd' % days
-        val -= days * 24 *3600
+        val -= days * day
 
-    hours = val // 3600
+    hours = val // hour
     if hours:
         txt += '%dh' % hours
-        val -= hours * 3600
-    mins = val // 60
+        val -= hours * hour
+
+    mins = val // minute
     if mins:
         txt += '%dm' % mins
-        val -= mins * 60
+        val -= mins * minute
+
     txt+='%ds' % val
     return txt
 
