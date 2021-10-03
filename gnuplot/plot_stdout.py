@@ -6,7 +6,7 @@ import transform_data_format
 
 def bytes_to_txt(val):
     if val < 1<<10:
-        return '%.3f B' % val
+        return '%d B' % val
     if val < 1<<20:
         return '%.3f KiB' % (val / (1<<10))
     if val < 1<<30:
