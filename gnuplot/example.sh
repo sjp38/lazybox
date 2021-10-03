@@ -28,7 +28,8 @@ echo "stdout plots"
 ./clustered_box_datgen.py | ./plot.py stdout --data_fmt table \
 	> "$ODIR/clustered_box_stdout"
 
-./scatter_datgen.py | ./plot.py stdout --stdout_val_type bytes \
+./scatter_datgen.py --max 10000000000 \
+	| ./plot.py stdout --stdout_val_type bytes \
 	> "$ODIR/scatter_stdout_bytes"
 ./scatter_datgen.py | ./plot.py stdout --stdout_val_type seconds \
 	> "$ODIR/scatter_stdout_seconds"
