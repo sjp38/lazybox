@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from collections import OrderedDict
+import collections
 
 import transform_data_format
 
@@ -56,7 +56,7 @@ def plot(data, args):
     max_y = None
     max_x_len = 0
     max_y_len = 0
-    records = OrderedDict()
+    records = collections.OrderedDict()
     for line in data.strip().split('\n'):
         line = line.strip()
         if line.startswith('#'):
