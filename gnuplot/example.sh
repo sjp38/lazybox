@@ -20,3 +20,13 @@ OPTS=($OPTS)
 && \
 ./clustered_box-yerr_datgen.py | ./plot.py $ODIR/cluster-yerr.pdf \
 	--type clustered_boxes-yerr "${OPTS[@]}"
+
+echo
+echo "stdout plots"
+
+./scatter_datgen.py | ./plot.py stdout > "$ODIR/scatter_stdout"
+./clustered_box_datgen.py | ./plot.py stdout --data_fmt table \
+	> "$ODIR/clustered_box_stdout"
+
+echo
+echo "check the outputs in $ODIR"
