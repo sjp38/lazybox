@@ -23,6 +23,8 @@ OPTS=($OPTS)
 ./clustered_box-yerr_datgen.py | ./plot.py $ODIR/cluster-yerr.pdf \
 	--type clustered_boxes-yerr "${OPTS[@]}"
 
+./heatmap_datgen.py | ./plot.py "$ODIR/heatmap.pdf" --type heatmap
+
 echo
 echo "stdout plots"
 
