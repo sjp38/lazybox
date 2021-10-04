@@ -1,5 +1,26 @@
 #!/usr/bin/env python3
 
+'''
+This script gets number of commits per day for last one year and prints the
+data in a heatmap-visualization-ready format (day, week, number of commits).
+
+Example usage:
+
+    $ cd linux
+    $ $lazybox/scripts/git_contributions.py | \
+            $lazybox/gnuplot/plot.py stdout --type heatmap
+    2204227254202322335120345423321831233520131323410000
+    2312243345610232335110136343311223344431125243310000
+    4113322246110242423130924264212242433430132232211000
+    2201123333200353245102554243211324435432221422410000
+    1214333353100124322020323362221232435200232223130000
+    0000110000000000020002000001000000011100000010000000
+    0000000000000001100000001020100010000000010000100000
+    # color samples: 0123456789
+    # values range: [1-884]
+    # unit of the number: 98.111
+'''
+
 import subprocess
 import datetime
 
