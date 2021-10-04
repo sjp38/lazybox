@@ -47,9 +47,43 @@ def format_val_txt(val, val_type):
         return seconds_to_txt(val)
     return '%s' % val
 
+def plot_heatmap(data, args):
+    rows = []
+    row = []
+    for line in data.strip().split('\n'):
+        if line.startswith('#'):
+            continue
+        x, y, z = [int(x) for x in line.split()]
+        if len(row) > 0 and row[-1][0] != x:
+            rows.append(row)
+            row = []
+        row.append([x, y, z])
+    rows.append(row)
+
+    min_z = None
+    max_z = None
+    for row in rows:
+        for point in row:
+            if min_z == None or point[2] < min_z:
+                min_z = point[2]
+            if max_z == None or point[2] > max_z:
+                max_z = point[2]
+
+    unit = (max_z - min_z) / 9
+    for row in rows:
+        to_print = ''
+        for point in row:
+            to_print+='%d' % ((point[2] - min_z) / unit)
+        print(to_print)
+    print('# %d-%d' % (min_z, max_z))
+    print('# unit:', unit)
+
 def plot(data, args):
     if args.data_fmt == 'table':
         data = transform_data_format.tbl_to_recs(data)
+
+    if args.type == 'heatmap':
+        return plot_heatmap(data, args)
 
     title = None
     min_y = None
