@@ -7,7 +7,7 @@ def main():
     today = datetime.date.today()
     start_date = datetime.date(today.year - 1, today.month, today.day)
     since = start_date.strftime('%Y-%m-%d')
-    cmd = 'git log --pretty=%ad --date=format:%Y-%m-%d'.split()
+    cmd = 'git log --pretty=%cd --date=format:%Y-%m-%d'.split()
     cmd.append('--since=%s' % since)
     commit_dates = subprocess.check_output(cmd).decode().strip().split('\n')
     if len(commit_dates) == 0:
