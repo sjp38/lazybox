@@ -70,13 +70,20 @@ def plot_heatmap(data, args):
                 max_z = point[2]
 
     unit = (max_z - min_z) / 9
+    bgcolors = [237, 239, 241, 243, 245, 247, 249, 251, 253, 255]
     for row in rows:
-        to_print = ''
+        to_print = []
         for point in row:
-            to_print+='%d' % ((point[2] - min_z) / unit)
-        print(to_print)
-    print('# %d-%d' % (min_z, max_z))
-    print('# unit:', unit)
+            heat = int((point[2] - min_z) / unit)
+            bgcolor = bgcolors[heat]
+            to_print.append(u'\u001b[48;5;%dm\u001b[38;5;%dm%d' % (
+                bgcolor, 232, heat))
+        print(''.join(to_print) + u'\u001b[0m')
+    heat_samples = [u'\u001b[48;5;%dm\u001b[38;5;%dm%d' % (bgcolors[x], 232, x)
+            for x in range(10)]
+    print('# color samples: %s' % ''.join(heat_samples) + u'\u001b[0m')
+    print('# values range: [%d-%d]' % (min_z, max_z))
+    print('# unit of the number: %.3f' % unit)
 
 def plot(data, args):
     if args.data_fmt == 'table':
