@@ -11,16 +11,16 @@ OPTS+="--gnuplot_cmds"
 
 OPTS=($OPTS)
 
-./scatter_datgen.py | ./plot.py $ODIR/scatter.pdf "${OPTS[@]}" \
+./scatter_datgen.py | ./plot.py "$ODIR/scatter.pdf" "${OPTS[@]}" \
 	--font 'times new roman,20'
 
-./scatter-yerr_datgen.py | ./plot.py $ODIR/scatter-yerr.pdf \
+./scatter-yerr_datgen.py | ./plot.py "$ODIR/scatter-yerr.pdf" \
 	--type scatter-yerr "${OPTS[@]}" --xlog --xtitle "examle x title"
 
-./clustered_box_datgen.py | ./plot.py $ODIR/cluster.pdf \
+./clustered_box_datgen.py | ./plot.py "$ODIR/cluster.pdf" \
 	--type clustered_boxes "${OPTS[@]}" --ytitle "example y title"
 
-./clustered_box-yerr_datgen.py | ./plot.py $ODIR/cluster-yerr.pdf \
+./clustered_box-yerr_datgen.py | ./plot.py "$ODIR/cluster-yerr.pdf" \
 	--type clustered_boxes-yerr "${OPTS[@]}"
 
 ./heatmap_datgen.py | ./plot.py "$ODIR/heatmap.pdf" --type heatmap
