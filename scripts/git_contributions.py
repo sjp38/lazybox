@@ -19,6 +19,12 @@ Example usage:
     # color samples: 0123456789
     # values range: [1-884]
     # unit of the number: 98.111
+
+TODO
+- multiple git repos
+- specific branches
+- more colors other than gray scale
+- Print from sunday
 '''
 
 import subprocess
