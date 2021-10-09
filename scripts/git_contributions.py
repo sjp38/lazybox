@@ -39,7 +39,9 @@ def main():
     args = parser.parse_args()
 
     today = datetime.date.today()
-    start_date = datetime.date(today.year - 1, today.month, today.day)
+    today_weekday = today.weekday()
+    start_date = datetime.date(today.year - 1, today.month,
+            today.day - today_weekday)
     since = start_date.strftime('%Y-%m-%d')
     commit_dates = []
     for repo in args.repos:
@@ -53,7 +55,7 @@ def main():
     if len(commit_dates) == 0:
         return
 
-    nr_commits = [0] * 365
+    nr_commits = [0] * (365 + today_weekday)
 
     for commit_date in commit_dates:
         year, month, day = [int(x) for x in commit_date.split('-')]
@@ -62,11 +64,11 @@ def main():
         nr_commits[index] += 1
 
     for day in range(0, 7):
-        for week in range(0, 52):
+        for week in range(0, 53):
             commits = 0
             idx = week * 7 + day
 
-            if idx < 365:
+            if idx < 365 + today_weekday:
                 commits = nr_commits[idx]
             print('%d %d %d' % (day, week, commits))
 
