@@ -28,9 +28,15 @@ TODO
 '''
 
 import argparse
-import subprocess
 import datetime
 import os
+import subprocess
+
+def get_commit_dates(repo, since):
+    cmd = ['git', '-C', '%s' % repo]
+    cmd += 'log --pretty=%cd --date=format:%Y-%m-%d'.split()
+    cmd.append('--since=%s' % since)
+    return subprocess.check_output(cmd).decode().strip().split('\n')
 
 def main():
     parser = argparse.ArgumentParser()
@@ -43,20 +49,14 @@ def main():
     start_date = datetime.date(today.year - 1, today.month,
             today.day - today_weekday)
     since = start_date.strftime('%Y-%m-%d')
+
     commit_dates = []
     for repo in args.repos:
-        if not os.path.isdir(os.path.join(repo, '.git')):
-            print('\'%s\' seems not a git repo' % repo)
-            exit(1)
-        cmd = ['git', '-C', '%s' % repo]
-        cmd += 'log --pretty=%cd --date=format:%Y-%m-%d'.split()
-        cmd.append('--since=%s' % since)
-        commit_dates += subprocess.check_output(cmd).decode().strip().split('\n')
+        commit_dates += get_commit_dates(repo, since)
     if len(commit_dates) == 0:
         return
 
     nr_commits = [0] * (365 + today_weekday)
-
     for commit_date in commit_dates:
         year, month, day = [int(x) for x in commit_date.split('-')]
         date = datetime.date(year, month, day)
