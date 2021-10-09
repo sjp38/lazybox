@@ -41,12 +41,18 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('repos', nargs='+',
             help='git repositories to count commits')
+    parser.add_argument('--since',
+            help='since when in YYYY-MM-DD format')
     args = parser.parse_args()
 
     today = datetime.date.today()
     today_weekday = today.weekday()
-    start_date = datetime.date(today.year - 1, today.month,
-            today.day - today_weekday)
+    if not args.since:
+        start_date = datetime.date(today.year - 1, today.month,
+                today.day - today_weekday)
+    else:
+        year, month, day = [int(x) for x in args.since.split('-')]
+        start_date = datetime.date(year, month, day)
     since = start_date.strftime('%Y-%m-%d')
 
     commit_dates = []
@@ -55,7 +61,8 @@ def main():
     if len(commit_dates) == 0:
         return
 
-    nr_commits = [0] * (365 + today_weekday)
+    duration = (today - start_date).days + today_weekday
+    nr_commits = [0] * duration
     for commit_date in commit_dates:
         year, month, day = [int(x) for x in commit_date.split('-')]
         date = datetime.date(year, month, day)
@@ -63,11 +70,11 @@ def main():
         nr_commits[index] += 1
 
     for day in range(0, 7):
-        for week in range(0, 53):
+        for week in range(0, int(duration / 7)):
             commits = 0
             idx = week * 7 + day
 
-            if idx < 365 + today_weekday:
+            if idx < duration:
                 commits = nr_commits[idx]
             print('%d %d %d' % (day, week, commits))
 
