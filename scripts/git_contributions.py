@@ -30,6 +30,7 @@ TODO
 import argparse
 import subprocess
 import datetime
+import os
 
 def main():
     parser = argparse.ArgumentParser()
@@ -42,6 +43,9 @@ def main():
     since = start_date.strftime('%Y-%m-%d')
     commit_dates = []
     for repo in args.repos:
+        if not os.path.isdir(os.path.join(repo, '.git')):
+            print('\'%s\' seems not a git repo' % repo)
+            exit(1)
         cmd = ['git', '-C', '%s' % repo]
         cmd += 'log --pretty=%cd --date=format:%Y-%m-%d'.split()
         cmd.append('--since=%s' % since)
