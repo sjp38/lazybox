@@ -21,10 +21,9 @@ Example usage:
     # unit of the number: 98.111
 
 TODO
-- multiple git repos
 - specific branches
 - more colors other than gray scale
-- Print from sunday
+- specific range of days
 '''
 
 import argparse
