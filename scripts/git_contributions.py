@@ -27,16 +27,25 @@ TODO
 - Print from sunday
 '''
 
+import argparse
 import subprocess
 import datetime
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('repos', nargs='+',
+            help='git repositories to count commits')
+    args = parser.parse_args()
+
     today = datetime.date.today()
     start_date = datetime.date(today.year - 1, today.month, today.day)
     since = start_date.strftime('%Y-%m-%d')
-    cmd = 'git log --pretty=%cd --date=format:%Y-%m-%d'.split()
-    cmd.append('--since=%s' % since)
-    commit_dates = subprocess.check_output(cmd).decode().strip().split('\n')
+    commit_dates = []
+    for repo in args.repos:
+        cmd = ['git', '-C', '%s' % repo]
+        cmd += 'log --pretty=%cd --date=format:%Y-%m-%d'.split()
+        cmd.append('--since=%s' % since)
+        commit_dates += subprocess.check_output(cmd).decode().strip().split('\n')
     if len(commit_dates) == 0:
         return
 
