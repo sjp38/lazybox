@@ -69,8 +69,11 @@ def main():
         index = (date - start_date).days - 1
         nr_commits[index] += 1
 
+    nr_weeks = duration // 7
+    if duration % 7:
+        nr_weeks += 1
     for day in range(0, 7):
-        for week in range(0, int(duration / 7)):
+        for week in range(0, nr_weeks):
             commits = 0
             idx = week * 7 + day
 
