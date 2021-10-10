@@ -34,8 +34,8 @@ import subprocess
 def get_commit_dates(repo, since, until):
     cmd = ['git', '-C', '%s' % repo]
     cmd += 'log --pretty=%cd --date=format:%Y-%m-%d'.split()
-    cmd.append('--since=%s' % since)
-    cmd.append('--until=%s' % until)
+    cmd.append('--since=%s' % since.strftime('%Y-%m-%d'))
+    cmd.append('--until=%s' % until.strftime('%Y-%m-%d'))
     return subprocess.check_output(cmd).decode().strip().split('\n')
 
 def get_date_from_yyyymmdd(txt):
@@ -45,10 +45,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('repos', nargs='+',
             help='git repositories to count commits')
-    parser.add_argument('--since',
-            help='since when in YYYY-MM-DD format')
-    parser.add_argument('--until',
-            help='until when in YYYY-MM-DD format')
+    parser.add_argument('--since', help='since when in YYYY-MM-DD format')
+    parser.add_argument('--until', help='until when in YYYY-MM-DD format')
     args = parser.parse_args()
 
     if args.until:
@@ -56,24 +54,23 @@ def main():
     else:
         until = datetime.date.today()
 
-    if not args.since:
-        start_date = until - datetime.timedelta(365)
+    if args.since:
+        since = get_date_from_yyyymmdd(args.since)
     else:
-        start_date = get_date_from_yyyymmdd(args.since)
-    start_date -= datetime.timedelta(start_date.weekday())
-    since = start_date.strftime('%Y-%m-%d')
+        since = until - datetime.timedelta(365)
+    since -= datetime.timedelta(since.weekday())
 
     commit_dates = []
     for repo in args.repos:
-        commit_dates += get_commit_dates(repo, since, until.strftime('%Y-%m-%d'))
+        commit_dates += get_commit_dates(repo, since, until)
     if len(commit_dates) == 0:
         return
 
-    duration = (until - start_date).days + 1
+    duration = (until - since).days + 1
     nr_commits = [0] * duration
     for commit_date in commit_dates:
         date = get_date_from_yyyymmdd(commit_date)
-        index = (date - start_date).days
+        index = (date - since).days
         nr_commits[index] += 1
 
     nr_weeks = duration // 7
