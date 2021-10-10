@@ -46,15 +46,12 @@ def main():
     args = parser.parse_args()
 
     today = datetime.date.today()
-    today_weekday = today.weekday()
     if not args.since:
-        start_date = datetime.date(today.year - 1, today.month, today.day)
-        start_date -= datetime.timedelta(start_date.weekday())
+        start_date = today - datetime.timedelta(365)
     else:
         year, month, day = [int(x) for x in args.since.split('-')]
         start_date = datetime.date(year, month, day)
-        start_date_weekday = start_date.weekday()
-        start_date -= datetime.timedelta(start_date_weekday)
+    start_date -= datetime.timedelta(start_date.weekday())
     since = start_date.strftime('%Y-%m-%d')
 
     commit_dates = []
@@ -63,7 +60,7 @@ def main():
     if len(commit_dates) == 0:
         return
 
-    duration = (today - start_date).days + today_weekday
+    duration = (today - start_date).days
     nr_commits = [0] * duration
     for commit_date in commit_dates:
         year, month, day = [int(x) for x in commit_date.split('-')]
