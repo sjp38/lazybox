@@ -31,10 +31,11 @@ import datetime
 import os
 import subprocess
 
-def get_commit_dates(repo, since):
+def get_commit_dates(repo, since, until):
     cmd = ['git', '-C', '%s' % repo]
     cmd += 'log --pretty=%cd --date=format:%Y-%m-%d'.split()
     cmd.append('--since=%s' % since)
+    cmd.append('--until=%s' % until)
     return subprocess.check_output(cmd).decode().strip().split('\n')
 
 def get_date_from_yyyymmdd(txt):
@@ -46,11 +47,17 @@ def main():
             help='git repositories to count commits')
     parser.add_argument('--since',
             help='since when in YYYY-MM-DD format')
+    parser.add_argument('--until',
+            help='until when in YYYY-MM-DD format')
     args = parser.parse_args()
 
-    today = datetime.date.today()
+    if args.until:
+        until = get_date_from_yyyymmdd(args.until)
+    else:
+        until = datetime.date.today()
+
     if not args.since:
-        start_date = today - datetime.timedelta(365)
+        start_date = until - datetime.timedelta(365)
     else:
         start_date = get_date_from_yyyymmdd(args.since)
     start_date -= datetime.timedelta(start_date.weekday())
@@ -58,11 +65,11 @@ def main():
 
     commit_dates = []
     for repo in args.repos:
-        commit_dates += get_commit_dates(repo, since)
+        commit_dates += get_commit_dates(repo, since, until.strftime('%Y-%m-%d'))
     if len(commit_dates) == 0:
         return
 
-    duration = (today - start_date).days
+    duration = (until - start_date).days + 1
     nr_commits = [0] * duration
     for commit_date in commit_dates:
         date = get_date_from_yyyymmdd(commit_date)
