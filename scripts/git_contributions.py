@@ -37,6 +37,9 @@ def get_commit_dates(repo, since):
     cmd.append('--since=%s' % since)
     return subprocess.check_output(cmd).decode().strip().split('\n')
 
+def get_date_from_yyyymmdd(txt):
+    return datetime.date(*[int(x) for x in txt.split('-')])
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('repos', nargs='+',
@@ -49,8 +52,7 @@ def main():
     if not args.since:
         start_date = today - datetime.timedelta(365)
     else:
-        year, month, day = [int(x) for x in args.since.split('-')]
-        start_date = datetime.date(year, month, day)
+        start_date = get_date_from_yyyymmdd(args.since)
     start_date -= datetime.timedelta(start_date.weekday())
     since = start_date.strftime('%Y-%m-%d')
 
@@ -63,8 +65,7 @@ def main():
     duration = (today - start_date).days
     nr_commits = [0] * duration
     for commit_date in commit_dates:
-        year, month, day = [int(x) for x in commit_date.split('-')]
-        date = datetime.date(year, month, day)
+        date = get_date_from_yyyymmdd(commit_date)
         index = (date - start_date).days
         nr_commits[index] += 1
 
