@@ -31,11 +31,13 @@ import datetime
 import os
 import subprocess
 
-def get_commit_dates(repo, since, until):
+def get_commit_dates(repo, since, until, author):
     cmd = ['git', '-C', '%s' % repo]
     cmd += 'log --pretty=%cd --date=format:%Y-%m-%d'.split()
     cmd.append('--since=%s' % since.strftime('%Y-%m-%d'))
     cmd.append('--until=%s' % until.strftime('%Y-%m-%d'))
+    if author:
+        cmd.append('--author=%s' % author)
     return subprocess.check_output(cmd).decode().strip().split('\n')
 
 def get_date_from_yyyymmdd(txt):
@@ -47,6 +49,7 @@ def main():
             help='git repositories to count commits')
     parser.add_argument('--since', help='since when in YYYY-MM-DD format')
     parser.add_argument('--until', help='until when in YYYY-MM-DD format')
+    parser.add_argument('--author', help='author of the commits')
     args = parser.parse_args()
 
     if args.until:
@@ -62,7 +65,7 @@ def main():
 
     commit_dates = []
     for repo in args.repos:
-        commit_dates += get_commit_dates(repo, since, until)
+        commit_dates += get_commit_dates(repo, since, until, args.author)
     if len(commit_dates) == 0:
         return
 
