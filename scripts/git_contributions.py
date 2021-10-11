@@ -23,7 +23,6 @@ Example usage:
 TODO
 - specific branches
 - more colors other than gray scale
-- specific range of days
 '''
 
 import argparse
