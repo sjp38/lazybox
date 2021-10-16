@@ -21,7 +21,6 @@ Example usage:
     # unit of the number: 98.111
 
 TODO
-- specific branches
 - more colors other than gray scale
 '''
 
