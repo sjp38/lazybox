@@ -29,17 +29,9 @@ import datetime
 import os
 import subprocess
 
-def get_commit_dates(repo, since, until, author):
-    git_ref = 'HEAD'
-    # repo could be '<path>' or '<path> -- <git reference>'
+def get_commit_dates(repo, git_ref, since, until, author):
     if not os.path.isdir(os.path.join(repo, '.git')):
-        # check if this is '<path> -- <git reference>'
-        repo_tokens = repo.split(' -- ')
-        repo = repo_tokens[0]
-        if not os.path.isdir(os.path.join(repo, '.git')):
-            print('not git')
             return []
-        git_ref = ' -- '.join(repo_tokens[1:])
     cmd = ['git', '-C', '%s' % repo]
     cmd += 'log --pretty=%cd --date=format:%Y-%m-%d'.split()
     cmd.append('--since=%s' % since.strftime('%Y-%m-%d'))
@@ -62,10 +54,19 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('repos', nargs='+',
             help='git repositories to count commits')
+    parser.add_argument('--heads', nargs='+',
+            help='git heads of the repositories to count commits')
     parser.add_argument('--since', help='since when in YYYY-MM-DD format')
     parser.add_argument('--until', help='until when in YYYY-MM-DD format')
     parser.add_argument('--author', help='author of the commits')
     args = parser.parse_args()
+
+    if not args.heads:
+        args.heads = ['HEAD'] * len(args.repos)
+    elif len(args.heads) == 1:
+        args.heads *= len(args.repos)
+    elif len(args.heads) != len(args.repos):
+        print('Wrong number of heads')
 
     if args.until:
         until = get_date_from_yyyymmdd(args.until)
@@ -79,8 +80,9 @@ def main():
     since -= datetime.timedelta(since.weekday())
 
     commit_dates = []
-    for repo in args.repos:
-        commit_dates += get_commit_dates(repo, since, until, args.author)
+    for idx, repo in enumerate(args.repos):
+        commit_dates += get_commit_dates(repo, args.heads[idx], since, until,
+                args.author)
     if len(commit_dates) == 0:
         return
 
