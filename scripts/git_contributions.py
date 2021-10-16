@@ -47,7 +47,10 @@ def get_commit_dates(repo, since, until, author):
     cmd.append(git_ref)
     if author:
         cmd.append('--author=%s' % author)
-    dates = subprocess.check_output(cmd).decode().strip().split('\n')
+    try:
+        dates = subprocess.check_output(cmd).decode().strip().split('\n')
+    except subprocess.CalledProcessError as e:
+        dates = []
     if dates == ['']:
         dates = []
     return dates
