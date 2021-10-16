@@ -37,7 +37,10 @@ def get_commit_dates(repo, since, until, author):
     cmd.append('--until=%s' % until.strftime('%Y-%m-%d'))
     if author:
         cmd.append('--author=%s' % author)
-    return subprocess.check_output(cmd).decode().strip().split('\n')
+    dates = subprocess.check_output(cmd).decode().strip().split('\n')
+    if dates == ['']:
+        dates = []
+    return dates
 
 def get_date_from_yyyymmdd(txt):
     return datetime.date(*[int(x) for x in txt.split('-')])
