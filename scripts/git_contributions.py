@@ -31,12 +31,21 @@ import os
 import subprocess
 
 def get_commit_dates(repo, since, until, author):
+    git_ref = 'HEAD'
+    # repo could be '<path>' or '<path> -- <git reference>'
     if not os.path.isdir(os.path.join(repo, '.git')):
-        return []
+        # check if this is '<path> -- <git reference>'
+        repo_tokens = repo.split(' -- ')
+        repo = repo_tokens[0]
+        if not os.path.isdir(os.path.join(repo, '.git')):
+            print('not git')
+            return []
+        git_ref = ' -- '.join(repo_tokens[1:])
     cmd = ['git', '-C', '%s' % repo]
     cmd += 'log --pretty=%cd --date=format:%Y-%m-%d'.split()
     cmd.append('--since=%s' % since.strftime('%Y-%m-%d'))
     cmd.append('--until=%s' % until.strftime('%Y-%m-%d'))
+    cmd.append(git_ref)
     if author:
         cmd.append('--author=%s' % author)
     dates = subprocess.check_output(cmd).decode().strip().split('\n')
