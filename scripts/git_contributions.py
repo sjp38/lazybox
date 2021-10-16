@@ -31,6 +31,8 @@ import os
 import subprocess
 
 def get_commit_dates(repo, since, until, author):
+    if not os.path.isdir(os.path.join(repo, '.git')):
+        return []
     cmd = ['git', '-C', '%s' % repo]
     cmd += 'log --pretty=%cd --date=format:%Y-%m-%d'.split()
     cmd.append('--since=%s' % since.strftime('%Y-%m-%d'))
