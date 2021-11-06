@@ -10,7 +10,7 @@ linux_repo=$1
 
 for major in 2.6 3 4 5
 do
-	for minor in {1..20}
+	for minor in {1..40}
 	do
 		version="v$major.$minor"
 		nr_maintainers=$(git -C "$linux_repo" \
