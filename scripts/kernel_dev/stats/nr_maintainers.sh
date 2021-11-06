@@ -18,7 +18,7 @@ do
 		version="v$major.$minor"
 		nr_maintainers=$(git -C "$linux_repo" \
 			show "$version":MAINTAINERS 2> /dev/null | \
-			grep '^M:' | sort | uniq -c | wc -l)
+			grep '^M:' | sort | uniq | wc -l)
 		if [ "$nr_maintainers" = "0" ]
 		then
 			continue
