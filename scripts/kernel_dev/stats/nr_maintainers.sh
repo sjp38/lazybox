@@ -23,7 +23,14 @@ do
 		then
 			continue
 		fi
-		new=$((nr_maintainers - prev_nr_maintainers))
+
+		if [ "$prev_nr_maintainers" -eq 0 ]
+		then
+			new=0
+		else
+			new=$((nr_maintainers - prev_nr_maintainers))
+		fi
+
 		echo "$version	$nr_maintainers	$new"
 		prev_nr_maintainers=$nr_maintainers
 	done
