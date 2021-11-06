@@ -8,6 +8,9 @@ fi
 
 linux_repo=$1
 
+echo "version	total	new"
+
+prev_nr_maintainers=0
 for major in 2.6 3 4 5
 do
 	for minor in {1..40}
@@ -20,6 +23,8 @@ do
 		then
 			continue
 		fi
-		echo "$version: $nr_maintainers"
+		new=$((nr_maintainers - prev_nr_maintainers))
+		echo "$version	$nr_maintainers	$new"
+		prev_nr_maintainers=$nr_maintainers
 	done
 done
