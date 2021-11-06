@@ -16,9 +16,10 @@ since_date=$(date --date='-6 month')
 nr_active_maintainers=0
 while IFS= read -r author
 do
+	email=$(echo "$author" | awk '{print $NF}')
 	nr_recent_commits=$(git -C "$linux_repo" \
 		log --pretty=%h --since "$since_date" \
-		--author "$author" -1 | wc -l)
+		--author "$email" -1 | wc -l)
 	if [ "$nr_recent_commits" -eq 1 ]
 	then
 		echo "$author": active
