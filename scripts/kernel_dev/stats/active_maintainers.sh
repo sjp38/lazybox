@@ -15,7 +15,7 @@ else
 	active_thres_days=180
 fi
 
-maintainers=$(git -C "$linux_repo" show "$version":MAINTAINERS 2> /dev/null | \
+maintainers=$(git -C "$linux_repo" show HEAD:MAINTAINERS 2> /dev/null | \
 	grep '^M:' | sort | uniq | awk -F'^M:\t' '{print $2}')
 nr_maintainers=$(echo "$maintainers" | wc -l)
 
