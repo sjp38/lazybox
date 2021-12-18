@@ -7,7 +7,7 @@ data in a heatmap-visualization-ready format (day, week, number of commits).
 Example usage:
 
     $ cd linux
-    $ $lazybox/scripts/git_contributions.py | \
+    $ $lazybox/scripts/git_stats/nr_commits.py | \
             $lazybox/gnuplot/plot.py stdout --type heatmap
     2204227254202322335120345423321831233520131323410000
     2312243345610232335110136343311223344431125243310000
