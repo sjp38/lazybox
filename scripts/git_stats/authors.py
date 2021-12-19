@@ -8,6 +8,8 @@ def main():
     parser.add_argument('repo', help='git repositories to get the stat from')
     parser.add_argument('--since', help='since when in YYYY-MM-DD format')
     parser.add_argument('--until', help='until when in YYYY-MM-DD format')
+    parser.add_argument('--max_nr_authors', type=int,
+            help='max number of authors to list')
     args = parser.parse_args()
 
     cmd = ('git -C %s log' % args.repo).split()
@@ -24,6 +26,8 @@ def main():
         authors[author] += 1
 
     authors_sorted = sorted(authors, key=authors.get, reverse=True)
+    if args.max_nr_authors:
+        authors_sorted = authors_sorted[:args.max_nr_authors]
     for author in authors_sorted:
         print('%s: %d' % (author, authors[author]))
 
