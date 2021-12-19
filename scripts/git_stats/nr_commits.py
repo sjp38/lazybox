@@ -52,13 +52,16 @@ def get_date_from_yyyymmdd(txt):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('repos', nargs='+',
+    parser.add_argument('repos', nargs='+', metavar='<dir>',
             help='git repositories to count commits')
-    parser.add_argument('--heads', nargs='+',
+    parser.add_argument('--heads', nargs='+', metavar='<git heads>',
             help='git heads of the repositories to count commits')
-    parser.add_argument('--since', help='since when in YYYY-MM-DD format')
-    parser.add_argument('--until', help='until when in YYYY-MM-DD format')
-    parser.add_argument('--author', help='author of the commits')
+    parser.add_argument('--since', metavar='<date>',
+            help='since when in YYYY-MM-DD format')
+    parser.add_argument('--until', metavar='<date>',
+            help='until when in YYYY-MM-DD format')
+    parser.add_argument('--author', metavar='<author>',
+            help='author of the commits')
     args = parser.parse_args()
 
     if not args.heads:
