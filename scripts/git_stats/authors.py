@@ -11,7 +11,7 @@ def main():
     args = parser.parse_args()
 
     cmd = ('git -C %s log' % args.repo).split()
-    cmd.append('--pretty="%an <%ae>"')
+    cmd.append('--pretty=%an <%ae>')
     if args.since:
         cmd.append('--since=%s' % args.since)
     if args.until:
