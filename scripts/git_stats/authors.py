@@ -17,7 +17,8 @@ def main():
             authors[author] = 0
         authors[author] += 1
 
-    for author in authors:
+    authors_sorted = sorted(authors, key=authors.get, reverse=True)
+    for author in authors_sorted:
         print('%s: %d' % (author, authors[author]))
 
 if __name__ == '__main__':
