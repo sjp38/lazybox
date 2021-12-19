@@ -5,10 +5,13 @@ import subprocess
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('repo', help='git repositories to get the stat from')
-    parser.add_argument('--since', help='since when in YYYY-MM-DD format')
-    parser.add_argument('--until', help='until when in YYYY-MM-DD format')
-    parser.add_argument('--max_nr_authors', type=int,
+    parser.add_argument('repo', metavar='<dir>',
+            help='git repositories to get the stat from')
+    parser.add_argument('--since', metavar='<date>',
+            help='since when in YYYY-MM-DD format')
+    parser.add_argument('--until', metavar='<date>',
+            help='until when in YYYY-MM-DD format')
+    parser.add_argument('--max_nr_authors', type=int, metavar='<number>',
             help='max number of authors to list')
     args = parser.parse_args()
 
