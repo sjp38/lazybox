@@ -34,5 +34,7 @@ def main():
     for author in authors_sorted:
         print('%s: %d' % (author, authors[author]))
 
+    print('# %d authors in total' % len(authors))
+
 if __name__ == '__main__':
     main()
