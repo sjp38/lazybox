@@ -46,6 +46,8 @@ def main():
             help='max number of authors to list')
     parser.add_argument('--sortby', choices=['commits', 'lines'],
             default='commits', help='metric to sort authors by')
+    parser.add_argument('--skip_merge_commits', action='store_true',
+            help='do not count merge commits')
     args = parser.parse_args()
 
     cmd = ('git -C %s log' % args.repo).split()
@@ -56,6 +58,8 @@ def main():
         cmd.append('--until=%s' % args.until)
     if args.sortby == 'lines':
         cmd.append('--shortstat')
+        args.skip_merge_commits = True
+    if args.skip_merge_commits:
         cmd.append('--no-merges')
 
     git_output = subprocess.check_output(cmd).decode().strip()
