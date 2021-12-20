@@ -32,7 +32,7 @@ def main():
     if args.max_nr_authors:
         authors_sorted = authors_sorted[:args.max_nr_authors]
     for author in authors_sorted:
-        print('%s: %d' % (author, authors[author]))
+        print('%s: %d commits' % (author, authors[author]))
 
     print('# %d authors in total' % len(authors))
 
