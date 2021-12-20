@@ -68,8 +68,7 @@ def main():
     if args.max_nr_authors:
         authors_sorted = authors_sorted[:args.max_nr_authors]
     for author in authors_sorted:
-        print('%s: %d %s' % (author, authors[author], 'commits' if args.sortby
-            == 'commits' else 'lines'))
+        print('%s: %d %s' % (author, authors[author], args.sortby))
 
     print('# %d authors, %d %s in total' % (len(authors),
         sum(authors.values()), args.sortby))
