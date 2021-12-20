@@ -71,7 +71,8 @@ def main():
         print('%s: %d %s' % (author, authors[author], 'commits' if args.sortby
             == 'commits' else 'lines'))
 
-    print('# %d authors in total' % len(authors))
+    print('# %d authors, %d %s in total' % (len(authors),
+        sum(authors.values()), args.sortby))
 
 if __name__ == '__main__':
     main()
