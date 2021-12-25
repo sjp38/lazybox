@@ -3,16 +3,23 @@
 import argparse
 import subprocess
 
-def parse_git_output_by_commits(git_output):
+def email_domain(author):
+    email = author.split()[-1][1:-1]
+    fields = email.split('@')
+    return '@'.join(fields[1:])
+
+def parse_git_output_by_commits(git_output, by_domain):
     authors_lines = git_output.split('\n')
     authors = {}
     for author in authors_lines:
+        if by_domain:
+            author = email_domain(author)
         if not author in authors:
             authors[author] = 0
         authors[author] += 1
     return authors
 
-def parse_git_output_by_lines(git_output):
+def parse_git_output_by_lines(git_output, by_domain):
     # example input is:
     #     sj38.park@gmail.com
     #
@@ -25,6 +32,8 @@ def parse_git_output_by_lines(git_output):
     lines = git_output.split('\n')
     for idx in range(0, len(lines), 3):
         author = lines[idx].strip()
+        if by_domain:
+            author = email_domain(author)
         if not author in authors:
             authors[author] = 0
         changes_fields = lines[idx + 2].strip().split()
@@ -34,11 +43,11 @@ def parse_git_output_by_lines(git_output):
                 authors[author] += int(changes_fields[idx - 1])
     return authors
 
-def parse_git_output(git_output, sortby):
+def parse_git_output(git_output, sortby, by_domain):
     if sortby == 'commits':
-        return parse_git_output_by_commits(git_output)
+        return parse_git_output_by_commits(git_output, by_domain)
     elif sortby == 'lines':
-        return parse_git_output_by_lines(git_output)
+        return parse_git_output_by_lines(git_output, by_domain)
     print('parse_git_output: Wrong sortby (%s)' % sortby)
     exit(1)
 
@@ -56,6 +65,8 @@ def main():
             default='commits', help='metric to sort authors by')
     parser.add_argument('--skip_merge_commits', action='store_true',
             help='do not count merge commits')
+    parser.add_argument('--by_domain', action='store_true', default=False,
+            help='account by email domain only')
     args = parser.parse_args()
 
     cmd = ('git -C %s log' % args.repo).split()
@@ -71,7 +82,7 @@ def main():
         cmd.append('--no-merges')
 
     git_output = subprocess.check_output(cmd).decode().strip()
-    authors = parse_git_output(git_output, args.sortby)
+    authors = parse_git_output(git_output, args.sortby, args.by_domain)
 
     authors_sorted = sorted(authors, key=authors.get, reverse=True)
     if args.max_nr_authors:
