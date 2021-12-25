@@ -34,6 +34,14 @@ def parse_git_output_by_lines(git_output):
                 authors[author] += int(changes_fields[idx - 1])
     return authors
 
+def parse_git_output(git_output, sortby):
+    if sortby == 'commits':
+        return parse_git_output_by_commits(git_output)
+    elif sortby == 'lines':
+        return parse_git_output_by_lines(git_output)
+    print('parse_git_output: Wrong sortby (%s)' % sortby)
+    exit(1)
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('repo', metavar='<dir>',
@@ -63,10 +71,7 @@ def main():
         cmd.append('--no-merges')
 
     git_output = subprocess.check_output(cmd).decode().strip()
-    if args.sortby == 'commits':
-        authors = parse_git_output_by_commits(git_output)
-    else:
-        authors = parse_git_output_by_lines(git_output)
+    authors = parse_git_output(git_output, args.sortby)
 
     authors_sorted = sorted(authors, key=authors.get, reverse=True)
     if args.max_nr_authors:
