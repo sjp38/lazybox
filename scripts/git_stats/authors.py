@@ -3,6 +3,9 @@
 '''
 TODO
 - Support author exclusion
+- Support linux/MAINTAINERS auto parsing
+
+DONE
 - Support scoping for specific files
 '''
 
