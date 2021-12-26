@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 
+'''
+TODO
+- Support author exclusion
+- Support scoping for specific files
+'''
+
 import argparse
 import subprocess
 
