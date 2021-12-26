@@ -61,6 +61,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('repo', metavar='<dir>',
             help='git repositories to get the stat from')
+    parser.add_argument('--files', nargs='+', metavar='<file>',
+            help='authors for only the files')
     parser.add_argument('--since', metavar='<date>',
             help='since when in YYYY-MM-DD format')
     parser.add_argument('--until', metavar='<date>',
@@ -86,6 +88,10 @@ def main():
         args.skip_merge_commits = True
     if args.skip_merge_commits:
         cmd.append('--no-merges')
+
+    if args.files:
+        cmd.append('--')
+        cmd += args.files
 
     git_output = subprocess.check_output(cmd).decode().strip()
     authors = parse_git_output(git_output, args.sortby, args.by_domain)
