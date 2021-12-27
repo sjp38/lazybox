@@ -71,8 +71,12 @@ def plot_heatmap(data, args):
 
     unit = (max_z - min_z) / 9
     bgcolors = [237, 239, 241, 243, 245, 247, 249, 251, 253, 255]
-    for row in rows:
+    if args.stdout_first_row_display:
+        print(args.stdout_first_row_display)
+    for idx, row in enumerate(rows):
         to_print = []
+        if args.stdout_first_col_display:
+            to_print.append(args.stdout_first_col_display[idx])
         for point in row:
             heat = int((point[2] - min_z) / unit)
             bgcolor = bgcolors[heat]

@@ -46,6 +46,10 @@ def get_args():
             help='max number of columns for stdout plot')
     parser.add_argument('--stdout_val_type', choices=['bytes', 'seconds'],
             help='type of the value')
+    parser.add_argument('--stdout_first_row_display',
+            help='string to display at first row')
+    parser.add_argument('--stdout_first_col_display', nargs='+',
+            help='string to display at first column')
     return parser.parse_args()
 
 def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
