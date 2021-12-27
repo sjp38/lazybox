@@ -51,7 +51,7 @@ def get_args():
     parser.add_argument('--stdout_first_col_display', nargs='+',
             help='string to display at first column')
     parser.add_argument('--stdout_heatmap_colorset',
-            choices=['grayscale'], default='grayscale',
+            choices=['grayscale', 'green'], default='grayscale',
             help='heatmap color set')
     return parser.parse_args()
 
