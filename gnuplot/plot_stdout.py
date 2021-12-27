@@ -48,6 +48,11 @@ def format_val_txt(val, val_type):
     return '%s' % val
 
 def plot_heatmap(data, args):
+    colorsets = {
+            'grayscale': {
+                'bg': [237, 239, 241, 243, 245, 247, 249, 251, 253, 255],
+                'fg': [232] * 10},
+            }
     rows = []
     row = []
     for line in data.strip().split('\n'):
@@ -70,7 +75,9 @@ def plot_heatmap(data, args):
                 max_z = point[2]
 
     unit = (max_z - min_z) / 9
-    bgcolors = [237, 239, 241, 243, 245, 247, 249, 251, 253, 255]
+    colorset = colorsets[args.stdout_heatmap_colorset]
+    bgcolors = colorset['bg']
+    fgcolors = colorset['fg']
     if args.stdout_first_row_display:
         print(args.stdout_first_row_display)
     for idx, row in enumerate(rows):
@@ -80,11 +87,12 @@ def plot_heatmap(data, args):
         for point in row:
             heat = int((point[2] - min_z) / unit)
             bgcolor = bgcolors[heat]
+            fgcolor = fgcolors[heat]
             to_print.append(u'\u001b[48;5;%dm\u001b[38;5;%dm%d' % (
-                bgcolor, 232, heat))
+                bgcolor, fgcolor, heat))
         print(''.join(to_print) + u'\u001b[0m')
-    heat_samples = [u'\u001b[48;5;%dm\u001b[38;5;%dm%d' % (bgcolors[x], 232, x)
-            for x in range(10)]
+    heat_samples = [u'\u001b[48;5;%dm\u001b[38;5;%dm%d' %
+            (bgcolors[x], fgcolor, x) for x in range(10)]
     print('# color samples: %s' % ''.join(heat_samples) + u'\u001b[0m')
     print('# values range: [%d-%d]' % (min_z, max_z))
     print('# unit of the number: %.3f' % unit)

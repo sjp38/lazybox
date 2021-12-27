@@ -50,6 +50,9 @@ def get_args():
             help='string to display at first row')
     parser.add_argument('--stdout_first_col_display', nargs='+',
             help='string to display at first column')
+    parser.add_argument('--stdout_heatmap_colorset',
+            choices=['grayscale'], default='grayscale',
+            help='heatmap color set')
     return parser.parse_args()
 
 def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
