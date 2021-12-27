@@ -47,6 +47,12 @@ def format_val_txt(val, val_type):
         return seconds_to_txt(val)
     return '%s' % val
 
+def colored_text(bgcolor, fgcolor, text):
+    return u'\u001b[48;5;%dm\u001b[38;5;%dm%s' % (bgcolor, fgcolor, text)
+
+def print_colored_text(colored_text):
+    print(colored_text + u'\u001b[0m')
+
 def plot_heatmap(data, args):
     colorsets = {
             'grayscale': {
@@ -91,12 +97,11 @@ def plot_heatmap(data, args):
             heat = int((point[2] - min_z) / unit)
             bgcolor = bgcolors[heat]
             fgcolor = fgcolors[heat]
-            to_print.append(u'\u001b[48;5;%dm\u001b[38;5;%dm%d' % (
-                bgcolor, fgcolor, heat))
-        print(''.join(to_print) + u'\u001b[0m')
-    heat_samples = [u'\u001b[48;5;%dm\u001b[38;5;%dm%d' %
-            (bgcolors[x], fgcolor, x) for x in range(10)]
-    print('# color samples: %s' % ''.join(heat_samples) + u'\u001b[0m')
+            to_print.append(colored_text(bgcolor, fgcolor, heat))
+        print_colored_text(''.join(to_print))
+    print('# color samples: ', end='')
+    print_colored_text(''.join([colored_text(bgcolors[x], fgcolors[x], x)
+        for x in range(10)]))
     print('# values range: [%d-%d]' % (min_z, max_z))
     print('# unit of the number: %.3f' % unit)
 
