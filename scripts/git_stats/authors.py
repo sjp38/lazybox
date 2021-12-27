@@ -3,13 +3,14 @@
 '''
 TODO
 - Support author exclusion
-- Support linux/MAINTAINERS auto parsing
 
 DONE
 - Support scoping for specific files
+- Support linux/MAINTAINERS auto parsing
 '''
 
 import argparse
+import os
 import subprocess
 
 def email_domain(author):
@@ -60,12 +61,41 @@ def parse_git_output(git_output, sortby, by_domain):
     print('parse_git_output: Wrong sortby (%s)' % sortby)
     exit(1)
 
+def files_for_linux_subsystems(repo, subsystems):
+    maintainers_file = os.path.join(repo, 'MAINTAINERS')
+    if not os.path.isfile(maintainers_file):
+        print('MAINTAINERS file is not found in %s' % repo)
+        exit(1)
+
+    with open(maintainers_file, 'r') as f:
+        content = f.read()
+
+    maintainers_list = content.split('Maintainers List\n----------------\n')[1]
+    subsys_descs = maintainers_list.split('\n\n')[1:]
+    if len(subsys_descs) == 0:
+        print('subsystems descriptions not found in the MAINTAINERS file')
+        exit(1)
+
+    files = []
+    for subsys_desc in subsys_descs:
+        lines = subsys_desc.strip().split('\n')
+        name = lines[0].strip()
+        if not name in subsystems:
+            continue
+        for line in lines[1:]:
+            if not line.startswith('F:'):
+                continue
+            files.append(line.split()[1])
+    return files
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('repo', metavar='<dir>',
             help='git repositories to get the stat from')
     parser.add_argument('--files', nargs='+', metavar='<file>',
             help='authors for only the files')
+    parser.add_argument('--linux_subsystems', nargs='+', metavar='<subsystem>',
+            help='authors for the linux subsystems (in MAINTAINERS file)')
     parser.add_argument('--since', metavar='<date>',
             help='since when in YYYY-MM-DD format')
     parser.add_argument('--until', metavar='<date>',
@@ -91,6 +121,12 @@ def main():
         args.skip_merge_commits = True
     if args.skip_merge_commits:
         cmd.append('--no-merges')
+
+    if args.linux_subsystems:
+        if args.files == None:
+            args.files = []
+        args.files += files_for_linux_subsystems(args.repo,
+                args.linux_subsystems)
 
     if args.files:
         cmd.append('--')
