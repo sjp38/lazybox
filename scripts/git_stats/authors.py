@@ -2,9 +2,9 @@
 
 '''
 TODO
-- Support author exclusion
 
 DONE
+- Support author exclusion
 - Support scoping for specific files
 - Support linux/MAINTAINERS auto parsing
 '''
@@ -100,6 +100,8 @@ def main():
             help='since when in YYYY-MM-DD format')
     parser.add_argument('--until', metavar='<date>',
             help='until when in YYYY-MM-DD format')
+    parser.add_argument('--exclude', metavar='<author>', nargs='+',
+            help='authors to exclude from the output')
     parser.add_argument('--max_nr_authors', type=int, metavar='<number>',
             help='max number of authors to list')
     parser.add_argument('--sortby', choices=['commits', 'lines'],
@@ -136,6 +138,10 @@ def main():
     authors = parse_git_output(git_output, args.sortby, args.by_domain)
 
     authors_sorted = sorted(authors, key=authors.get, reverse=True)
+
+    if args.exclude:
+        authors_sorted = filter(lambda author: author not in args.exclude,
+                authors_sorted)
     if args.max_nr_authors:
         authors_sorted = authors_sorted[:args.max_nr_authors]
     for author in authors_sorted:
