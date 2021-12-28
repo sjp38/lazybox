@@ -2,6 +2,7 @@
 
 '''
 TODO
+- Exclude/include specific email domain
 
 DONE
 - Support author exclusion
