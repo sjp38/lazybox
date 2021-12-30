@@ -3,6 +3,10 @@
 '''
 TODO
 - Exclude/include specific email domain
+- Identify authors using only name
+- Print rank of each authors in output
+- Support outputs per interval (e.g., --since 2020-01-01 --until 2022-12-31 --interval 30days)
+- Make --max_nr_authors 30 by default
 
 DONE
 - Support author exclusion
