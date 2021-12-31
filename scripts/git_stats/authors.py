@@ -3,7 +3,6 @@
 '''
 TODO
 - Exclude/include specific email domain
-- Print rank of each authors in output
 - Support outputs per interval (e.g., --since 2020-01-01 --until 2022-12-31 --interval 30days)
 
 DONE
@@ -12,6 +11,7 @@ DONE
 - Support linux/MAINTAINERS auto parsing
 - Identify authors using only name
 - Make --max_nr_authors 30 by default
+- Print rank of each authors in output
 '''
 
 import argparse
@@ -156,8 +156,8 @@ def main():
                 authors_sorted)
     if args.max_nr_authors:
         authors_sorted = authors_sorted[:args.max_nr_authors]
-    for author in authors_sorted:
-        print('%s: %d %s' % (author, authors[author], args.sortby))
+    for idx, author in enumerate(authors_sorted):
+        print('%d. %s: %d %s' % (idx + 1, author, authors[author], args.sortby))
 
     print('# %d authors, %d %s in total' % (len(authors),
         sum(authors.values()), args.sortby))
