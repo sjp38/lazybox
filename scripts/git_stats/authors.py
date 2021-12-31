@@ -5,13 +5,13 @@ TODO
 - Exclude/include specific email domain
 - Print rank of each authors in output
 - Support outputs per interval (e.g., --since 2020-01-01 --until 2022-12-31 --interval 30days)
-- Make --max_nr_authors 30 by default
 
 DONE
 - Support author exclusion
 - Support scoping for specific files
 - Support linux/MAINTAINERS auto parsing
 - Identify authors using only name
+- Make --max_nr_authors 30 by default
 '''
 
 import argparse
@@ -113,6 +113,7 @@ def main():
     parser.add_argument('--exclude', metavar='<author>', nargs='+',
             help='authors to exclude from the output')
     parser.add_argument('--max_nr_authors', type=int, metavar='<number>',
+            default=30,
             help='max number of authors to list')
     parser.add_argument('--sortby', choices=['commits', 'lines'],
             default='commits', help='metric to sort authors by')
