@@ -3,7 +3,6 @@
 '''
 TODO
 - Exclude/include specific email domain
-- Identify authors using only name
 - Print rank of each authors in output
 - Support outputs per interval (e.g., --since 2020-01-01 --until 2022-12-31 --interval 30days)
 - Make --max_nr_authors 30 by default
@@ -12,29 +11,36 @@ DONE
 - Support author exclusion
 - Support scoping for specific files
 - Support linux/MAINTAINERS auto parsing
+- Identify authors using only name
 '''
 
 import argparse
 import os
 import subprocess
 
-def email_domain(author):
-    email = author.split()[-1][1:-1]
-    fields = email.split('@')
-    return '@'.join(fields[1:])
+def author_id(author, identify_with):
+    if identify_with == 'all':
+        return author
+    elif identify_with == 'name':
+        return ' '.join(author.split()[0:-1])
+    elif identify_with == 'email':
+        return author.split()[-1][1:-1]
+    elif identify_with == 'domain':
+        email = author.split()[-1][1:-1]
+        fields = email.split('@')
+        return '@'.join(fields[1:])
 
-def parse_git_output_by_commits(git_output, by_domain):
+def parse_git_output_by_commits(git_output, author_identity):
     authors_lines = git_output.split('\n')
     authors = {}
     for author in authors_lines:
-        if by_domain:
-            author = email_domain(author)
+        author = author_id(author, author_identity)
         if not author in authors:
             authors[author] = 0
         authors[author] += 1
     return authors
 
-def parse_git_output_by_lines(git_output, by_domain):
+def parse_git_output_by_lines(git_output, author_identity):
     # example input is:
     #     sj38.park@gmail.com
     #
@@ -47,8 +53,7 @@ def parse_git_output_by_lines(git_output, by_domain):
     lines = git_output.split('\n')
     for idx in range(0, len(lines), 3):
         author = lines[idx].strip()
-        if by_domain:
-            author = email_domain(author)
+        author = author_id(author, author_identity)
         if not author in authors:
             authors[author] = 0
         changes_fields = lines[idx + 2].strip().split()
@@ -58,11 +63,11 @@ def parse_git_output_by_lines(git_output, by_domain):
                 authors[author] += int(changes_fields[idx - 1])
     return authors
 
-def parse_git_output(git_output, sortby, by_domain):
+def parse_git_output(git_output, sortby, author_identity):
     if sortby == 'commits':
-        return parse_git_output_by_commits(git_output, by_domain)
+        return parse_git_output_by_commits(git_output, author_identity)
     elif sortby == 'lines':
-        return parse_git_output_by_lines(git_output, by_domain)
+        return parse_git_output_by_lines(git_output, author_identity)
     print('parse_git_output: Wrong sortby (%s)' % sortby)
     exit(1)
 
@@ -113,8 +118,9 @@ def main():
             default='commits', help='metric to sort authors by')
     parser.add_argument('--skip_merge_commits', action='store_true',
             help='do not count merge commits')
-    parser.add_argument('--by_domain', action='store_true', default=False,
-            help='account by email domain only')
+    parser.add_argument('--author_identity', default='all',
+            choices=['all', 'name', 'email', 'domain'],
+            help='how to identify authors')
     args = parser.parse_args()
 
     cmd = ('git -C %s log' % args.repo).split()
@@ -140,7 +146,7 @@ def main():
         cmd += args.files
 
     git_output = subprocess.check_output(cmd).decode().strip()
-    authors = parse_git_output(git_output, args.sortby, args.by_domain)
+    authors = parse_git_output(git_output, args.sortby, args.author_identity)
 
     authors_sorted = sorted(authors, key=authors.get, reverse=True)
 
