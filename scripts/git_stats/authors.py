@@ -3,7 +3,6 @@
 '''
 TODO
 - Exclude/include specific email domain
-- Support outputs per interval (e.g., --since 2020-01-01 --until 2022-12-31 --interval 30days)
 - Support plotting
 
 DONE
@@ -13,9 +12,11 @@ DONE
 - Identify authors using only name
 - Make --max_nr_authors 30 by default
 - Print rank of each authors in output
+- Support outputs per interval (e.g., --since 2020-01-01 --until 2022-12-31 --interval 30days)
 '''
 
 import argparse
+import datetime
 import os
 import subprocess
 
@@ -138,6 +139,13 @@ def get_pr_authors(args):
     print('# %d authors, %d %s in total' % (len(authors),
         sum(authors.values()), args.sortby))
 
+def get_first_commit_date(repo):
+    cmd = 'git log --pretty=%ad --date=format:%Y-%m-%d --reverse -n 1'.split()
+    return subprocess.check_output(cmd).decode().strip()
+
+def yyyymmdd_to_date(yyyymmdd):
+    return datetime.date(*[int(x) for x in yyyymmdd.split('-')])
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('repo', metavar='<dir>',
@@ -150,6 +158,8 @@ def main():
             help='since when in YYYY-MM-DD format')
     parser.add_argument('--until', metavar='<date>',
             help='until when in YYYY-MM-DD format')
+    parser.add_argument('--interval', metavar='<days>', type=int,
+            help='interval days to print output for each')
     parser.add_argument('--exclude', metavar='<author>', nargs='+',
             help='authors to exclude from the output')
     parser.add_argument('--max_nr_authors', type=int, metavar='<number>',
@@ -163,6 +173,24 @@ def main():
             choices=['all', 'name', 'email', 'domain'],
             help='how to identify authors')
     args = parser.parse_args()
+
+    if args.interval:
+        if not args.since:
+            args.since = get_first_commit_date(args.repo)
+        orig_until = args.until
+        if not orig_until:
+            orig_until = datetime.date.today().strftime('%Y-%m-%d')
+        args.until = yyyymmdd_to_date(args.since) + datetime.timedelta(
+                args.interval)
+        args.until = args.until.strftime('%Y-%m-%d')
+        while yyyymmdd_to_date(args.since) < yyyymmdd_to_date(orig_until):
+            print('\n# %s to %s' % (args.since, args.until))
+            get_pr_authors(args)
+            args.since = args.until
+            args.until = yyyymmdd_to_date(args.since) + datetime.timedelta(
+                    args.interval)
+            args.until = args.until.strftime('%Y-%m-%d')
+        return
 
     get_pr_authors(args)
 
