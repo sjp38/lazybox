@@ -139,10 +139,6 @@ def get_pr_authors(args):
     print('# %d authors, %d %s in total' % (len(authors),
         sum(authors.values()), args.sortby))
 
-def get_first_commit_date(repo):
-    cmd = 'git log --pretty=%ad --date=format:%Y-%m-%d --reverse -n 1'.split()
-    return subprocess.check_output(cmd).decode().strip()
-
 def yyyymmdd_to_date(yyyymmdd):
     return datetime.date(*[int(x) for x in yyyymmdd.split('-')])
 
@@ -176,7 +172,8 @@ def main():
 
     if args.interval:
         if not args.since:
-            args.since = get_first_commit_date(args.repo)
+            print('\'--interval\' should given with \'--since\'')
+            exit(1)
         orig_until = args.until
         if not orig_until:
             orig_until = datetime.date.today().strftime('%Y-%m-%d')
