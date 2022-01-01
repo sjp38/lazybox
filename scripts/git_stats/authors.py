@@ -4,6 +4,7 @@
 TODO
 - Exclude/include specific email domain
 - Support outputs per interval (e.g., --since 2020-01-01 --until 2022-12-31 --interval 30days)
+- Support plotting
 
 DONE
 - Support author exclusion
@@ -98,32 +99,7 @@ def files_for_linux_subsystems(repo, subsystems):
             files.append(line.split()[1])
     return files
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('repo', metavar='<dir>',
-            help='git repositories to get the stat from')
-    parser.add_argument('--files', nargs='+', metavar='<file>',
-            help='authors for only the files')
-    parser.add_argument('--linux_subsystems', nargs='+', metavar='<subsystem>',
-            help='authors for the linux subsystems (in MAINTAINERS file)')
-    parser.add_argument('--since', metavar='<date>',
-            help='since when in YYYY-MM-DD format')
-    parser.add_argument('--until', metavar='<date>',
-            help='until when in YYYY-MM-DD format')
-    parser.add_argument('--exclude', metavar='<author>', nargs='+',
-            help='authors to exclude from the output')
-    parser.add_argument('--max_nr_authors', type=int, metavar='<number>',
-            default=30,
-            help='max number of authors to list')
-    parser.add_argument('--sortby', choices=['commits', 'lines'],
-            default='commits', help='metric to sort authors by')
-    parser.add_argument('--skip_merge_commits', action='store_true',
-            help='do not count merge commits')
-    parser.add_argument('--author_identity', default='all',
-            choices=['all', 'name', 'email', 'domain'],
-            help='how to identify authors')
-    args = parser.parse_args()
-
+def get_pr_authors(args):
     cmd = ('git -C %s log' % args.repo).split()
     cmd.append('--pretty=%an <%ae>')
     if args.since:
@@ -161,6 +137,34 @@ def main():
 
     print('# %d authors, %d %s in total' % (len(authors),
         sum(authors.values()), args.sortby))
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('repo', metavar='<dir>',
+            help='git repositories to get the stat from')
+    parser.add_argument('--files', nargs='+', metavar='<file>',
+            help='authors for only the files')
+    parser.add_argument('--linux_subsystems', nargs='+', metavar='<subsystem>',
+            help='authors for the linux subsystems (in MAINTAINERS file)')
+    parser.add_argument('--since', metavar='<date>',
+            help='since when in YYYY-MM-DD format')
+    parser.add_argument('--until', metavar='<date>',
+            help='until when in YYYY-MM-DD format')
+    parser.add_argument('--exclude', metavar='<author>', nargs='+',
+            help='authors to exclude from the output')
+    parser.add_argument('--max_nr_authors', type=int, metavar='<number>',
+            default=30,
+            help='max number of authors to list')
+    parser.add_argument('--sortby', choices=['commits', 'lines'],
+            default='commits', help='metric to sort authors by')
+    parser.add_argument('--skip_merge_commits', action='store_true',
+            help='do not count merge commits')
+    parser.add_argument('--author_identity', default='all',
+            choices=['all', 'name', 'email', 'domain'],
+            help='how to identify authors')
+    args = parser.parse_args()
+
+    get_pr_authors(args)
 
 if __name__ == '__main__':
     main()
