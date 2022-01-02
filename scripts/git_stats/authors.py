@@ -56,6 +56,8 @@ def parse_git_output_by_lines(git_output, author_identity):
     authors = {}
     lines = git_output.split('\n')
     for idx in range(0, len(lines), 3):
+        if idx + 2 >= len(lines):
+            break
         author = lines[idx].strip()
         author = author_id(author, author_identity)
         if not author in authors:
