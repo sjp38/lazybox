@@ -134,7 +134,10 @@ def get_pr_authors(args):
     if args.max_nr_authors:
         authors_sorted = authors_sorted[:args.max_nr_authors]
     for idx, author in enumerate(authors_sorted):
-        print('%d. %s: %d %s' % (idx + 1, author, authors[author], args.sortby))
+        line = '%s: %d %s' % (author, authors[author], args.sortby)
+        if not args.hide_rank:
+            line = '%d. %s' % (idx + 1, line)
+        print(line)
 
     print('# %d authors, %d %s in total' % (len(authors),
         sum(authors.values()), args.sortby))
@@ -168,6 +171,8 @@ def main():
     parser.add_argument('--author_identity', default='all',
             choices=['all', 'name', 'email', 'domain'],
             help='how to identify authors')
+    parser.add_argument('--hide_rank', action='store_true',
+            help='do not print rank')
     args = parser.parse_args()
 
     if args.interval:
