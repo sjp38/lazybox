@@ -36,6 +36,8 @@ def parse_git_output_by_commits(git_output, author_identity):
     authors_lines = git_output.split('\n')
     authors = {}
     for author in authors_lines:
+        if author == '':
+            continue
         author = author_id(author, author_identity)
         if not author in authors:
             authors[author] = 0
