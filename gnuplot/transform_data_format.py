@@ -5,6 +5,43 @@ import sys
 
 from collections import OrderedDict
 
+'''
+Formats
+=======
+
+recs
+----
+
+Records.
+
+    <legend>
+    <x-val 1> <y-val1>
+    <x-val 2> <y-val2>
+    ...
+
+
+    <legend2>
+    <x-val 1> <y-val3>
+    <x-val 2> <y-val4>
+    ...
+
+
+    ...
+
+rec_yerr
+--------
+
+Records with y error.  Same to recs but have third field after y-val.
+
+table
+-----
+
+    <whatever>  <legendA>   <legendB>   ...
+    <xval1>     <yval1>     <yval2>     ...
+    ...
+
+'''
+
 def recs_to_tbl(data):
     recs = OrderedDict()
 
