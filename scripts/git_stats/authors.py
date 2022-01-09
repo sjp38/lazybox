@@ -131,11 +131,9 @@ def get_authors(args):
     return parse_git_output(git_output, args.sortby, args.author_identity)
 
 def pr_authors(authors, args):
-    authors_sorted = sorted(authors, key=authors.get, reverse=True)
-
     if args.exclude:
-        authors_sorted = filter(lambda author: author not in args.exclude,
-                authors_sorted)
+        authors = {k:v for k,v in authors.items() if not k in args.exclude}
+    authors_sorted = sorted(authors, key=authors.get, reverse=True)
     if args.max_nr_authors:
         authors_sorted = authors_sorted[:args.max_nr_authors]
     for idx, author in enumerate(authors_sorted):
