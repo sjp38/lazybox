@@ -104,7 +104,7 @@ def files_for_linux_subsystems(repo, subsystems):
             files.append(line.split()[1])
     return files
 
-def get_pr_authors(args):
+def get_authors(args):
     cmd = ('git -C %s log' % args.repo).split()
     cmd.append('--pretty=%an <%ae>')
     if args.since:
@@ -128,8 +128,9 @@ def get_pr_authors(args):
         cmd += args.files
 
     git_output = subprocess.check_output(cmd).decode().strip()
-    authors = parse_git_output(git_output, args.sortby, args.author_identity)
+    return parse_git_output(git_output, args.sortby, args.author_identity)
 
+def pr_authors(authors, args):
     authors_sorted = sorted(authors, key=authors.get, reverse=True)
 
     if args.exclude:
@@ -145,6 +146,9 @@ def get_pr_authors(args):
 
     print('# %d authors, %d %s in total' % (len(authors),
         sum(authors.values()), args.sortby))
+
+def get_pr_authors(args):
+    pr_authors(get_authors(args), args)
 
 def yyyymmdd_to_date(yyyymmdd):
     return datetime.date(*[int(x) for x in yyyymmdd.split('-')])
