@@ -136,18 +136,18 @@ def get_authors(args):
         authors_sorted = authors_sorted[:args.max_nr_authors]
     return authors_sorted, authors
 
-def pr_authors(authors_sorted, authors, args):
+def pr_authors(authors_sorted, authors, sortby, hide_rank):
     for idx, author in enumerate(authors_sorted):
-        line = '%s: %d %s' % (author, authors[author], args.sortby)
-        if not args.hide_rank:
+        line = '%s: %d %s' % (author, authors[author], sortby)
+        if not hide_rank:
             line = '%d. %s' % (idx + 1, line)
         print(line)
 
     print('# %d authors, %d %s in total' % (len(authors),
-        sum(authors.values()), args.sortby))
+        sum(authors.values()), sortby))
 
 def get_pr_authors(args):
-    pr_authors(*get_authors(args), args)
+    pr_authors(*get_authors(args), args.sortby, args.hide_rank)
 
 def yyyymmdd_to_date(yyyymmdd):
     return datetime.date(*[int(x) for x in yyyymmdd.split('-')])
