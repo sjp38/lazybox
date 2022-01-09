@@ -128,14 +128,15 @@ def get_authors(args):
         cmd += args.files
 
     git_output = subprocess.check_output(cmd).decode().strip()
-    return parse_git_output(git_output, args.sortby, args.author_identity)
-
-def pr_authors(authors, args):
+    authors = parse_git_output(git_output, args.sortby, args.author_identity)
     if args.exclude:
         authors = {k:v for k,v in authors.items() if not k in args.exclude}
     authors_sorted = sorted(authors, key=authors.get, reverse=True)
     if args.max_nr_authors:
         authors_sorted = authors_sorted[:args.max_nr_authors]
+    return authors_sorted, authors
+
+def pr_authors(authors_sorted, authors, args):
     for idx, author in enumerate(authors_sorted):
         line = '%s: %d %s' % (author, authors[author], args.sortby)
         if not args.hide_rank:
@@ -146,7 +147,7 @@ def pr_authors(authors, args):
         sum(authors.values()), args.sortby))
 
 def get_pr_authors(args):
-    pr_authors(get_authors(args), args)
+    pr_authors(*get_authors(args), args)
 
 def yyyymmdd_to_date(yyyymmdd):
     return datetime.date(*[int(x) for x in yyyymmdd.split('-')])
