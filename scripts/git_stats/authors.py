@@ -215,10 +215,10 @@ def main():
                 print('author:', author)
                 for period, authors in authors_by_time:
                     authors_contribs = authors[1]
+                    contribs = 0
                     if author in authors_contribs:
-                        print(period, authors_contribs[author])
-                    else:
-                        print(period, 0)
+                        contribs = authors_contribs[author]
+                    print(period, contribs, args.sortby)
                 print()
             return
 
