@@ -16,6 +16,7 @@ DONE
 '''
 
 import argparse
+import collections
 import datetime
 import os
 import subprocess
@@ -180,6 +181,8 @@ def main():
             help='how to identify authors')
     parser.add_argument('--hide_rank', action='store_true',
             help='do not print rank')
+    parser.add_argument('--pr_by_authors', action='store_true',
+            help='print output by authors')
     args = parser.parse_args()
 
     if args.interval:
@@ -192,6 +195,33 @@ def main():
         args.until = yyyymmdd_to_date(args.since) + datetime.timedelta(
                 args.interval)
         args.until = args.until.strftime('%Y-%m-%d')
+
+        if args.pr_by_authors:
+            authors_by_time = []
+            while yyyymmdd_to_date(args.since) < yyyymmdd_to_date(orig_until):
+                period = '%s to %s' % (args.since, args.until)
+                authors_by_time.append([period, get_authors(args)])
+                args.since = args.until
+                args.until = yyyymmdd_to_date(args.since) + datetime.timedelta(
+                        args.interval)
+                args.until = args.until.strftime('%Y-%m-%d')
+            total_authors = []
+            for period, authors in authors_by_time:
+                authors_sorted = authors[0]
+                for author in authors_sorted:
+                    if not author in total_authors:
+                        total_authors.append(author)
+            for author in total_authors:
+                print('author:', author)
+                for period, authors in authors_by_time:
+                    authors_contribs = authors[1]
+                    if author in authors_contribs:
+                        print(period, authors_contribs[author])
+                    else:
+                        print(period, 0)
+                print()
+            return
+
         while yyyymmdd_to_date(args.since) < yyyymmdd_to_date(orig_until):
             print('\n# %s to %s' % (args.since, args.until))
             get_pr_authors(args)
