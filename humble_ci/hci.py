@@ -22,6 +22,45 @@ TODO
 - support reboot
 '''
 
+def run_tests(repo, before_update_commits, after_update_commits, test):
+    for ref in before_update_commits:
+        if before_update_commits[ref] != after_update_commits[ref]:
+            cmd = ['git', '-C', repo, 'checkout',
+                    after_update_commits[ref]]
+            try:
+                subprocess.check_output(cmd)
+            except subprocess.CalledProcessError as e:
+                print('checkout %s out (\'%s\') failed' % (ref, ' '.join(cmd)))
+                exit(1)
+
+            try:
+                subprocess.check_output(test)
+            except subprocess.CalledProcessError as e:
+                print('test failed for %s' % (ref))
+
+def git_remote_update(repo):
+    cmd = ['git', '-C', repo, 'remote', 'update']
+    try:
+        subprocess.check_output(cmd)
+    except subprocess.CalledProcessError as e:
+        print('updating remotes (\'%s\') failed' % ' '.join(cmd))
+        exit(1)
+
+
+def get_refs_commits(repo, trees_to_track):
+    refs_commits = {}
+    for name, url, branch in trees_to_track:
+        ref_to_check = '%s/%s' % (name, branch)
+        cmd = ['git', '-C', repo, 'rev-parse', ref_to_check]
+        try:
+            commit = subprocess.check_output(cmd).decode().strip()
+        except subprocess.CalledProcessError as e:
+            print('getting hash of %s (\'%s\') failed' %
+                    (ref_to_check, ' '.join(cmd)))
+            exit(1)
+        refs_commits[ref_to_check] = commit
+    return refs_commits
+
 def check_set_repo(repo, trees_to_track):
     if not os.path.isdir(repo):
         name, url, branch = trees_to_track[0]
@@ -63,55 +102,10 @@ def main():
         exit(1)
 
     check_set_repo(args.repo, args.tree_to_track)
-
-    # check before-update commits
-    before_update_commits = {}
-    for name, url, branch in args.tree_to_track:
-        ref_to_check = '%s/%s' % (name, branch)
-        cmd = ['git', '-C', args.repo, 'rev-parse', ref_to_check]
-        try:
-            commit = subprocess.check_output(cmd).decode().strip()
-        except subprocess.CalledProcessError as e:
-            print('getting hash of %s (\'%s\') failed' %
-                    (ref_to_check, ' '.join(cmd)))
-            exit(1)
-        before_update_commits[ref_to_check] = commit
-
-    # update
-    cmd = ['git', '-C', args.repo, 'remote', 'update']
-    try:
-        subprocess.check_output(cmd)
-    except subprocess.CalledProcessError as e:
-        print('updating remotes (\'%s\') failed' % ' '.join(cmd))
-        exit(1)
-
-    # check after-update commits
-    after_update_commits = {}
-    for name, url, branch in args.tree_to_track:
-        ref_to_check = '%s/%s' % (name, branch)
-        cmd = ['git', '-C', args.repo, 'rev-parse', ref_to_check]
-        try:
-            commit = subprocess.check_output(cmd).decode().strip()
-        except subprocess.CalledProcessError as e:
-            print('getting hash of %s (\'%s\') failed' %
-                    (ref_to_check, ' '.join(cmd)))
-            exit(1)
-        after_update_commits[ref_to_check] = commit
-
-    for ref in before_update_commits:
-        if before_update_commits[ref] != after_update_commits[ref]:
-            cmd = ['git', '-C', args.repo, 'checkout',
-                    after_update_commits[ref]]
-            try:
-                subprocess.check_output(cmd)
-            except subprocess.CalledProcessError as e:
-                print('checkout %s out (\'%s\') failed' % (ref, ' '.join(cmd)))
-                exit(1)
-
-            try:
-                subprocess.check_output(args.test)
-            except subprocess.CalledProcessError as e:
-                print('test failed for %s' % (ref))
+    before_update_commits = get_refs_commits(args.repo, args.tree_to_track)
+    git_remote_update(args.repo)
+    after_update_commits = get_refs_commits(args.repo, args.tree_to_track)
+    run_tests(args.repo, before_update_commits, after_update_commits, args.test)
 
 if __name__ == '__main__':
     main()
