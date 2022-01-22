@@ -46,8 +46,29 @@ def git_remote_update(repo):
         print('updating remotes (\'%s\') failed' % ' '.join(cmd))
         exit(1)
 
+def set_repo(repo, trees_to_track):
+    name, url, branch = trees_to_track[0]
+    cmd = 'git clone --origin'.split()
+    cmd += [name, url, repo]
+    try:
+        subprocess.check_output(cmd)
+    except subprocess.CalledProcessError as e:
+        print('cloning the repo (\'%s\') failed' % ' '.join(cmd))
+        exit(1)
+    for name, url, branch in trees_to_track[1:]:
+        cmd = ['git', '-C', repo, 'remote', 'add']
+        cmd += [name, url]
+        try:
+            subprocess.check_output(cmd)
+        except subprocess.CalledProcessError as e:
+            print('adding retmote (\'%s\') failed' % ' '.join(cmd))
+            exit(1)
+    git_remote_update(repo)
 
 def get_refs_commits(repo, trees_to_track):
+    if not os.path.isdir(repo):
+        set_repo(repo, trees_to_track)
+
     refs_commits = {}
     for name, url, branch in trees_to_track:
         ref_to_check = '%s/%s' % (name, branch)
@@ -60,26 +81,6 @@ def get_refs_commits(repo, trees_to_track):
             exit(1)
         refs_commits[ref_to_check] = commit
     return refs_commits
-
-def check_set_repo(repo, trees_to_track):
-    if not os.path.isdir(repo):
-        name, url, branch = trees_to_track[0]
-        cmd = 'git clone --origin'.split()
-        cmd += [name, url, repo]
-        try:
-            subprocess.check_output(cmd)
-        except subprocess.CalledProcessError as e:
-            print('cloning the repo (\'%s\') failed' % ' '.join(cmd))
-            exit(1)
-        for name, url, branch in trees_to_track[1:]:
-            cmd = ['git', '-C', repo, 'remote', 'add']
-            cmd += [name, url]
-            try:
-                subprocess.check_output(cmd)
-            except subprocess.CalledProcessError as e:
-                print('adding retmote (\'%s\') failed' % ' '.join(cmd))
-                exit(1)
-        git_remote_update(repo)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -96,7 +97,6 @@ def main():
         print('all options should be given')
         exit(1)
 
-    check_set_repo(args.repo, args.tree_to_track)
     before_update_commits = get_refs_commits(args.repo, args.tree_to_track)
     git_remote_update(args.repo)
     after_update_commits = get_refs_commits(args.repo, args.tree_to_track)
