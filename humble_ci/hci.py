@@ -15,7 +15,37 @@ Works
 - check if the trees have updated
 - run the test against the updated ones, and
 - provide the reports
+
+TODO
+- cleanup code
+- support installation
+- support reboot
 '''
+
+def check_set_repo(repo, trees_to_track):
+    if not os.path.isdir(repo):
+        name, url, branch = trees_to_track[0]
+        cmd = 'git clone --origin'.split()
+        cmd += [name, url, repo]
+        try:
+            subprocess.check_output(cmd)
+        except subprocess.CalledProcessError as e:
+            print('cloning the repo (\'%s\') failed' % ' '.join(cmd))
+            exit(1)
+        for name, url, branch in trees_to_track[1:]:
+            cmd = ['git', '-C', repo, 'remote', 'add']
+            cmd += [name, url]
+            try:
+                subprocess.check_output(cmd)
+            except subprocess.CalledProcessError as e:
+                print('adding retmote (\'%s\') failed' % ' '.join(cmd))
+                exit(1)
+        cmd = ['git', '-C', repo, 'remote', 'update']
+        try:
+            subprocess.check_output(cmd)
+        except subprocess.CalledProcessError as e:
+            print('updating remotes (\'%s\') failed' % ' '.join(cmd))
+            exit(1)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -32,30 +62,7 @@ def main():
         print('all options should be given')
         exit(1)
 
-    if not os.path.isdir(args.repo):
-        name, url, branch = args.tree_to_track[0]
-        # git clone --origin $name $url $args.repo
-        cmd = 'git clone --origin'.split()
-        cmd += [name, url, args.repo]
-        try:
-            subprocess.check_output(cmd)
-        except subprocess.CalledProcessError as e:
-            print('cloning the repo (\'%s\') failed' % ' '.join(cmd))
-            exit(1)
-        for name, url, branch in args.tree_to_track[1:]:
-            cmd = ['git', '-C', args.repo, 'remote', 'add']
-            cmd += [name, url]
-            try:
-                subprocess.check_output(cmd)
-            except subprocess.CalledProcessError as e:
-                print('adding retmote (\'%s\') failed' % ' '.join(cmd))
-                exit(1)
-        cmd = ['git', '-C', args.repo, 'remote', 'update']
-        try:
-            subprocess.check_output(cmd)
-        except subprocess.CalledProcessError as e:
-            print('updating remotes (\'%s\') failed' % ' '.join(cmd))
-            exit(1)
+    check_set_repo(args.repo, args.tree_to_track)
 
     # check before-update commits
     before_update_commits = {}
