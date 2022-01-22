@@ -66,10 +66,14 @@ def set_repo(repo, trees_to_track):
     git_remote_update(repo)
 
 def get_refs_commits(repo, trees_to_track):
+    refs_commits = {}
+
     if not os.path.isdir(repo):
         set_repo(repo, trees_to_track)
+        for name, url, branch in trees_to_track:
+            refs_commits['%s/%s' % (name, branch)] = None
+        return refs_commits
 
-    refs_commits = {}
     for name, url, branch in trees_to_track:
         ref_to_check = '%s/%s' % (name, branch)
         cmd = ['git', '-C', repo, 'rev-parse', ref_to_check]
