@@ -24,19 +24,20 @@ TODO
 
 def run_tests(repo, before_update_commits, after_update_commits, test):
     for ref in before_update_commits:
-        if before_update_commits[ref] != after_update_commits[ref]:
-            cmd = ['git', '-C', repo, 'checkout',
-                    after_update_commits[ref]]
-            try:
-                subprocess.check_output(cmd)
-            except subprocess.CalledProcessError as e:
-                print('checkout %s out (\'%s\') failed' % (ref, ' '.join(cmd)))
-                exit(1)
+        if before_update_commits[ref] == after_update_commits[ref]:
+            continue
+        print('# test %s' % ref)
+        cmd = ['git', '-C', repo, 'checkout', after_update_commits[ref]]
+        try:
+            subprocess.check_output(cmd)
+        except subprocess.CalledProcessError as e:
+            print('checkout %s out (\'%s\') failed' % (ref, ' '.join(cmd)))
+            exit(1)
 
-            try:
-                subprocess.check_output(test)
-            except subprocess.CalledProcessError as e:
-                print('test failed for %s' % (ref))
+        try:
+            subprocess.check_output(test)
+        except subprocess.CalledProcessError as e:
+            print('test failed for %s' % (ref))
 
 def git_remote_update(repo):
     cmd = ['git', '-C', repo, 'remote', 'update']
@@ -101,9 +102,13 @@ def main():
         print('all options should be given')
         exit(1)
 
+    print('# get references before update')
     before_update_commits = get_refs_commits(args.repo, args.tree_to_track)
+    print('# update remotes')
     git_remote_update(args.repo)
+    print('# get references after update')
     after_update_commits = get_refs_commits(args.repo, args.tree_to_track)
+    print('# run tests')
     run_tests(args.repo, before_update_commits, after_update_commits, args.test)
 
 if __name__ == '__main__':
