@@ -57,5 +57,54 @@ def main():
             print('updating remotes (\'%s\') failed' % ' '.join(cmd))
             exit(1)
 
+    # check before-update commits
+    before_update_commits = {}
+    for name, url, branch in args.tree_to_track:
+        ref_to_check = '%s/%s' % (name, branch)
+        cmd = ['git', '-C', args.repo, 'rev-parse', ref_to_check]
+        try:
+            commit = subprocess.check_output(cmd).decode().strip()
+        except subprocess.CalledProcessError as e:
+            print('getting hash of %s (\'%s\') failed' %
+                    (ref_to_check, ' '.join(cmd)))
+            exit(1)
+        before_update_commits[ref_to_check] = commit
+
+    # update
+    cmd = ['git', '-C', args.repo, 'remote', 'update']
+    try:
+        subprocess.check_output(cmd)
+    except subprocess.CalledProcessError as e:
+        print('updating remotes (\'%s\') failed' % ' '.join(cmd))
+        exit(1)
+
+    # check after-update commits
+    after_update_commits = {}
+    for name, url, branch in args.tree_to_track:
+        ref_to_check = '%s/%s' % (name, branch)
+        cmd = ['git', '-C', args.repo, 'rev-parse', ref_to_check]
+        try:
+            commit = subprocess.check_output(cmd).decode().strip()
+        except subprocess.CalledProcessError as e:
+            print('getting hash of %s (\'%s\') failed' %
+                    (ref_to_check, ' '.join(cmd)))
+            exit(1)
+        after_update_commits[ref_to_check] = commit
+
+    for ref in before_update_commits:
+        if before_update_commits[ref] != after_update_commits[ref]:
+            cmd = ['git', '-C', args.repo, 'checkout',
+                    after_update_commits[ref]]
+            try:
+                subprocess.check_output(cmd)
+            except subprocess.CalledProcessError as e:
+                print('checkout %s out (\'%s\') failed' % (ref, ' '.join(cmd)))
+                exit(1)
+
+            try:
+                subprocess.check_output(args.test)
+            except subprocess.CalledProcessError as e:
+                print('test failed for %s' % (ref))
+
 if __name__ == '__main__':
     main()
