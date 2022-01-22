@@ -79,12 +79,7 @@ def check_set_repo(repo, trees_to_track):
             except subprocess.CalledProcessError as e:
                 print('adding retmote (\'%s\') failed' % ' '.join(cmd))
                 exit(1)
-        cmd = ['git', '-C', repo, 'remote', 'update']
-        try:
-            subprocess.check_output(cmd)
-        except subprocess.CalledProcessError as e:
-            print('updating remotes (\'%s\') failed' % ' '.join(cmd))
-            exit(1)
+        git_remote_update(repo)
 
 def main():
     parser = argparse.ArgumentParser()
