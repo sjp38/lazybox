@@ -26,10 +26,14 @@ def run_tests(repo, before_update_commits, after_update_commits,
         installer, test):
     for ref in before_update_commits:
         if before_update_commits[ref] == after_update_commits[ref]:
+            print('# Skip %s (%s): No update' %
+                    (ref, after_update_commits[ref]))
             continue
 
-        print('# test %s' % ref)
-        cmd = ['git', '-C', repo, 'checkout', after_update_commits[ref]]
+        ref_hash = '%s (%s)' % (ref, after_update_commits[ref])
+        print('# Checkout %s' % ref_hash)
+        cmd = ['git', '-C', repo, 'checkout', '--quiet',
+                after_update_commits[ref]]
         try:
             subprocess.check_output(cmd)
         except subprocess.CalledProcessError as e:
@@ -37,15 +41,21 @@ def run_tests(repo, before_update_commits, after_update_commits,
             exit(1)
 
         if installer:
+            print('# Install %s' % ref_hash)
             try:
                 subprocess.check_output(installer)
             except subprocess.CalledProcessError as e:
                 print('installer failed for %s' % ref)
 
+        print('# Test %s' % ref_hash)
+        test_passed = True
         try:
             subprocess.check_output(test)
         except subprocess.CalledProcessError as e:
-            print('test failed for %s' % (ref))
+            print('# FAIL %s' % ref_hash)
+            test_passed = False
+        if test_passed:
+            print('# PASS %s' % ref_hash)
 
 def git_remote_update(repo):
     cmd = ['git', '-C', repo, 'remote', 'update']
