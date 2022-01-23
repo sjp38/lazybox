@@ -3,6 +3,7 @@
 import argparse
 import os
 import subprocess
+import time
 
 '''
 Assumption
@@ -116,21 +117,33 @@ def main():
             help='installer program')
     parser.add_argument('--test', metavar='<path>',
             help='test to run')
+    parser.add_argument('--delay', metavar='<seconds>', default=1800, type=int,
+            help='delay between continuous tests')
+    parser.add_argument('--count', metavar='<count>', default=0, type=int,
+            help='how many times to do tests; 0 for infinite')
     args = parser.parse_args()
 
     if not args.repo or not args.tree_to_track or not args.test:
         print('all options should be given')
         exit(1)
 
-    print('# get references before update')
-    before_update_commits = get_refs_commits(args.repo, args.tree_to_track)
-    print('# update remotes')
-    git_remote_update(args.repo)
-    print('# get references after update')
-    after_update_commits = get_refs_commits(args.repo, args.tree_to_track)
-    print('# run tests')
-    run_tests(args.repo, before_update_commits, after_update_commits,
-            args.installer, args.test)
+    nr_repeats = 0
+    while args.count == 0 or nr_repeats < args.count:
+        if nr_repeats >= 1:
+            print('# wait %d seconds' % args.delay)
+            time.sleep(args.delay)
+
+        print('# get references before update')
+        before_update_commits = get_refs_commits(args.repo, args.tree_to_track)
+        print('# update remotes')
+        git_remote_update(args.repo)
+        print('# get references after update')
+        after_update_commits = get_refs_commits(args.repo, args.tree_to_track)
+        print('# run tests')
+        run_tests(args.repo, before_update_commits, after_update_commits,
+                args.installer, args.test)
+
+        nr_repeats += 1
 
 if __name__ == '__main__':
     main()
