@@ -22,10 +22,12 @@ TODO
 - support reboot
 '''
 
-def run_tests(repo, before_update_commits, after_update_commits, test):
+def run_tests(repo, before_update_commits, after_update_commits,
+        installer, test):
     for ref in before_update_commits:
         if before_update_commits[ref] == after_update_commits[ref]:
             continue
+
         print('# test %s' % ref)
         cmd = ['git', '-C', repo, 'checkout', after_update_commits[ref]]
         try:
@@ -33,6 +35,12 @@ def run_tests(repo, before_update_commits, after_update_commits, test):
         except subprocess.CalledProcessError as e:
             print('checkout %s out (\'%s\') failed' % (ref, ' '.join(cmd)))
             exit(1)
+
+        if installer:
+            try:
+                subprocess.check_output(installer)
+            except subprocess.CalledProcessError as e:
+                print('installer failed for %s' % ref)
 
         try:
             subprocess.check_output(test)
@@ -94,6 +102,8 @@ def main():
     parser.add_argument('--tree_to_track',
             metavar=('<name>', '<url>', '<branch>'), nargs=3, action='append',
             help='remote tree to track')
+    parser.add_argument('--installer', metavar='<command>',
+            help='installer program')
     parser.add_argument('--test', metavar='<path>',
             help='test to run')
     args = parser.parse_args()
@@ -109,7 +119,8 @@ def main():
     print('# get references after update')
     after_update_commits = get_refs_commits(args.repo, args.tree_to_track)
     print('# run tests')
-    run_tests(args.repo, before_update_commits, after_update_commits, args.test)
+    run_tests(args.repo, before_update_commits, after_update_commits,
+            args.installer, args.test)
 
 if __name__ == '__main__':
     main()
