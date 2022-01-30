@@ -6,8 +6,11 @@ import subprocess
 import time
 
 '''
+Checks update to the given program and run the given test if there was any
+change.
+
 Assumption
-- This script is periodically called by cron
+- This script is periodically called by cron, after boot
 Input
 - path to the repo
 - trees to check, and
