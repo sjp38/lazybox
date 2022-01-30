@@ -33,7 +33,9 @@ class HciTest:
     test_cmd = None
     past_commit = None
     current_commit = None
-    state = None # init, check_updsate, skip, install, test, pass, fail
+    state = None # init, check_update, install, test, finished
+    result = None # skip, pass, fail
+    skip_reason = None
 
     def tree_git_ref(self):
         return '%s/%s' % (self.tree[0], self.tree[2])
@@ -47,7 +49,7 @@ class HciTest:
 
 def run_tests(tests):
     for test in tests:
-        if test.state == 'skip':
+        if test.state == 'finished':
             continue
 
         if test.state == 'install':
@@ -78,10 +80,12 @@ def run_tests(tests):
             try:
                 subprocess.check_output(test.test_cmd)
                 print('# PASS %s' % ref_hash)
-                test.state = 'pass'
+                test.state = 'finished'
+                test.result = 'pass'
             except subprocess.CalledProcessError as e:
                 print('# FAIL %s' % ref_hash)
-                test.state = 'fail'
+                test.state = 'finished'
+                test.result = 'fail'
 
 def git_remote_update(repo):
     cmd = ['git', '-C', repo, 'remote', 'update']
@@ -181,7 +185,9 @@ def main():
         print('# schedule tests')
         for test in tests:
             if test.past_commit == test.current_commit:
-                test.state = 'skip'
+                test.state = 'finished'
+                test.result = 'skip'
+                test.skip_reason = 'no update'
             else:
                 test.state = 'install'
 
@@ -189,7 +195,7 @@ def main():
         run_tests(tests)
 
         for test in tests:
-            print('%s %s' % (test.tree_git_ref(), test.state))
+            print('%s %s' % (test.tree_git_ref(), test.result))
 
         nr_repeats += 1
 
