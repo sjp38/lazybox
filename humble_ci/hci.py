@@ -48,23 +48,20 @@ class HciTest:
         self.test_cmd = test_cmd
         self.state = state
 
-    def set_state(self, state, result=None, skip_reason=None):
-        valid_states = ['init', 'check_update', 'install', 'test', 'finished']
+    def set_state_finished(self, result, skip_reason=None):
+        if not result in ['pass', 'fail', 'skip']:
+            raise ValueError('wrong result \'%s\'' % result)
+        if result == 'skip' and skip_reason == None:
+            raise ValueError('skip reason is not given')
+        self.state = 'finished'
+        self.result = result
+        self.skip_reason = skip_reason
+
+    def set_state(self, state):
+        valid_states = ['init', 'check_update', 'install', 'test']
         if not state in valid_states:
             raise ValueError('wrong state \'%s\'' % state)
         self.state = state
-
-        if state == 'finished':
-            if result == None:
-                raise ValueError('result is not given')
-            if not result in ['pass', 'fail', 'skip']:
-                raise ValueError('wrong result \'%s\'' % result)
-            self.result = result
-
-        if self.result == 'skip':
-            if skip_reason == None:
-                raise ValueError('skip reason is not given')
-            self.skip_reason = skip_reason
 
     def git_remote_added(self):
         try:
@@ -74,7 +71,7 @@ class HciTest:
                 return False
         except subprocess.CalledProcessError as e:
             print('git remote failed')
-            self.set_state('finished', 'skip', 'git remote check failed')
+            self.set_state_finished('skip', 'git remote check failed')
             return False
         return True
 
@@ -90,7 +87,7 @@ class HciTest:
                 subprocess.check_output(git_cmd + ['init'])
             except subprocess.CalledProcessError as e:
                 print('git init failed')
-                self.set_state('finished', 'skip', 'git init failed')
+                self.set_state_finished('skip', 'git init failed')
 
         tracking = self.git_remote_added()
         if self.state == 'finished':
@@ -102,7 +99,7 @@ class HciTest:
                 self.past_commit = None
             except subprocess.CalledProcessError as e:
                 print('adding remote (\'%s\') failed' % self.tree_git_ref())
-                self.set_state('finished', 'skip', 'adding remote failed')
+                self.set_state_finished('skip', 'adding remote failed')
         else:
             try:
                 cmd = git_cmd + ['rev-parse', self.tree_git_ref()]
@@ -110,7 +107,7 @@ class HciTest:
                 self.past_commit = commit
             except subprocess.CalledProcessError as e:
                 print('getting hash of %s failed' % self.tree_git_ref())
-                self.set_state('finished', 'skip', 'getting past hash failed')
+                self.set_state_finished('skip', 'getting past hash failed')
 
         if self.state == 'finished':
             return
@@ -119,7 +116,7 @@ class HciTest:
             subprocess.check_output(git_cmd + ['fetch', name])
         except subprocess.CalledProcessError as e:
             print('fetching %s failed' % self.tree_git_ref())
-            self.set_state('finished', 'skip', 'fetching failed')
+            self.set_state_finished('skip', 'fetching failed')
 
         try:
             cmd = git_cmd + ['rev-parse', self.tree_git_ref()]
@@ -127,7 +124,7 @@ class HciTest:
             self.current_commit = commit
         except subprocess.CalledProcessError as e:
             print('getting hash of %s failed' % self.tree_git_ref())
-            self.set_state('finished', 'skip', 'getting current hash failed')
+            self.set_state_finished('skip', 'getting current hash failed')
 
 def run_tests(tests):
     for test in tests:
@@ -153,7 +150,7 @@ def run_tests(tests):
                     test.set_state('test')
                 except subprocess.CalledProcessError as e:
                     print('installer failed for %s' % ref)
-                    test.set_state('finished', 'skip', 'install failed')
+                    test.set_state_finished('skip', 'install failed')
             else:
                 test.set_state('test')
 
@@ -162,10 +159,10 @@ def run_tests(tests):
             try:
                 subprocess.check_output(test.test_cmd)
                 print('# PASS %s' % ref_hash)
-                test.set_state('finished', 'pass')
+                test.set_state_finished('pass')
             except subprocess.CalledProcessError as e:
                 print('# FAIL %s' % ref_hash)
-                test.set_state('finished', 'fail')
+                test.set_state_finished('fail')
 
 def main():
     parser = argparse.ArgumentParser()
@@ -207,7 +204,7 @@ def main():
         print('# schedule tests')
         for test in tests:
             if test.past_commit == test.current_commit:
-                test.set_state('finished', 'skip', 'no update')
+                test.set_state_finished('skip', 'no update')
             else:
                 test.set_state('install')
 
