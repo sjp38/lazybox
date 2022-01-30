@@ -38,12 +38,12 @@ class HciTest:
     def tree_git_ref(self):
         return '%s/%s' % (self.tree[0], self.tree[2])
 
-    def __init__(self, repo, tree, installer, test_cmd):
+    def __init__(self, repo, tree, installer, test_cmd, state):
         self.repo = repo
         self.tree = tree
         self.installer = installer
         self.test_cmd = test_cmd
-        self.state = 'init'
+        self.state = state
 
 def run_tests(tests):
     for test in tests:
@@ -160,7 +160,8 @@ def main():
 
         tests = []
         for tree in args.tree_to_track:
-            tests.append(HciTest(args.repo, tree, args.installer, args.test))
+            tests.append(HciTest(args.repo, tree, args.installer, args.test,
+                'init'))
 
         print('# get references before update')
         for test in tests:
