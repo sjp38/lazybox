@@ -47,6 +47,24 @@ class HciTest:
         self.test_cmd = test_cmd
         self.state = state
 
+    def set_state(self, state, result=None, skip_reason=None):
+        valid_states = ['init', 'check_update', 'install', 'test', 'finished']
+        if not state in valid_states:
+            raise ValueError('wrong state \'%s\'' % state)
+        self.state = state
+
+        if state == 'finished':
+            if result == None:
+                raise ValueError('result is not given')
+            if not result in ['pass', 'fail', 'skip']:
+                raise ValueError('wrong result \'%s\'' % result)
+            self.result = result
+
+        if self.result == 'skip':
+            if skip_reason == None:
+                raise ValueError('skip reason is not given')
+            self.skip_reason = skip_reason
+
 def run_tests(tests):
     for test in tests:
         if test.state == 'finished':
@@ -68,24 +86,22 @@ def run_tests(tests):
                 print('# Install %s' % ref_hash)
                 try:
                     subprocess.check_output(test.install_cmd)
-                    test.state = 'test'
+                    test.set_state('test')
                 except subprocess.CalledProcessError as e:
                     print('installer failed for %s' % ref)
-                    test.state = 'install_fail'
+                    test.set_state('finished', 'skip', 'install failed')
             else:
-                test.state = 'test'
+                test.set_state('test')
 
         if test.state == 'test':
             print('# Test %s' % ref_hash)
             try:
                 subprocess.check_output(test.test_cmd)
                 print('# PASS %s' % ref_hash)
-                test.state = 'finished'
-                test.result = 'pass'
+                test.set_state('finished', 'pass')
             except subprocess.CalledProcessError as e:
                 print('# FAIL %s' % ref_hash)
-                test.state = 'finished'
-                test.result = 'fail'
+                test.set_state('finished', 'fail')
 
 def git_remote_update(repo):
     cmd = ['git', '-C', repo, 'remote', 'update']
@@ -169,7 +185,7 @@ def main():
 
         print('# get references before update')
         for test in tests:
-            test.state = 'check_update'
+            test.set_state('check_update')
         before_update_commits = get_refs_commits(args.repo, args.tree_to_track)
         for test in tests:
             test.past_commit = before_update_commits[test.tree_git_ref()]
@@ -185,11 +201,9 @@ def main():
         print('# schedule tests')
         for test in tests:
             if test.past_commit == test.current_commit:
-                test.state = 'finished'
-                test.result = 'skip'
-                test.skip_reason = 'no update'
+                test.set_state('finished', 'skip', 'no update')
             else:
-                test.state = 'install'
+                test.set_state('install')
 
         print('# run tests')
         run_tests(tests)
