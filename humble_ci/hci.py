@@ -81,6 +81,7 @@ class HciTest:
 
         name, url, branch = self.tree
         git_cmd = ['git', '-C', self.repo]
+
         if not os.path.isdir(os.path.join(self.repo, '.git')):
             os.mkdir(self.repo)
             try:
@@ -126,43 +127,52 @@ class HciTest:
             print('getting hash of %s failed' % self.tree_git_ref())
             self.set_state_finished('skip', 'getting current hash failed')
 
-def run_tests(tests):
-    for test in tests:
-        if test.state == 'finished':
-            continue
+    def run(self):
+        if self.state == 'init':
+            self.state = 'check_update'
 
-        if test.state == 'install':
-            ref_hash = '%s (%s)' % (test.tree_git_ref(), test.current_commit)
+        if self.state == 'check_update':
+            self.check_update()
+            if self.past_commit == self.current_commit:
+                self.set_state_finished('skip', 'no update')
+            else:
+                self.set_state('install')
+
+        if self.state == 'install':
+            ref_hash = '%s (%s)' % (self.tree_git_ref(), self.current_commit)
             # TODO: Allow installer do checkout by itself?
             print('# Checkout %s' % ref_hash)
-            cmd = ['git', '-C', test.repo, 'checkout', '--quiet',
-                    test.current_commit]
+            cmd = ['git', '-C', self.repo, 'checkout', '--quiet',
+                    self.current_commit]
             try:
                 subprocess.check_output(cmd)
             except subprocess.CalledProcessError as e:
                 print('checkout %s out (\'%s\') failed' % (ref, ' '.join(cmd)))
                 exit(1)
 
-            if test.install_cmd:
+            if self.install_cmd:
                 print('# Install %s' % ref_hash)
                 try:
-                    subprocess.check_output(test.install_cmd)
-                    test.set_state('test')
+                    subprocess.check_output(self.install_cmd)
+                    self.set_state('test')
                 except subprocess.CalledProcessError as e:
                     print('installer failed for %s' % ref)
-                    test.set_state_finished('skip', 'install failed')
+                    self.set_state_finished('skip', 'install failed')
             else:
-                test.set_state('test')
+                self.set_state('test')
 
-        if test.state == 'test':
+        if self.state == 'test':
             print('# Test %s' % ref_hash)
             try:
-                subprocess.check_output(test.test_cmd)
+                subprocess.check_output(self.test_cmd)
                 print('# PASS %s' % ref_hash)
-                test.set_state_finished('pass')
+                self.set_state_finished('pass')
             except subprocess.CalledProcessError as e:
                 print('# FAIL %s' % ref_hash)
-                test.set_state_finished('fail')
+                self.set_state_finished('fail')
+
+        print('%s %s (skip reason: %s)' % (self.tree_git_ref(), self.result,
+            self.skip_reason))
 
 def main():
     parser = argparse.ArgumentParser()
@@ -193,26 +203,7 @@ def main():
 
         tests = []
         for tree in args.tree_to_track:
-            tests.append(HciTest(args.repo, tree, args.installer, args.test,
-                'init'))
-
-        print('# get references before update')
-        for test in tests:
-            test.set_state('check_update')
-            test.check_update()
-
-        print('# schedule tests')
-        for test in tests:
-            if test.past_commit == test.current_commit:
-                test.set_state_finished('skip', 'no update')
-            else:
-                test.set_state('install')
-
-        print('# run tests')
-        run_tests(tests)
-
-        for test in tests:
-            print('%s %s' % (test.tree_git_ref(), test.result))
+            HciTest(args.repo, tree, args.installer, args.test, 'init').run()
 
         nr_repeats += 1
 
