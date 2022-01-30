@@ -26,40 +26,61 @@ TODO
 - support reboot
 '''
 
-def run_tests(repo, before_update_commits, after_update_commits,
-        installer, test):
-    for ref in before_update_commits:
-        if before_update_commits[ref] == after_update_commits[ref]:
-            print('# Skip %s (%s): No update' %
-                    (ref, after_update_commits[ref]))
+class HciTest:
+    repo = None
+    tree = None # [remote name, remote url, branch]
+    install_cmd = None
+    test_cmd = None
+    past_commit = None
+    current_commit = None
+    status = None # init, skip, install, testing, pass, fail
+
+    def tree_git_ref(self):
+        return '%s/%s' % (self.tree[0], self.tree[2])
+
+    def __init__(self, repo, tree, installer, test_cmd):
+        self.repo = repo
+        self.tree = tree
+        self.installer = installer
+        self.test_cmd = test_cmd
+
+def run_tests(tests):
+    for test in tests:
+        if test.status == 'skip':
             continue
 
-        ref_hash = '%s (%s)' % (ref, after_update_commits[ref])
-        print('# Checkout %s' % ref_hash)
-        cmd = ['git', '-C', repo, 'checkout', '--quiet',
-                after_update_commits[ref]]
-        try:
-            subprocess.check_output(cmd)
-        except subprocess.CalledProcessError as e:
-            print('checkout %s out (\'%s\') failed' % (ref, ' '.join(cmd)))
-            exit(1)
-
-        if installer:
-            print('# Install %s' % ref_hash)
+        if test.status == 'install':
+            ref_hash = '%s (%s)' % (test.tree_git_ref(), test.current_commit)
+            # TODO: Allow installer do checkout by itself?
+            print('# Checkout %s' % ref_hash)
+            cmd = ['git', '-C', test.repo, 'checkout', '--quiet',
+                    test.current_commit]
             try:
-                subprocess.check_output(installer)
+                subprocess.check_output(cmd)
             except subprocess.CalledProcessError as e:
-                print('installer failed for %s' % ref)
+                print('checkout %s out (\'%s\') failed' % (ref, ' '.join(cmd)))
+                exit(1)
 
-        print('# Test %s' % ref_hash)
-        test_passed = True
-        try:
-            subprocess.check_output(test)
-        except subprocess.CalledProcessError as e:
-            print('# FAIL %s' % ref_hash)
-            test_passed = False
-        if test_passed:
-            print('# PASS %s' % ref_hash)
+            if test.install_cmd:
+                print('# Install %s' % ref_hash)
+                try:
+                    subprocess.check_output(test.install_cmd)
+                    test.status = 'test'
+                except subprocess.CalledProcessError as e:
+                    print('installer failed for %s' % ref)
+                    test.status = 'install_fail'
+            else:
+                test.status = 'test'
+
+        if test.status == 'test':
+            print('# Test %s' % ref_hash)
+            try:
+                subprocess.check_output(test.test_cmd)
+                print('# PASS %s' % ref_hash)
+                test.status = 'pass'
+            except subprocess.CalledProcessError as e:
+                print('# FAIL %s' % ref_hash)
+                test.status = 'fail'
 
 def git_remote_update(repo):
     cmd = ['git', '-C', repo, 'remote', 'update']
@@ -136,15 +157,35 @@ def main():
             print('# wait %d seconds' % args.delay)
             time.sleep(args.delay)
 
+        tests = []
+        for tree in args.tree_to_track:
+            tests.append(HciTest(args.repo, tree, args.installer, args.test))
+
         print('# get references before update')
         before_update_commits = get_refs_commits(args.repo, args.tree_to_track)
+        for test in tests:
+            test.past_commit = before_update_commits[test.tree_git_ref()]
+
         print('# update remotes')
         git_remote_update(args.repo)
+
         print('# get references after update')
         after_update_commits = get_refs_commits(args.repo, args.tree_to_track)
+        for test in tests:
+            test.current_commit = after_update_commits[test.tree_git_ref()]
+
+        print('# schedule tests')
+        for test in tests:
+            if test.past_commit == test.current_commit:
+                test.status = 'skip'
+            else:
+                test.status = 'install'
+
         print('# run tests')
-        run_tests(args.repo, before_update_commits, after_update_commits,
-                args.installer, args.test)
+        run_tests(tests)
+
+        for test in tests:
+            print('%s %s' % (test.tree_git_ref(), test.status))
 
         nr_repeats += 1
 
