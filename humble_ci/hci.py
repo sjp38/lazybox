@@ -176,24 +176,20 @@ class HciTest:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--repo', metavar='<path>',
+    parser.add_argument('--repo', metavar='<path>', required=True,
             help='path to the local repo')
-    parser.add_argument('--tree_to_track',
+    parser.add_argument('--tree_to_track', required=True,
             metavar=('<name>', '<url>', '<branch>'), nargs=3, action='append',
             help='remote tree to track')
     parser.add_argument('--installer', metavar='<command>',
             help='installer program')
-    parser.add_argument('--test', metavar='<command>',
+    parser.add_argument('--test', metavar='<command>', required=True,
             help='test to run')
     parser.add_argument('--delay', metavar='<seconds>', default=1800, type=int,
             help='delay between continuous tests')
     parser.add_argument('--count', metavar='<count>', default=0, type=int,
             help='how many times to do tests; 0 for infinite')
     args = parser.parse_args()
-
-    if not args.repo or not args.tree_to_track or not args.test:
-        print('all options should be given')
-        exit(1)
 
     nr_repeats = 0
     while args.count == 0 or nr_repeats < args.count:
