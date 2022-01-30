@@ -174,6 +174,26 @@ class HciTest:
         print('%s %s (skip reason: %s)' % (self.tree_git_ref(), self.result,
             self.skip_reason))
 
+def store_tests(tests, file_path):
+    maps = [x.__dict__ for x in tests]
+    with open(file_path, 'w') as f:
+        f.write(json.dumps(maps, indent=4))
+
+def load_tests(file_path):
+    with open(file_path, 'r') as f:
+        maps = json.loads(f.read())
+
+        tests = []
+        for m in maps:
+            test = HciTest(m['repo'], m['tree'], m['installer'],
+                    m['test_cmd'], m['state'])
+            if 'result' in m:
+                test.result = m['result']
+            if 'skip_reason' in m:
+                test.skip_reason = m['skip_reason']
+            tests.append(test)
+    return tests
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--repo', metavar='<path>', required=True,
