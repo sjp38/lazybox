@@ -140,7 +140,7 @@ def main():
             help='remote tree to track')
     parser.add_argument('--installer', metavar='<command>',
             help='installer program')
-    parser.add_argument('--test', metavar='<path>',
+    parser.add_argument('--test', metavar='<command>',
             help='test to run')
     parser.add_argument('--delay', metavar='<seconds>', default=1800, type=int,
             help='delay between continuous tests')
