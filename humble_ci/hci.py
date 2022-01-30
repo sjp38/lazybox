@@ -33,7 +33,7 @@ class HciTest:
     test_cmd = None
     past_commit = None
     current_commit = None
-    status = None # init, skip, install, testing, pass, fail
+    status = None # init, check_updsate, skip, install, test, pass, fail
 
     def tree_git_ref(self):
         return '%s/%s' % (self.tree[0], self.tree[2])
@@ -43,6 +43,7 @@ class HciTest:
         self.tree = tree
         self.installer = installer
         self.test_cmd = test_cmd
+        self.status = 'init'
 
 def run_tests(tests):
     for test in tests:
@@ -162,6 +163,8 @@ def main():
             tests.append(HciTest(args.repo, tree, args.installer, args.test))
 
         print('# get references before update')
+        for test in tests:
+            test.status = 'check_update'
         before_update_commits = get_refs_commits(args.repo, args.tree_to_track)
         for test in tests:
             test.past_commit = before_update_commits[test.tree_git_ref()]
