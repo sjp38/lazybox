@@ -198,6 +198,9 @@ def store_tests(tests, file_path):
         f.write(json.dumps(maps, indent=4))
 
 def load_tests(file_path):
+    if not os.path.isfile(file_path):
+        return []
+
     with open(file_path, 'r') as f:
         maps = json.loads(f.read())
 
@@ -236,15 +239,26 @@ def main():
 
     save_file = args.save_file
 
+    tests = load_tests(save_file)
+    finished = True
+    for test in tests:
+        if test.state != 'finished':
+            finished = False
+            break
+
+    if finished:
+        for tree in args.tree_to_track:
+            tests.append(HciTest(
+                args.repo, tree, args.install_cmd, args.test, 'init'))
+
     nr_repeats = 0
     while args.count == 0 or nr_repeats < args.count:
         if nr_repeats >= 1:
             print('# wait %d seconds' % args.delay)
             time.sleep(args.delay)
-
-        for tree in args.tree_to_track:
-            tests.append(HciTest(
-                args.repo, tree, args.install_cmd, args.test, 'init'))
+            for tree in args.tree_to_track:
+                tests.append(HciTest(
+                    args.repo, tree, args.install_cmd, args.test, 'init'))
 
         for test in tests:
             test.run()
