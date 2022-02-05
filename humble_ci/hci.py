@@ -252,6 +252,7 @@ def main():
             break
 
     if finished:
+        tests = []
         for tree in args.tree_to_track:
             tests.append(HciTest(
                 args.repo, tree, args.install_cmd, args.test, 'init'))
@@ -261,6 +262,7 @@ def main():
         if nr_repeats >= 1:
             print('# wait %d seconds' % args.delay)
             time.sleep(args.delay)
+            tests = []
             for tree in args.tree_to_track:
                 tests.append(HciTest(
                     args.repo, tree, args.install_cmd, args.test, 'init'))
