@@ -27,6 +27,9 @@ TODO
 - support reboot
 '''
 
+tests = []
+save_file = None
+
 class HciTest:
     repo = None
     tree = None # [remote name, remote url, branch]
@@ -37,18 +40,16 @@ class HciTest:
     state = None # init, check_update, install, test, finished
     result = None # skip, pass, fail
     skip_reason = None
-    save_file = None
 
     def tree_git_ref(self):
         return '%s/%s' % (self.tree[0], self.tree[2])
 
-    def __init__(self, repo, tree, install_cmd, test_cmd, state, save_file):
+    def __init__(self, repo, tree, install_cmd, test_cmd, state):
         self.repo = repo
         self.tree = tree
         self.install_cmd = install_cmd
         self.test_cmd = test_cmd
         self.state = state
-        self.save_file = save_file
 
     def set_state_finished(self, result, skip_reason=None):
         if not result in ['pass', 'fail', 'skip']:
@@ -132,22 +133,18 @@ class HciTest:
     def to_json(self):
         return json.dumps(self.__dict__, indent=4)
 
-    def save_in_file(self):
-        with open(self.save_file, 'w') as f:
-            f.write(self.to_json())
-
     def pr_in_json(self):
-        print(to_json(self))
+        print(self.to_json())
 
     def run(self):
-        self.save_in_file()
+        store_tests(tests, save_file)
 
         if self.state == 'init':
-            self.save_in_file()
+            store_tests(tests, save_file)
             self.state = 'check_update'
 
         if self.state == 'check_update':
-            self.save_in_file()
+            store_tests(tests, save_file)
             self.check_update()
 
             if self.past_commit == self.current_commit:
@@ -156,7 +153,7 @@ class HciTest:
                 self.set_state('install')
 
         if self.state == 'install':
-            self.save_in_file()
+            store_tests(tests, save_file)
             ref_hash = '%s (%s)' % (self.tree_git_ref(), self.current_commit)
             # TODO: Allow installer do checkout by itself?
             print('# Checkout %s' % ref_hash)
@@ -180,7 +177,7 @@ class HciTest:
                 self.set_state('test')
 
         if self.state == 'test':
-            self.save_in_file()
+            store_tests(tests, save_file)
             print('# Test %s' % ref_hash)
             try:
                 subprocess.check_output(self.test_cmd)
@@ -190,12 +187,13 @@ class HciTest:
                 print('# FAIL %s' % ref_hash)
                 self.set_state_finished('fail')
 
-        self.save_in_file()
+        store_tests(tests, save_file)
         print('%s %s (skip reason: %s)' % (self.tree_git_ref(), self.result,
             self.skip_reason))
 
 def store_tests(tests, file_path):
     maps = [x.__dict__ for x in tests]
+    print(json.dumps(maps, indent=4))
     with open(file_path, 'w') as f:
         f.write(json.dumps(maps, indent=4))
 
@@ -233,6 +231,11 @@ def main():
             help='how many times to do tests; 0 for infinite')
     args = parser.parse_args()
 
+    global tests
+    global save_file
+
+    save_file = args.save_file
+
     nr_repeats = 0
     while args.count == 0 or nr_repeats < args.count:
         if nr_repeats >= 1:
@@ -240,8 +243,11 @@ def main():
             time.sleep(args.delay)
 
         for tree in args.tree_to_track:
-            HciTest(args.repo, tree, args.install_cmd, args.test, 'init',
-                    args.save_file).run()
+            tests.append(HciTest(
+                args.repo, tree, args.install_cmd, args.test, 'init'))
+
+        for test in tests:
+            test.run()
 
         nr_repeats += 1
 
