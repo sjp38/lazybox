@@ -212,6 +212,11 @@ def load_tests(file_path):
                 test.result = m['result']
             if 'skip_reason' in m:
                 test.skip_reason = m['skip_reason']
+            if 'past_commit' in m:
+                test.past_commit = m['past_commit']
+            if 'current_commit' in m:
+                test.current_commit = m['current_commit']
+
             tests.append(test)
     return tests
 
