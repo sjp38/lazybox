@@ -41,10 +41,10 @@ class HciTest:
     def tree_git_ref(self):
         return '%s/%s' % (self.tree[0], self.tree[2])
 
-    def __init__(self, repo, tree, installer, test_cmd, state):
+    def __init__(self, repo, tree, install_cmd, test_cmd, state):
         self.repo = repo
         self.tree = tree
-        self.installer = installer
+        self.install_cmd = install_cmd
         self.test_cmd = test_cmd
         self.state = state
 
@@ -156,7 +156,7 @@ class HciTest:
                     subprocess.check_output(self.install_cmd)
                     self.set_state('test')
                 except subprocess.CalledProcessError as e:
-                    print('installer failed for %s' % ref)
+                    print('install command failed for %s' % ref)
                     self.set_state_finished('skip', 'install failed')
             else:
                 self.set_state('test')
@@ -185,7 +185,7 @@ def load_tests(file_path):
 
         tests = []
         for m in maps:
-            test = HciTest(m['repo'], m['tree'], m['installer'],
+            test = HciTest(m['repo'], m['tree'], m['install_cmd'],
                     m['test_cmd'], m['state'])
             if 'result' in m:
                 test.result = m['result']
@@ -201,8 +201,8 @@ def main():
     parser.add_argument('--tree_to_track', required=True,
             metavar=('<name>', '<url>', '<branch>'), nargs=3, action='append',
             help='remote tree to track')
-    parser.add_argument('--installer', metavar='<command>',
-            help='installer program')
+    parser.add_argument('--install_cmd', metavar='<command>',
+            help='install command')
     parser.add_argument('--test', metavar='<command>', required=True,
             help='test to run')
     parser.add_argument('--delay', metavar='<seconds>', default=1800, type=int,
@@ -219,7 +219,7 @@ def main():
 
         tests = []
         for tree in args.tree_to_track:
-            HciTest(args.repo, tree, args.installer, args.test, 'init').run()
+            HciTest(args.repo, tree, args.install_cmd, args.test, 'init').run()
 
         nr_repeats += 1
 
