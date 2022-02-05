@@ -217,7 +217,6 @@ def main():
             print('# wait %d seconds' % args.delay)
             time.sleep(args.delay)
 
-        tests = []
         for tree in args.tree_to_track:
             HciTest(args.repo, tree, args.install_cmd, args.test, 'init').run()
 
