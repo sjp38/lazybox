@@ -13,7 +13,7 @@ Run the given commands if there were any update to given source code repos.
 tests = []
 save_file = None
 
-class HciTest:
+class HciTasks:
     repo = None
     tree = None # [remote name, remote url, branch]
     cmds = None # list of commands to run for each update to each repo/tree
@@ -170,7 +170,7 @@ def load_tests(file_path):
 
         tests = []
         for m in maps:
-            test = HciTest(m['repo'], m['tree'], m['cmds'], m['state'])
+            test = HciTasks(m['repo'], m['tree'], m['cmds'], m['state'])
             test.nr_complete_cmds = m['nr_complete_cmds']
             test.result = m['result']
             test.skip_reason = m['skip_reason']
@@ -213,7 +213,7 @@ def main():
     if finished:
         tests = []
         for tree in args.tree_to_track:
-            tests.append(HciTest(
+            tests.append(HciTasks(
                 args.repo, tree, args.cmds, 'init'))
 
     nr_repeats = 0
@@ -223,7 +223,7 @@ def main():
             time.sleep(args.delay)
             tests = []
             for tree in args.tree_to_track:
-                tests.append(HciTest(
+                tests.append(HciTasks(
                     args.repo, tree, args.cmds, 'init'))
 
         for test in tests:
