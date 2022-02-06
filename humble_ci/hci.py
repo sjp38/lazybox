@@ -7,8 +7,7 @@ import time
 import json
 
 '''
-Checks update to the given source code repos and run the given test if there
-were any update.
+Run the given commands if there were any update to given source code repos.
 '''
 
 tests = []
