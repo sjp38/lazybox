@@ -7,24 +7,8 @@ import time
 import json
 
 '''
-Checks update to the given program and run the given test if there was any
-change.
-
-Assumption
-- This script is periodically called by cron, after boot
-Input
-- path to the repo
-- trees to check, and
-- test to run against those
-Works
-- check if the trees have updated
-- run the test against the updated ones, and
-- provide the reports
-
-TODO
-- cleanup code
-- support installation
-- support reboot
+Checks update to the given source code repos and run the given test if there
+were any update.
 '''
 
 tests = []
