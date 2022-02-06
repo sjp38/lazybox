@@ -33,7 +33,8 @@ save_file = None
 class HciTest:
     repo = None
     tree = None # [remote name, remote url, branch]
-    install_cmd = None
+    install_cmds = None
+    nr_complete_install_cmds = None
     test_cmd = None
     past_commit = None
     current_commit = None
@@ -44,10 +45,11 @@ class HciTest:
     def tree_git_ref(self):
         return '%s/%s' % (self.tree[0], self.tree[2])
 
-    def __init__(self, repo, tree, install_cmd, test_cmd, state):
+    def __init__(self, repo, tree, install_cmds, test_cmd, state):
         self.repo = repo
         self.tree = tree
-        self.install_cmd = install_cmd
+        self.install_cmds = install_cmds
+        self.nr_complete_install_cmds = 0
         self.test_cmd = test_cmd
         self.state = state
 
@@ -165,14 +167,16 @@ class HciTest:
                 print('checkout %s out (\'%s\') failed' % (ref, ' '.join(cmd)))
                 exit(1)
 
-            if self.install_cmd:
+            if self.install_cmds:
                 print('# Install %s' % ref_hash)
-                try:
-                    subprocess.check_output(self.install_cmd)
-                    self.set_state('test')
-                except subprocess.CalledProcessError as e:
-                    print('install command failed for %s' % ref)
-                    self.set_state_finished('skip', 'install failed')
+                for cmd in self.install_cmds[self.nr_complete_install_cmds:]:
+                    try:
+                        subprocess.check_output(cmd)
+                        self.nr_complete_install_cmds += 1
+                        self.set_state('test')
+                    except subprocess.CalledProcessError as e:
+                        print('install command failed for %s' % ref)
+                        self.set_state_finished('skip', 'install failed')
             else:
                 self.set_state('test')
 
@@ -227,8 +231,8 @@ def main():
     parser.add_argument('--tree_to_track', required=True,
             metavar=('<name>', '<url>', '<branch>'), nargs=3, action='append',
             help='remote tree to track')
-    parser.add_argument('--install_cmd', metavar='<command>',
-            help='install command')
+    parser.add_argument('--install_cmds', metavar='<command>', nargs='+',
+            help='install commands')
     parser.add_argument('--test', metavar='<command>', required=True,
             help='test to run')
     parser.add_argument('--save_file', metavar='<file>', default='.hci_tests',
@@ -255,7 +259,7 @@ def main():
         tests = []
         for tree in args.tree_to_track:
             tests.append(HciTest(
-                args.repo, tree, args.install_cmd, args.test, 'init'))
+                args.repo, tree, args.install_cmds, args.test, 'init'))
 
     nr_repeats = 0
     while args.count == 0 or nr_repeats < args.count:
@@ -265,7 +269,7 @@ def main():
             tests = []
             for tree in args.tree_to_track:
                 tests.append(HciTest(
-                    args.repo, tree, args.install_cmd, args.test, 'init'))
+                    args.repo, tree, args.install_cmds, args.test, 'init'))
 
         for test in tests:
             test.run()
