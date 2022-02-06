@@ -16,24 +16,23 @@ save_file = None
 class HciTest:
     repo = None
     tree = None # [remote name, remote url, branch]
-    install_cmds = None
-    nr_complete_install_cmds = None
-    test_cmd = None
+    cmds = None # list of commands to run for each update to each repo/tree
+                # If any of command fails, we fail.
+    nr_complete_cmds = None
     past_commit = None
     current_commit = None
-    state = None # init, check_update, install, test, finished
+    state = None # init, check_update, run, finished
     result = None # skip, pass, fail
     skip_reason = None
 
     def tree_git_ref(self):
         return '%s/%s' % (self.tree[0], self.tree[2])
 
-    def __init__(self, repo, tree, install_cmds, test_cmd, state):
+    def __init__(self, repo, tree, cmds, state):
         self.repo = repo
         self.tree = tree
-        self.install_cmds = install_cmds
-        self.nr_complete_install_cmds = 0
-        self.test_cmd = test_cmd
+        self.cmds = cmds
+        self.nr_complete_cmds = 0
         self.state = state
         self.result = None
         self.skip_reason = None
@@ -50,7 +49,7 @@ class HciTest:
         self.skip_reason = skip_reason
 
     def set_state(self, state):
-        valid_states = ['init', 'check_update', 'install', 'test']
+        valid_states = ['init', 'check_update', 'run']
         if not state in valid_states:
             raise ValueError('wrong state \'%s\'' % state)
         self.state = state
@@ -133,9 +132,9 @@ class HciTest:
             if self.past_commit == self.current_commit:
                 self.set_state_finished('skip', 'no update')
             else:
-                self.set_state('install')
+                self.set_state('run')
 
-        if self.state == 'install':
+        if self.state == 'run':
             store_tests(tests, save_file)
             ref_hash = '%s (%s)' % (self.tree_git_ref(), self.current_commit)
             # TODO: Allow installer do checkout by itself?
@@ -148,29 +147,15 @@ class HciTest:
                 print('checkout %s out (\'%s\') failed' % (ref, ' '.join(cmd)))
                 exit(1)
 
-            if self.install_cmds:
-                print('# Install %s' % ref_hash)
-                for cmd in self.install_cmds[self.nr_complete_install_cmds:]:
-                    try:
-                        subprocess.check_output(cmd)
-                        self.nr_complete_install_cmds += 1
-                        self.set_state('test')
-                    except subprocess.CalledProcessError as e:
-                        print('install command failed for %s' % ref)
-                        self.set_state_finished('skip', 'install failed')
-            else:
-                self.set_state('test')
-
-        if self.state == 'test':
-            store_tests(tests, save_file)
-            print('# Test %s' % ref_hash)
-            try:
-                subprocess.check_output(self.test_cmd)
-                print('# PASS %s' % ref_hash)
-                self.set_state_finished('pass')
-            except subprocess.CalledProcessError as e:
-                print('# FAIL %s' % ref_hash)
-                self.set_state_finished('fail')
+            print('# Run tasks for %s' % ref_hash)
+            for cmd in self.cmds[self.nr_complete_cmds:]:
+                try:
+                    subprocess.check_output(cmd)
+                    self.nr_complete_cmds += 1
+                    self.set_state_finished('pass')
+                except subprocess.CalledProcessError as e:
+                    print('Task \'%s\' failed for %s' % (cmd, ref))
+                    self.set_state_finished('fail')
 
         store_tests(tests, save_file)
         print('%s %s (skip reason: %s)' % (self.tree_git_ref(), self.result,
@@ -191,8 +176,8 @@ def load_tests(file_path):
 
         tests = []
         for m in maps:
-            test = HciTest(m['repo'], m['tree'], m['install_cmd'],
-                    m['test_cmd'], m['state'])
+            test = HciTest(m['repo'], m['tree'], m['cmds'], m['state'])
+            test.nr_complete_cmds = m['nr_complete_cmds']
             test.result = m['result']
             test.skip_reason = m['skip_reason']
             test.past_commit = m['past_commit']
@@ -208,11 +193,9 @@ def main():
     parser.add_argument('--tree_to_track', required=True,
             metavar=('<name>', '<url>', '<branch>'), nargs=3, action='append',
             help='remote tree to track')
-    parser.add_argument('--install_cmds', metavar='<command>', nargs='+',
+    parser.add_argument('--cmds', metavar='<command>', nargs='+',
             required=True,
-            help='install commands')
-    parser.add_argument('--test', metavar='<command>', required=True,
-            help='test to run')
+            help='commands to run for each repo update')
     parser.add_argument('--save_file', metavar='<file>', default='.hci_tests',
             help='file to save the tests states')
     parser.add_argument('--delay', metavar='<seconds>', default=1800, type=int,
@@ -237,7 +220,7 @@ def main():
         tests = []
         for tree in args.tree_to_track:
             tests.append(HciTest(
-                args.repo, tree, args.install_cmds, args.test, 'init'))
+                args.repo, tree, args.cmds, 'init'))
 
     nr_repeats = 0
     while args.count == 0 or nr_repeats < args.count:
@@ -247,7 +230,7 @@ def main():
             tests = []
             for tree in args.tree_to_track:
                 tests.append(HciTest(
-                    args.repo, tree, args.install_cmds, args.test, 'init'))
+                    args.repo, tree, args.cmds, 'init'))
 
         for test in tests:
             test.run()
