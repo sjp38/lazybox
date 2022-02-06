@@ -36,6 +36,10 @@ class HciTest:
         self.nr_complete_install_cmds = 0
         self.test_cmd = test_cmd
         self.state = state
+        self.result = None
+        self.skip_reason = None
+        self.past_commit = None
+        self.current_commit = None
 
     def set_state_finished(self, result, skip_reason=None):
         if not result in ['pass', 'fail', 'skip']:
@@ -190,14 +194,10 @@ def load_tests(file_path):
         for m in maps:
             test = HciTest(m['repo'], m['tree'], m['install_cmd'],
                     m['test_cmd'], m['state'])
-            if 'result' in m:
-                test.result = m['result']
-            if 'skip_reason' in m:
-                test.skip_reason = m['skip_reason']
-            if 'past_commit' in m:
-                test.past_commit = m['past_commit']
-            if 'current_commit' in m:
-                test.current_commit = m['current_commit']
+            test.result = m['result']
+            test.skip_reason = m['skip_reason']
+            test.past_commit = m['past_commit']
+            test.current_commit = m['current_commit']
 
             tests.append(test)
     return tests
