@@ -136,21 +136,15 @@ class HciTest:
 
         if self.state == 'run':
             store_tests(tests, save_file)
-            ref_hash = '%s (%s)' % (self.tree_git_ref(), self.current_commit)
-            # TODO: Allow installer do checkout by itself?
-            print('# Checkout %s' % ref_hash)
-            cmd = ['git', '-C', self.repo, 'checkout', '--quiet',
-                    self.current_commit]
-            try:
-                subprocess.check_output(cmd)
-            except subprocess.CalledProcessError as e:
-                print('checkout %s out (\'%s\') failed' % (ref, ' '.join(cmd)))
-                exit(1)
+            task_env = os.environ.copy()
+            task_env["HUMBLE_CI_REPO"] = self.repo
+            task_env["HUMBLE_CI_REMOTE"] = self.tree[0]
+            task_env["HUMBLE_CI_URL"] = self.tree[1]
+            task_env["HUMBLE_CI_BRANCH"] = self.tree[2]
 
-            print('# Run tasks for %s' % ref_hash)
             for cmd in self.cmds[self.nr_complete_cmds:]:
                 try:
-                    subprocess.check_output(cmd)
+                    subprocess.check_output(cmd, env=task_env)
                     self.nr_complete_cmds += 1
                     self.set_state_finished('pass')
                 except subprocess.CalledProcessError as e:
