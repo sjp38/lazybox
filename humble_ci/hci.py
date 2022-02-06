@@ -116,12 +116,6 @@ class HciTest:
             print('getting hash of %s failed' % self.tree_git_ref())
             self.set_state_finished('skip', 'getting current hash failed')
 
-    def to_json(self):
-        return json.dumps(self.__dict__, indent=4)
-
-    def pr_in_json(self):
-        print(self.to_json())
-
     def run(self):
         store_tests(tests, save_file)
 
