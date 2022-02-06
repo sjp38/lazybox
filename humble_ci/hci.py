@@ -210,6 +210,7 @@ def main():
             metavar=('<name>', '<url>', '<branch>'), nargs=3, action='append',
             help='remote tree to track')
     parser.add_argument('--install_cmds', metavar='<command>', nargs='+',
+            required=True,
             help='install commands')
     parser.add_argument('--test', metavar='<command>', required=True,
             help='test to run')
