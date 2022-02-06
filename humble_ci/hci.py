@@ -156,8 +156,8 @@ class HciTest:
                 except subprocess.CalledProcessError as e:
                     print('Task \'%s\' failed for %s' % (cmd, ref))
                     self.set_state_finished('fail')
+                store_tests(tests, save_file)
 
-        store_tests(tests, save_file)
         print('%s %s (skip reason: %s)' % (self.tree_git_ref(), self.result,
             self.skip_reason))
 
