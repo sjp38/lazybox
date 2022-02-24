@@ -20,11 +20,20 @@ def read_fs(root, strip_content, max_depth, current_depth=1):
                     contents[filename] = contents[filename].strip()
     return contents
 
+def write_fs(root, contents):
+    for filename in contents:
+        filepath = os.path.join(root, filename)
+        if os.path.isfile(filepath):
+            with open(filepath, 'w') as f:
+                f.write(contents[filename])
+        else:
+            write_fs(filepath, contents[filename])
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('command', choices=['read', 'write'],
             help='command to do')
-    parser.add_argument('--root', help='root to start read')
+    parser.add_argument('--root', help='root to do the reads or writes')
     parser.add_argument('--max_depth', type=int,
             help='depth to read')
     parser.add_argument('--strip_content', action='store_true',
@@ -38,6 +47,8 @@ def main():
             exit(1)
         print(json.dumps(read_fs(args.root, args.strip_content,
             args.max_depth), indent=4, sort_keys=True))
+    elif args.command == 'write':
+        write_fs(args.root, json.loads(args.contents))
 
 if __name__ == '__main__':
     main()
