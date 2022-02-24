@@ -4,18 +4,20 @@ import argparse
 import json
 import os
 
-def read_fs(root, max_depth=None, current_depth=1):
+def read_fs(root, strip_content, max_depth, current_depth=1):
     contents = {}
     for filename in os.listdir(root):
         filepath = os.path.join(root, filename)
         if os.path.isdir(filepath):
             if max_depth != None and current_depth + 1 > max_depth:
                 continue
-            contents[filename] = read_fs(filepath, max_depth,
+            contents[filename] = read_fs(filepath, strip_content, max_depth,
                     current_depth + 1)
         else:
             with open(filepath, 'r') as f:
                 contents[filename] = f.read()
+                if strip_content:
+                    contents[filename] = contents[filename].strip()
     return contents
 
 def main():
@@ -25,6 +27,8 @@ def main():
     parser.add_argument('--root', help='root to start read')
     parser.add_argument('--max_depth', type=int,
             help='depth to read')
+    parser.add_argument('--strip_content', action='store_true',
+            help='strip contents of files')
     parser.add_argument('--contents', help='contents to write')
     args = parser.parse_args()
 
@@ -32,8 +36,8 @@ def main():
         if args.root == None:
             print('--root is not given')
             exit(1)
-        print(json.dumps(read_fs(args.root, args.max_depth), indent=4,
-            sort_keys=True))
+        print(json.dumps(read_fs(args.root, args.strip_content,
+            args.max_depth), indent=4, sort_keys=True))
 
 if __name__ == '__main__':
     main()
