@@ -36,7 +36,7 @@ def main():
     parser.add_argument('--root', help='root to do the reads or writes')
     parser.add_argument('--max_depth', type=int,
             help='depth to read')
-    parser.add_argument('--strip_content', action='store_true',
+    parser.add_argument('--dont_strip_content', action='store_true',
             help='strip contents of files')
     parser.add_argument('--contents', help='contents to write')
     args = parser.parse_args()
@@ -45,7 +45,7 @@ def main():
         if args.root == None:
             print('--root is not given')
             exit(1)
-        print(json.dumps(read_fs(args.root, args.strip_content,
+        print(json.dumps(read_fs(args.root, not args.dont_strip_content,
             args.max_depth), indent=4, sort_keys=True))
     elif args.command == 'write':
         write_fs(args.root, json.loads(args.contents))
