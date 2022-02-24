@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+
+import argparse
+import json
+import os
+
+def read_fs(root, max_depth=None, current_depth=1):
+    contents = {}
+    for filename in os.listdir(root):
+        filepath = os.path.join(root, filename)
+        if os.path.isdir(filepath):
+            if max_depth != None and current_depth + 1 > max_depth:
+                continue
+            contents[filename] = read_fs(filepath, max_depth,
+                    current_depth + 1)
+        else:
+            with open(filepath, 'r') as f:
+                contents[filename] = f.read()
+    return contents
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('command', choices=['read', 'write'],
+            help='command to do')
+    parser.add_argument('--root', help='root to start read')
+    parser.add_argument('--max_depth', type=int,
+            help='depth to read')
+    parser.add_argument('--contents', help='contents to write')
+    args = parser.parse_args()
+
+    if args.command == 'read':
+        if args.root == None:
+            print('--root is not given')
+            exit(1)
+        print(json.dumps(read_fs(args.root, args.max_depth), indent=4,
+            sort_keys=True))
+
+if __name__ == '__main__':
+    main()
