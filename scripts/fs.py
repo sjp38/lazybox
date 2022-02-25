@@ -4,7 +4,7 @@ import argparse
 import json
 import os
 
-def read_fs(root, strip_content, max_depth, current_depth=1):
+def read_fs(root, strip_content, max_depth, current_depth):
     contents = {}
     for filename in os.listdir(root):
         filepath = os.path.join(root, filename)
@@ -55,7 +55,7 @@ def main():
             print('--root is not given')
             exit(1)
         print(json.dumps(read_fs(args.root, not args.dont_strip_content,
-            args.max_depth), indent=4, sort_keys=True))
+            args.max_depth, 1), indent=4, sort_keys=True))
     elif args.command == 'write':
         if args.contents != None:
             contents = args.contents
