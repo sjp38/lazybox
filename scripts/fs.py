@@ -38,14 +38,16 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('command', choices=['read', 'write'],
             help='command to do')
-    parser.add_argument('root', help='root to do the reads or writes')
-    parser.add_argument('--max_depth', type=int,
+    parser.add_argument('root', metavar='<path>',
+            help='root to do the reads or writes')
+    parser.add_argument('--max_depth', type=int, metavar='<number>',
             help='depth to read')
     parser.add_argument('--dont_strip_content', action='store_true',
             help='strip contents of files')
-    parser.add_argument('--contents', help='contents to write')
-    parser.add_argument('--content_file',
-            help='file having the content to write')
+    parser.add_argument('--contents', metavar='<json string>',
+            help='contents to write')
+    parser.add_argument('--content_file', metavar='<file>',
+            help='json file having the content to write')
     args = parser.parse_args()
 
     if args.command == 'read':
