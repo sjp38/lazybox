@@ -38,7 +38,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('command', choices=['read', 'write'],
             help='command to do')
-    parser.add_argument('--root', help='root to do the reads or writes')
+    parser.add_argument('root', help='root to do the reads or writes')
     parser.add_argument('--max_depth', type=int,
             help='depth to read')
     parser.add_argument('--dont_strip_content', action='store_true',
