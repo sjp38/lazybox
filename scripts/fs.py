@@ -16,10 +16,13 @@ def read_fs(root, strip_content, max_depth, current_depth):
             contents[filename] = read_fs(filepath, strip_content, max_depth,
                     current_depth + 1)
         else:
-            with open(filepath, 'r') as f:
-                contents[filename] = f.read()
-                if strip_content:
-                    contents[filename] = contents[filename].strip()
+            try:
+                with open(filepath, 'r') as f:
+                    contents[filename] = f.read()
+                    if strip_content:
+                        contents[filename] = contents[filename].strip()
+            except Exception as e:
+                contents[filename] = 'failed (%s)' % e
             if verbose:
                 print('read %s from %s' % (contents[filename], filepath))
     return contents
@@ -35,8 +38,11 @@ def write_fs(root, contents):
         if os.path.isfile(filepath):
             if verbose:
                 print('write %s into %s' % (contents[filename], filepath))
-            with open(filepath, 'w') as f:
-                f.write(contents[filename])
+            try:
+                with open(filepath, 'w') as f:
+                    f.write(contents[filename])
+            except Exception as e:
+                print('failed writing %s (%s)' % e)
         else:
             write_fs(filepath, contents[filename])
 
