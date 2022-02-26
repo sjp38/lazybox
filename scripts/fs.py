@@ -4,6 +4,8 @@ import argparse
 import json
 import os
 
+verbose = False
+
 def read_fs(root, strip_content, max_depth, current_depth):
     contents = {}
     for filename in os.listdir(root):
@@ -18,6 +20,8 @@ def read_fs(root, strip_content, max_depth, current_depth):
                 contents[filename] = f.read()
                 if strip_content:
                     contents[filename] = contents[filename].strip()
+            if verbose:
+                print('read %s from %s' % (contents[filename], filepath))
     return contents
 
 def write_fs(root, contents):
@@ -29,6 +33,8 @@ def write_fs(root, contents):
     for filename in contents:
         filepath = os.path.join(root, filename)
         if os.path.isfile(filepath):
+            if verbose:
+                print('write %s into %s' % (contents[filename], filepath))
             with open(filepath, 'w') as f:
                 f.write(contents[filename])
         else:
@@ -48,7 +54,12 @@ def main():
             help='contents to write')
     parser.add_argument('--content_file', metavar='<file>',
             help='json file having the content to write')
+    parser.add_argument('--verbose', action='store_true',
+            help='print verbose log')
     args = parser.parse_args()
+
+    global verbose
+    verbose = args.verbose
 
     if args.command == 'read':
         if args.root == None:
