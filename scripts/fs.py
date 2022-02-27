@@ -42,7 +42,8 @@ def write_fs(root, contents):
                 with open(filepath, 'w') as f:
                     f.write(contents[filename])
             except Exception as e:
-                print('failed writing %s (%s)' % e)
+                print('failed writing %s to %s (%s)' % (
+                    contents[filename], filepath, e))
         else:
             write_fs(filepath, contents[filename])
 
