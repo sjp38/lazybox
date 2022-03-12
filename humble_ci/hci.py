@@ -137,7 +137,7 @@ class HciTasks:
         if self.state == 'run':
             store_tests(tests, save_file)
             task_env = os.environ.copy()
-            task_env["HUMBLE_CI_REPO"] = self.repo
+            task_env["HUMBLE_CI_REPO"] = os.path.abspath(self.repo)
             task_env["HUMBLE_CI_REMOTE"] = self.tree[0]
             task_env["HUMBLE_CI_URL"] = self.tree[1]
             task_env["HUMBLE_CI_BRANCH"] = self.tree[2]
