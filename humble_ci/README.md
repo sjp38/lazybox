@@ -28,7 +28,7 @@ For the case, this directory contains a script for that purpose, namely
 formats the notirication message with the `HUMBLE_CI_*` environment variables,
 and send the message via `git send-email`.  In other words, it assumes the user
 would already set `git-sendemail` with smtp password so that it can send email
-without intervention, and called by `hci.py`. 
+without intervention, and called by `hci.py`.
 
 For example, below command will check updates to Linux mainline and two latest
 LTS kernels for every hour, and send notice email.
@@ -37,4 +37,4 @@ LTS kernels for every hour, and send notice email.
                --tree_to_track linus git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
                --tree_to_track stable git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-5.4.y
                --tree_to_track stable git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-5.10.y
-               --cmds "./noti_update.sh $emal_to_receive_noti" --delay 3600
+               --cmds "./noti_update.sh $email_to_receive_noti" --delay 3600
