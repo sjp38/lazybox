@@ -18,11 +18,10 @@ repo_name=$(basename "$repo")
 commit_intro=$(git -C "$repo" show --pretty="%h (\"%s\")" --quiet \
 	"$remote/$branch")
 
-subject="$repo_name: $remote/$branch has updated to $commit_intro"
+subject="[hci-noti] $repo_name: $remote/$branch has updated to $commit_intro"
 echo "Subject: $subject" > report
 echo "
-humble_ci noticed $repo_name's update on $branch of $remote ($url).
-The latest commit of the tree is:
+humble_ci noticed update on $branch of $url.  The last commit of the tree is:
 
     $commit_intro" >> report
 
