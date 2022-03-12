@@ -27,5 +27,5 @@ cat "$additional_config_file" >> "$build_dir/.config"
 make -C "$src_dir" O="$build_dir" olddefconfig
 make -C "$src_dir" O="$build_dir" -j$(nproc)
 sudo make -C "$src_dir" O="$build_dir" modules_install install
-kernelversion=$(make -C "$src_dir" kernelversion | tail -n 2 | head -n 1)
+kernelversion=$(make -C "$src_dir" kernelrelease | tail -n 2 | head -n 1)
 sudo "$bindir/set_kernel.py" "$kernelversion"
