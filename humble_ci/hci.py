@@ -144,7 +144,7 @@ class HciTasks:
 
             for cmd in self.cmds[self.nr_complete_cmds:]:
                 try:
-                    subprocess.check_output(cmd, env=task_env)
+                    subprocess.check_output(cmd, env=task_env, shell=True)
                     self.nr_complete_cmds += 1
                     self.set_state_finished('pass')
                 except subprocess.CalledProcessError as e:
