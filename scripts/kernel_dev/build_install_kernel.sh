@@ -9,9 +9,21 @@ fi
 bindir=$(dirname "$0")
 src_dir=$1
 build_dir=$2
-config_file=$3
+additional_config_file=$3
 
-cat "$config_file" >> "$build_dir/.config"
+orig_config=$build_dir/.config
+
+if [ ! -d "$build_dir" ]
+then
+	mkdir "$build_dir"
+fi
+
+if [ ! -f "$orig_config" ]
+then
+	cp "/boot/config-$(uname -r)" "$orig_config"
+fi
+
+cat "$additional_config_file" >> "$build_dir/.config"
 make -C "$src_dir" O="$build_dir" olddefconfig
 make -C "$src_dir" O="$build_dir" -j$(nproc)
 sudo make -C "$src_dir" O="$build_dir" modules_install install
