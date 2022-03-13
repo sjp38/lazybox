@@ -10,7 +10,7 @@ import json
 Run the given commands if there were any update to given source code repos.
 '''
 
-tests = []
+tasks = []
 save_file = None
 
 class HciTasks:
@@ -137,14 +137,14 @@ class HciTasks:
             self.set_state_finished('skip', 'getting current hash failed')
 
     def run(self):
-        store_tests(tests, save_file)
+        store_tasks(tasks, save_file)
 
         if self.state == 'init':
-            store_tests(tests, save_file)
+            store_tasks(tasks, save_file)
             self.state = 'check_update'
 
         if self.state == 'check_update':
-            store_tests(tests, save_file)
+            store_tasks(tasks, save_file)
             self.check_update()
 
             if self.past_commit == self.current_commit:
@@ -153,7 +153,7 @@ class HciTasks:
                 self.set_state('run')
 
         if self.state == 'run':
-            store_tests(tests, save_file)
+            store_tasks(tasks, save_file)
             task_env = os.environ.copy()
             task_env["HUMBLE_CI_REPO"] = os.path.abspath(self.repo)
             task_env["HUMBLE_CI_REMOTE"] = self.tree[0]
@@ -169,36 +169,36 @@ class HciTasks:
                     print('Task \'%s\' failed for %s' % (cmd,
                         self.tree_git_ref()))
                     self.set_state_finished('fail')
-                store_tests(tests, save_file)
+                store_tasks(tasks, save_file)
 
         print('%s %s (skip reason: %s)' % (self.tree_git_ref(), self.result,
             self.skip_reason))
 
-def store_tests(tests, file_path):
-    maps = [x.__dict__ for x in tests]
+def store_tasks(tasks, file_path):
+    maps = [x.__dict__ for x in tasks]
     if pr_status:
         print(json.dumps(maps, indent=4))
     with open(file_path, 'w') as f:
         f.write(json.dumps(maps, indent=4))
 
-def load_tests(file_path):
+def load_tasks(file_path):
     if not os.path.isfile(file_path):
         return []
 
     with open(file_path, 'r') as f:
         maps = json.loads(f.read())
 
-        tests = []
+        tasks = []
         for m in maps:
-            test = HciTasks(m['repo'], m['tree'], m['cmds'], m['state'])
-            test.nr_complete_cmds = m['nr_complete_cmds']
-            test.result = m['result']
-            test.skip_reason = m['skip_reason']
-            test.past_commit = m['past_commit']
-            test.current_commit = m['current_commit']
+            task = HciTasks(m['repo'], m['tree'], m['cmds'], m['state'])
+            task.nr_complete_cmds = m['nr_complete_cmds']
+            task.result = m['result']
+            task.skip_reason = m['skip_reason']
+            task.past_commit = m['past_commit']
+            task.current_commit = m['current_commit']
 
-            tests.append(test)
-    return tests
+            tasks.append(task)
+    return tasks
 
 def main():
     parser = argparse.ArgumentParser()
@@ -210,34 +210,34 @@ def main():
     parser.add_argument('--cmds', metavar='<command>', nargs='+',
             required=True,
             help='commands to run for each repo update')
-    parser.add_argument('--save_file', metavar='<file>', default='.hci_tests',
-            help='file to save the tests states')
+    parser.add_argument('--save_file', metavar='<file>', default='.hci_tasks',
+            help='file to save the tasks states')
     parser.add_argument('--delay', metavar='<seconds>', default=1800, type=int,
-            help='delay between continuous tests')
+            help='delay between continuous tasks')
     parser.add_argument('--count', metavar='<count>', default=0, type=int,
-            help='how many times to do tests; 0 for infinite')
+            help='how many times to do tasks; 0 for infinite')
     parser.add_argument('--pr_status', action='store_true',
             help='print status whenever changed')
     args = parser.parse_args()
 
-    global tests
+    global tasks
     global save_file
     global pr_status
 
     save_file = args.save_file
     pr_status = args.pr_status
 
-    tests = load_tests(save_file)
+    tasks = load_tasks(save_file)
     finished = True
-    for test in tests:
-        if test.state != 'finished':
+    for task in tasks:
+        if task.state != 'finished':
             finished = False
             break
 
     if finished:
-        tests = []
+        tasks = []
         for tree in args.tree_to_track:
-            tests.append(HciTasks(
+            tasks.append(HciTasks(
                 args.repo, tree, args.cmds, 'init'))
 
     nr_repeats = 0
@@ -245,13 +245,13 @@ def main():
         if nr_repeats >= 1:
             print('# wait %d seconds' % args.delay)
             time.sleep(args.delay)
-            tests = []
+            tasks = []
             for tree in args.tree_to_track:
-                tests.append(HciTasks(
+                tasks.append(HciTasks(
                     args.repo, tree, args.cmds, 'init'))
 
-        for test in tests:
-            test.run()
+        for task in tasks:
+            task.run()
 
         nr_repeats += 1
 
