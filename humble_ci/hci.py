@@ -162,7 +162,10 @@ class HciTasks:
 
             for cmd in self.cmds[self.nr_complete_cmds:]:
                 try:
-                    subprocess.check_output(cmd, env=task_env, shell=True)
+                    output = subprocess.check_output(cmd, env=task_env,
+                            shell=True)
+                    if pr_cmd_output:
+                        print('cmd %s output:\n%s' % (cmd, output.decode()))
                     self.nr_complete_cmds += 1
                     self.set_state_finished('pass')
                 except subprocess.CalledProcessError as e:
@@ -218,14 +221,18 @@ def main():
             help='how many times to do tasks; 0 for infinite')
     parser.add_argument('--pr_status', action='store_true',
             help='print status whenever changed')
+    parser.add_argument('--pr_cmd_output', action='store_true',
+            help='print the cmds output')
     args = parser.parse_args()
 
     global tasks
     global save_file
     global pr_status
+    global pr_cmd_output
 
     save_file = args.save_file
     pr_status = args.pr_status
+    pr_cmd_output = args.pr_cmd_output
 
     tasks = load_tasks(save_file)
     finished = True
