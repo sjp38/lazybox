@@ -158,7 +158,8 @@ class HciTasks:
 
 def store_tests(tests, file_path):
     maps = [x.__dict__ for x in tests]
-    print(json.dumps(maps, indent=4))
+    if pr_status:
+        print(json.dumps(maps, indent=4))
     with open(file_path, 'w') as f:
         f.write(json.dumps(maps, indent=4))
 
@@ -197,12 +198,16 @@ def main():
             help='delay between continuous tests')
     parser.add_argument('--count', metavar='<count>', default=0, type=int,
             help='how many times to do tests; 0 for infinite')
+    parser.add_argument('--pr_status', action='store_true',
+            help='print status whenever changed')
     args = parser.parse_args()
 
     global tests
     global save_file
+    global pr_status
 
     save_file = args.save_file
+    pr_status = args.pr_status
 
     tests = load_tests(save_file)
     finished = True
