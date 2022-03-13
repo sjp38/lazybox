@@ -148,7 +148,8 @@ class HciTasks:
                     self.nr_complete_cmds += 1
                     self.set_state_finished('pass')
                 except subprocess.CalledProcessError as e:
-                    print('Task \'%s\' failed for %s' % (cmd, ref))
+                    print('Task \'%s\' failed for %s' % (cmd,
+                        self.tree_git_ref()))
                     self.set_state_finished('fail')
                 store_tests(tests, save_file)
 
