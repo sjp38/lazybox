@@ -114,6 +114,7 @@ class HciTasks:
             except subprocess.CalledProcessError as e:
                 print('adding remote (\'%s\') failed' % self.tree_git_ref())
                 self.set_state_finished('skip', 'adding remote failed')
+                return
         else:
             remote_fetched = self.git_remote_fetched()
             if self.state == 'finished':
@@ -124,22 +125,22 @@ class HciTasks:
                     print('getting old hash of %s failed' %
                             self.tree_git_ref())
                     self.set_state_finished('skip', 'getting past hash failed')
+                    return
                 else:
                     self.past_commit = commit
-
-        if self.state == 'finished':
-            return
 
         try:
             subprocess.check_output(git_cmd + ['fetch', name, branch])
         except subprocess.CalledProcessError as e:
             print('fetching %s failed' % self.tree_git_ref())
             self.set_state_finished('skip', 'fetching failed')
+            return
 
         commit = self.git_commit_id()
         if commit == None:
             print('getting new hash of %s failed' % self.tree_git_ref())
             self.set_state_finished('skip', 'getting current hash failed')
+            return
         else:
             self.current_commit = commit
 
