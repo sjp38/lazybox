@@ -66,6 +66,20 @@ class HciTasks:
             return False
         return True
 
+    def git_remote_fetched(self):
+        try:
+            remote_branches = [line.split()[0] for line in
+                    subprocess.check_output(
+                    ['git', '-C', self.repo, 'branch', '-r']).decode().
+                    strip().split('\n')]
+            if not self.tree_git_ref() in remote_branches:
+                return False
+        except subprocess.CalledProcessError as e:
+            print('git remote failed')
+            self.set_state_finished('skip', 'git remote check failed')
+            return False
+        return True
+
     def check_update(self):
         if self.state != 'check_update':
             return
@@ -81,11 +95,11 @@ class HciTasks:
                 print('git init failed')
                 self.set_state_finished('skip', 'git init failed')
 
-        tracking = self.git_remote_added()
+        remote_added = self.git_remote_added()
         if self.state == 'finished':
             return
 
-        if not tracking:
+        if not remote_added:
             try:
                 subprocess.check_output(git_cmd + ['remote', 'add', name, url])
                 self.past_commit = None
@@ -93,19 +107,23 @@ class HciTasks:
                 print('adding remote (\'%s\') failed' % self.tree_git_ref())
                 self.set_state_finished('skip', 'adding remote failed')
         else:
-            try:
-                cmd = git_cmd + ['rev-parse', self.tree_git_ref()]
-                commit = subprocess.check_output(cmd).decode().strip()
-                self.past_commit = commit
-            except subprocess.CalledProcessError as e:
-                print('getting hash of %s failed' % self.tree_git_ref())
-                self.set_state_finished('skip', 'getting past hash failed')
+            remote_fetched = self.git_remote_fetched()
+            if self.state == 'finished':
+                return
+            if remote_fetched:
+                try:
+                    cmd = git_cmd + ['rev-parse', self.tree_git_ref()]
+                    commit = subprocess.check_output(cmd).decode().strip()
+                    self.past_commit = commit
+                except subprocess.CalledProcessError as e:
+                    print('getting hash of %s failed' % self.tree_git_ref())
+                    self.set_state_finished('skip', 'getting past hash failed')
 
         if self.state == 'finished':
             return
 
         try:
-            subprocess.check_output(git_cmd + ['fetch', name])
+            subprocess.check_output(git_cmd + ['fetch', name, branch])
         except subprocess.CalledProcessError as e:
             print('fetching %s failed' % self.tree_git_ref())
             self.set_state_finished('skip', 'fetching failed')
