@@ -216,9 +216,9 @@ def main():
     parser.add_argument('--save_file', metavar='<file>', default='.hci_tasks',
             help='file to save the tasks states')
     parser.add_argument('--delay', metavar='<seconds>', default=1800, type=int,
-            help='delay between continuous tasks')
+            help='delay between updates checks')
     parser.add_argument('--count', metavar='<count>', default=0, type=int,
-            help='how many times to do tasks; 0 for infinite')
+            help='how many times to do update checks; 0 for infinite')
     parser.add_argument('--pr_status', action='store_true',
             help='print status whenever changed')
     parser.add_argument('--pr_cmd_output', action='store_true',
