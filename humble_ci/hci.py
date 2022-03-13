@@ -80,6 +80,14 @@ class HciTasks:
             return False
         return True
 
+    def git_commit_id(self):
+        git_cmd = ['git', '-C', self.repo]
+        cmd = git_cmd + ['rev-parse', self.tree_git_ref()]
+        try:
+            return subprocess.check_output(cmd).decode().strip()
+        except subprocess.CalledProcessError as e:
+            return None
+
     def check_update(self):
         if self.state != 'check_update':
             return
@@ -111,13 +119,13 @@ class HciTasks:
             if self.state == 'finished':
                 return
             if remote_fetched:
-                try:
-                    cmd = git_cmd + ['rev-parse', self.tree_git_ref()]
-                    commit = subprocess.check_output(cmd).decode().strip()
-                    self.past_commit = commit
-                except subprocess.CalledProcessError as e:
-                    print('getting hash of %s failed' % self.tree_git_ref())
+                commit = self.git_commit_id()
+                if commit == None:
+                    print('getting old hash of %s failed' %
+                            self.tree_git_ref())
                     self.set_state_finished('skip', 'getting past hash failed')
+                else:
+                    self.past_commit = commit
 
         if self.state == 'finished':
             return
@@ -128,13 +136,12 @@ class HciTasks:
             print('fetching %s failed' % self.tree_git_ref())
             self.set_state_finished('skip', 'fetching failed')
 
-        try:
-            cmd = git_cmd + ['rev-parse', self.tree_git_ref()]
-            commit = subprocess.check_output(cmd).decode().strip()
-            self.current_commit = commit
-        except subprocess.CalledProcessError as e:
-            print('getting hash of %s failed' % self.tree_git_ref())
+        commit = self.git_commit_id()
+        if commit == None:
+            print('getting new hash of %s failed' % self.tree_git_ref())
             self.set_state_finished('skip', 'getting current hash failed')
+        else:
+            self.current_commit = commit
 
     def run(self):
         store_tasks(tasks, save_file)
