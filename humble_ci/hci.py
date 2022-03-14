@@ -57,17 +57,20 @@ class HciTasks:
             raise ValueError('wrong state \'%s\'' % state)
         self.state = state
 
-    def git_remote_added(self):
+    def git_run(self, commands_list):
+        cmd = self.git_cmd() + commands_list
         try:
-            remotes = subprocess.check_output(
-                    self.git_cmd() + ['remote']).decode().strip().split()
-            if not self.tree[0] in remotes:
-                return False
+            return subprocess.check_output(cmd).decode().strip()
         except subprocess.CalledProcessError as e:
+            return None
+
+    def git_remote_added(self):
+        remotes = self.git_run(['remote']).split()
+        if remotes == None:
             print('git remote failed')
             self.set_state_finished('skip', 'git remote check failed')
             return False
-        return True
+        return self.tree[0] in remotes
 
     def git_remote_fetched(self):
         try:
