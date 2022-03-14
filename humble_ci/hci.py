@@ -94,11 +94,10 @@ class HciTasks:
 
         if not os.path.isdir(os.path.join(self.repo, '.git')):
             os.mkdir(self.repo)
-            try:
-                subprocess.check_output(git_cmd + ['init'])
-            except subprocess.CalledProcessError as e:
+            if self.git_run(['init']) == None:
                 print('git init failed')
                 self.set_state_finished('skip', 'git init failed')
+                return
 
         remote_added = self.git_remote_added()
         if self.state == 'finished':
@@ -106,10 +105,8 @@ class HciTasks:
 
         git_ref = self.tree_git_ref()
         if not remote_added:
-            try:
-                subprocess.check_output(git_cmd + ['remote', 'add', name, url])
-                self.past_commit = None
-            except subprocess.CalledProcessError as e:
+            self.past_commit = None
+            if self.git_run(['remote', 'add', name, url]) == None:
                 print('adding remote (\'%s\') failed' % git_ref)
                 self.set_state_finished('skip', 'adding remote failed')
                 return
@@ -126,9 +123,7 @@ class HciTasks:
                 else:
                     self.past_commit = commit
 
-        try:
-            subprocess.check_output(git_cmd + ['fetch', name, branch])
-        except subprocess.CalledProcessError as e:
+        if self.git_run(['fetch', name, branch]) == None:
             print('fetching %s failed' % git_ref)
             self.set_state_finished('skip', 'fetching failed')
             return
@@ -138,8 +133,7 @@ class HciTasks:
             print('getting new hash of %s failed' % git_ref)
             self.set_state_finished('skip', 'getting current hash failed')
             return
-        else:
-            self.current_commit = commit
+        self.current_commit = commit
 
     def run(self):
         store_tasks(tasks, save_file)
