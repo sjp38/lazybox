@@ -57,81 +57,70 @@ class HciTasks:
     def git_cmd(self):
         return ['git', '-C', self.repo]
 
-    def git_run(self, commands_list):
+    def git_run(self, commands_list, description):
         cmd = self.git_cmd() + commands_list
         try:
             return subprocess.check_output(cmd).decode().strip()
         except subprocess.CalledProcessError as e:
+            msg = 'Failed %s (%s)' % (description, ' '.join(cmd))
+            print(msg)
+            self.set_state_finished('skip', msg)
             return None
 
     def git_remote_added(self):
-        remotes = self.git_run(['remote'])
+        remotes = self.git_run(['remote'], 'git remote check')
         if remotes == None:
-            print('git remote failed')
-            self.set_state_finished('skip', 'git remote check failed')
-            return False
+            return None
         return self.tree[0] in remotes.split()
 
     def git_remote_fetched(self):
-        remote_branches = self.git_run(['branch', '-r'])
-
+        remote_branches = self.git_run(['branch', '-r'], 'fetched check')
         if remote_branches == None:
-            print('git remote failed')
-            self.set_state_finished('skip', 'git remote check failed')
-            return False
-        remote_branches = [line.split()[0] for line in remote_branches.split('\n')]
+            return None
+        remote_branches = [line.split()[0] for line in
+                remote_branches.split('\n')]
         return self.tree_git_ref() in remote_branches
 
-    def git_commit_id(self):
-        return self.git_run(['rev-parse', self.tree_git_ref()])
+    def git_commit_id(self, description):
+        return self.git_run(['rev-parse', self.tree_git_ref()], description)
 
     def check_update(self):
         if self.state != 'check_update':
             return
 
         name, url, branch = self.tree
-        git_cmd = self.git_cmd()
+        git_ref = self.tree_git_ref()
 
         if not os.path.isdir(os.path.join(self.repo, '.git')):
             os.mkdir(self.repo)
-            if self.git_run(['init']) == None:
-                print('git init failed')
-                self.set_state_finished('skip', 'git init failed')
+            if self.git_run(['init'], 'repo init') == None:
                 return
 
         remote_added = self.git_remote_added()
-        if self.state == 'finished':
+        if remote_added == None:
             return
 
-        git_ref = self.tree_git_ref()
         if not remote_added:
             self.past_commit = None
-            if self.git_run(['remote', 'add', name, url]) == None:
-                print('adding remote (\'%s\') failed' % git_ref)
-                self.set_state_finished('skip', 'adding remote failed')
+            if self.git_run(['remote', 'add', name, url],
+                    'adding remote') == None:
                 return
         else:
             remote_fetched = self.git_remote_fetched()
-            if self.state == 'finished':
+            if self.state == None:
                 return
             if remote_fetched:
-                commit = self.git_commit_id()
+                commit = self.git_commit_id('getting old hash of %s' % git_ref)
                 if commit == None:
-                    print('getting old hash of %s failed' % git_ref)
-                    self.set_state_finished('skip', 'getting past hash failed')
                     return
-                else:
-                    self.past_commit = commit
+                self.past_commit = commit
 
-        if self.git_run(['fetch', name, branch]) == None:
-            print('fetching %s failed' % git_ref)
-            self.set_state_finished('skip', 'fetching failed')
+        if self.git_run(['fetch', name, branch],
+                'fetching %s' % git_ref) == None:
             return
 
-        commit = self.git_commit_id()
+        commit = self.git_commit_id('getting new hash of %s' % git_ref)
         if commit == None:
-            print('getting new hash of %s failed' % git_ref)
-            self.set_state_finished('skip', 'getting current hash failed')
             return
         self.current_commit = commit
 
