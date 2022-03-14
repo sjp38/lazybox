@@ -39,6 +39,9 @@ class HciTasks:
         self.past_commit = None
         self.current_commit = None
 
+    def git_cmd(self):
+        return ['git', '-C', self.repo]
+
     def set_state_finished(self, result, skip_reason=None):
         if not result in ['pass', 'fail', 'skip']:
             raise ValueError('wrong result \'%s\'' % result)
@@ -57,7 +60,7 @@ class HciTasks:
     def git_remote_added(self):
         try:
             remotes = subprocess.check_output(
-                    ['git', '-C', self.repo, 'remote']).decode().strip().split()
+                    self.git_cmd() + ['remote']).decode().strip().split()
             if not self.tree[0] in remotes:
                 return False
         except subprocess.CalledProcessError as e:
@@ -70,7 +73,7 @@ class HciTasks:
         try:
             remote_branches = [line.split()[0] for line in
                     subprocess.check_output(
-                    ['git', '-C', self.repo, 'branch', '-r']).decode().
+                        self.git_cmd() + ['branch', '-r']).decode().
                     strip().split('\n')]
             if not self.tree_git_ref() in remote_branches:
                 return False
@@ -81,8 +84,7 @@ class HciTasks:
         return True
 
     def git_commit_id(self):
-        git_cmd = ['git', '-C', self.repo]
-        cmd = git_cmd + ['rev-parse', self.tree_git_ref()]
+        cmd = self.git_cmd() + ['rev-parse', self.tree_git_ref()]
         try:
             return subprocess.check_output(cmd).decode().strip()
         except subprocess.CalledProcessError as e:
@@ -93,7 +95,7 @@ class HciTasks:
             return
 
         name, url, branch = self.tree
-        git_cmd = ['git', '-C', self.repo]
+        git_cmd = self.git_cmd()
 
         if not os.path.isdir(os.path.join(self.repo, '.git')):
             os.mkdir(self.repo)
