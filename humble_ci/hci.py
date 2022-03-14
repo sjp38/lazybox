@@ -83,11 +83,7 @@ class HciTasks:
         return self.tree_git_ref() in remote_branches
 
     def git_commit_id(self):
-        cmd = self.git_cmd() + ['rev-parse', self.tree_git_ref()]
-        try:
-            return subprocess.check_output(cmd).decode().strip()
-        except subprocess.CalledProcessError as e:
-            return None
+        return self.git_run(['rev-parse', self.tree_git_ref()])
 
     def check_update(self):
         if self.state != 'check_update':
