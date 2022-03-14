@@ -25,9 +25,6 @@ class HciTasks:
     result = None # skip, pass, fail
     skip_reason = None
 
-    def tree_git_ref(self):
-        return '%s/%s' % (self.tree[0], self.tree[2])
-
     def __init__(self, repo, tree, cmds, state):
         self.repo = repo
         self.tree = tree
@@ -38,9 +35,6 @@ class HciTasks:
         self.skip_reason = None
         self.past_commit = None
         self.current_commit = None
-
-    def git_cmd(self):
-        return ['git', '-C', self.repo]
 
     def set_state_finished(self, result, skip_reason=None):
         if not result in ['pass', 'fail', 'skip']:
@@ -56,6 +50,12 @@ class HciTasks:
         if not state in valid_states:
             raise ValueError('wrong state \'%s\'' % state)
         self.state = state
+
+    def tree_git_ref(self):
+        return '%s/%s' % (self.tree[0], self.tree[2])
+
+    def git_cmd(self):
+        return ['git', '-C', self.repo]
 
     def git_run(self, commands_list):
         cmd = self.git_cmd() + commands_list
