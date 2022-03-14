@@ -65,20 +65,21 @@ class HciTasks:
             return None
 
     def git_remote_added(self):
-        remotes = self.git_run(['remote']).split()
+        remotes = self.git_run(['remote'])
         if remotes == None:
             print('git remote failed')
             self.set_state_finished('skip', 'git remote check failed')
             return False
-        return self.tree[0] in remotes
+        return self.tree[0] in remotes.split()
 
     def git_remote_fetched(self):
-        remote_branches = [line.split()[0] for line in self.git_run(
-            ['branch', '-r']).split('\n')]
+        remote_branches = self.git_run(['branch', '-r'])
+
         if remote_branches == None:
             print('git remote failed')
             self.set_state_finished('skip', 'git remote check failed')
             return False
+        remote_branches = [line.split()[0] for line in remote_branches.split('\n')]
         return self.tree_git_ref() in remote_branches
 
     def git_commit_id(self):
