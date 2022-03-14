@@ -160,6 +160,7 @@ class HciTasks:
             else:
                 self.set_state('run')
 
+        git_ref = self.tree_git_ref()
         if self.state == 'run':
             store_tasks(tasks, save_file)
             task_env = os.environ.copy()
@@ -177,12 +178,11 @@ class HciTasks:
                     self.nr_complete_cmds += 1
                     self.set_state_finished('pass')
                 except subprocess.CalledProcessError as e:
-                    print('Task \'%s\' failed for %s' % (cmd,
-                        self.tree_git_ref()))
+                    print('Task \'%s\' failed for %s' % (cmd, git_ref))
                     self.set_state_finished('fail')
                 store_tasks(tasks, save_file)
 
-        print('%s %s (skip reason: %s)' % (self.tree_git_ref(), self.result,
+        print('%s %s (skip reason: %s)' % (git_ref, self.result,
             self.skip_reason))
 
 def store_tasks(tasks, file_path):
