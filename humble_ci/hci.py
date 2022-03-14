@@ -73,18 +73,13 @@ class HciTasks:
         return self.tree[0] in remotes
 
     def git_remote_fetched(self):
-        try:
-            remote_branches = [line.split()[0] for line in
-                    subprocess.check_output(
-                        self.git_cmd() + ['branch', '-r']).decode().
-                    strip().split('\n')]
-            if not self.tree_git_ref() in remote_branches:
-                return False
-        except subprocess.CalledProcessError as e:
+        remote_branches = [line.split()[0] for line in self.git_run(
+            ['branch', '-r']).split('\n')]
+        if remote_branches == None:
             print('git remote failed')
             self.set_state_finished('skip', 'git remote check failed')
             return False
-        return True
+        return self.tree_git_ref() in remote_branches
 
     def git_commit_id(self):
         cmd = self.git_cmd() + ['rev-parse', self.tree_git_ref()]
