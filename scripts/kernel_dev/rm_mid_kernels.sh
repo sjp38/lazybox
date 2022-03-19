@@ -7,6 +7,12 @@ then
 	exit 1
 fi
 
+if [ "$EUID" -ne 0 ]
+then
+	echo "run as root, please"
+	exit 1
+fi
+
 bindir="$(dirname "$0")"
 
 nr_old_kernels_to_leave=$1
