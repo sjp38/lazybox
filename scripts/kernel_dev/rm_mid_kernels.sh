@@ -24,6 +24,7 @@ kernels_to_remove=""
 i=0
 for kernel in $kernels
 do
+	i=$((i + 1))
 	if [ $i -lt $remove_start ]
 	then
 		continue
