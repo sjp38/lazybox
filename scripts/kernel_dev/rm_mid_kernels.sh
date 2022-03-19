@@ -7,6 +7,8 @@ then
 	exit 1
 fi
 
+bindir="$(dirname "$0")"
+
 nr_old_kernels_to_leave=$1
 nr_new_kernels_to_leave=$2
 
