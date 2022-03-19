@@ -31,7 +31,7 @@ do
 	then
 		continue
 	fi
-	if [ $i -gt $remove_end ]
+	if [ $i -ge $remove_end ]
 	then
 		break
 	fi
