@@ -84,10 +84,11 @@ then
 fi
 
 bindir=$(dirname "$0")
-read -r -a kernels <<< "$("$bindir/ls_kernels.py")"
+# newest kernel comes first
+kernels=($("$bindir/ls_kernels.py"))
 
-rm_start=$except_old_nr
-rm_end=$((${#kernels[@]} - except_new_nr))
+rm_start=$except_new_nr
+rm_end=$((${#kernels[@]} - except_old_nr))
 
 for ((i = 0 ; i < ${#kernels[@]} ; i++))
 do
