@@ -28,6 +28,7 @@ kernels_to_remove=()
 except_old_nr=0
 except_new_nr=0
 dry_run="false"
+target_specified="false"
 
 while [ $# -ne 0 ]
 do
@@ -39,6 +40,7 @@ do
 			pr_usage_exit 1
 		fi
 		except_old_nr=$2
+		target_specified="true"
 		shift 2
 		continue
 		;;
@@ -49,6 +51,7 @@ do
 			pr_usage_exit 1
 		fi
 		except_new_nr=$2
+		target_specified="true"
 		shift 2
 		continue
 		;;
@@ -68,10 +71,17 @@ do
 			pr_usage_exit 1
 		fi
 		kernels_to_remove=($@)
+		target_specified="true"
 		break
 		;;
 	esac
 done
+
+if [ ! "$target_specified" = "true" ]
+then
+	echo "Target kernels to remove are not specified"
+	pr_usage_exit 1
+fi
 
 bindir=$(dirname "$0")
 read -r -a kernels <<< "$("$bindir/ls_kernels.py")"
