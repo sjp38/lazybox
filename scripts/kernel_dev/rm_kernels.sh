@@ -1,9 +1,21 @@
 #!/bin/bash
 
+pr_usage()
+{
+	echo "Usage: $0 <target kernel version>..."
+}
+
+pr_usage_exit()
+{
+	exit_code=$1
+
+	pr_usage
+	exit "$exit_code"
+}
+
 if [ $# -lt 1 ];
 then
-	echo "Usage: $0 <target kernel version>..."
-	exit 1
+	pr_usage_exit 1
 fi
 
 if [ "$EUID" -ne 0 ]
