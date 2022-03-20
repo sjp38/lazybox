@@ -89,7 +89,7 @@ do
 	kernels_to_remove+=("${kernels[$i]}")
 done
 
-if [ "$EUID" -ne 0 ]
+if [ "$EUID" -ne 0 ] && [ "$dry_run" = "false" ]
 then
 	echo "run as root, please"
 	exit 1
