@@ -81,7 +81,6 @@ rm_end=$((${#kernels[@]} - except_new_nr))
 
 for ((i = 0 ; i < ${#kernels[@]} ; i++))
 do
-	echo "$i"
 	if [ $i -lt $rm_start ] || [ $i -ge $rm_end ]
 	then
 		continue
