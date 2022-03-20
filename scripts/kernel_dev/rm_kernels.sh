@@ -7,6 +7,7 @@ pr_usage()
 	echo "OPTION"
 	echo "  --except_old <number>	Leave <number> oldest kernels"
 	echo "  --except_new <number>	Leave <number> latest kernels"
+	echo "  -h, --help		Show this message"
 }
 
 pr_usage_exit()
@@ -48,6 +49,9 @@ do
 		except_new_nr=$2
 		shift 2
 		continue
+		;;
+	"--help" | "-h")
+		pr_usage_exit 0
 		;;
 	*)
 		if [ "$except_old_nr" = "" ] && [ "$except_new_nr" = "" ] &&
