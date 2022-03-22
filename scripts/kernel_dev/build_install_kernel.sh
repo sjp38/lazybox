@@ -2,7 +2,7 @@
 
 set -e
 
-if [ $# -ne 2 ] || [ $# -ne 3 ]
+if [ $# -ne 2 ] && [ $# -ne 3 ]
 then
 	echo "Usage: $0 <src dir> <build dir> [config file to append]"
 	exit 1
