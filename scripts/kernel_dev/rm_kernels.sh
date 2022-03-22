@@ -7,6 +7,7 @@ pr_usage()
 	echo "OPTION"
 	echo "  --except_old <number>	Leave <number> oldest kernels"
 	echo "  --except_new <number>	Leave <number> latest kernels"
+	echo "  --except_current	Leave currently running kernel"
 	echo "  --dry			Make no change but notify what will do"
 	echo "  -h, --help		Show this message"
 }
@@ -27,6 +28,7 @@ fi
 kernels_to_remove=()
 except_old_nr=0
 except_new_nr=0
+except_current="false"
 dry_run="false"
 target_specified="false"
 
@@ -53,6 +55,11 @@ do
 		except_new_nr=$2
 		target_specified="true"
 		shift 2
+		continue
+		;;
+	"--except_current")
+		except_current="true"
+		shift 1
 		continue
 		;;
 	"--dry")
@@ -87,12 +94,17 @@ bindir=$(dirname "$0")
 # newest kernel comes first
 kernels=($("$bindir/ls_kernels.py"))
 
+current_kernel=$(uname -r)
 rm_start=$except_new_nr
 rm_end=$((${#kernels[@]} - except_old_nr))
 
 for ((i = 0 ; i < ${#kernels[@]} ; i++))
 do
 	if [ $i -lt $rm_start ] || [ $i -ge $rm_end ]
+	then
+		continue
+	fi
+	if [ "${kernels[$i]}" = "$current_kernel" ]
 	then
 		continue
 	fi
