@@ -19,11 +19,14 @@ commit_intro=$(git -C "$repo" show --pretty="%h (\"%s\")" --quiet \
 	"$remote/$branch")
 
 subject="[hci-noti] $repo_name: $remote/$branch has updated to $commit_intro"
-echo "Subject: $subject" > report
+
+report_file=$(mktemp hci-report-XXXX)
+
+echo "Subject: $subject" > "$report_file"
 echo "
 humble_ci noticed update on $branch of $url.  The last commit of the tree is:
 
-    $commit_intro" >> report
+    $commit_intro" >> "$report_file"
 
-git send-email --to "$recipients" report
-rm report
+git send-email --to "$recipients" "$report_file"
+rm "$report_file"
