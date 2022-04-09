@@ -36,6 +36,12 @@ class HciTasks:
         self.past_commit = None
         self.current_commit = None
 
+    def set_state(self, state):
+        valid_states = ['init', 'check_update', 'run', 'finished']
+        if not state in valid_states:
+            raise ValueError('wrong state \'%s\'' % state)
+        self.state = state
+
     def set_state_finished(self, result, skip_reason=None):
         if not result in ['pass', 'fail', 'skip']:
             raise ValueError('wrong result \'%s\'' % result)
@@ -44,12 +50,6 @@ class HciTasks:
         self.set_state('finished')
         self.result = result
         self.skip_reason = skip_reason
-
-    def set_state(self, state):
-        valid_states = ['init', 'check_update', 'run', 'finished']
-        if not state in valid_states:
-            raise ValueError('wrong state \'%s\'' % state)
-        self.state = state
 
     def tree_git_ref(self):
         return '%s/%s' % (self.tree[0], self.tree[2])
