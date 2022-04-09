@@ -59,7 +59,7 @@ def main():
     parser = argparse.ArgumentParser(description=description, epilog=epilog,
             formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('order', type=int, metavar='<order>',
-            help='order of desired pages')
+            help='order of desired contiguous pages')
     args = parser.parse_args()
     order = args.order
 
