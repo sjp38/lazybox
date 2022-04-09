@@ -30,7 +30,7 @@ class HciTasks:
         self.tree = tree
         self.cmds = cmds
         self.nr_complete_cmds = 0
-        self.state = state
+        self.set_state(state)
         self.result = None
         self.skip_reason = None
         self.past_commit = None
@@ -41,12 +41,12 @@ class HciTasks:
             raise ValueError('wrong result \'%s\'' % result)
         if result == 'skip' and skip_reason == None:
             raise ValueError('skip reason is not given')
-        self.state = 'finished'
+        self.set_state('finished')
         self.result = result
         self.skip_reason = skip_reason
 
     def set_state(self, state):
-        valid_states = ['init', 'check_update', 'run']
+        valid_states = ['init', 'check_update', 'run', 'finished']
         if not state in valid_states:
             raise ValueError('wrong state \'%s\'' % state)
         self.state = state
@@ -132,7 +132,7 @@ class HciTasks:
             if uncond_single_run:
                 self.set_state('run')
             else:
-                self.state = 'check_update'
+                self.set_state('check_update')
 
         if self.state == 'check_update':
             store_tasks(tasks, save_file)
