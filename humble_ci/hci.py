@@ -129,7 +129,10 @@ class HciTasks:
 
         if self.state == 'init':
             store_tasks(tasks, save_file)
-            self.state = 'check_update'
+            if uncond_single_run:
+                self.set_state('run')
+            else:
+                self.state = 'check_update'
 
         if self.state == 'check_update':
             store_tasks(tasks, save_file)
@@ -201,6 +204,8 @@ def main():
     parser.add_argument('--cmds', metavar='<command>', nargs='+',
             required=True,
             help='commands to run for each repo update')
+    parser.add_argument('--uncond_single_run', action='store_true',
+            help='unconditionally run the commands for the trees once')
     parser.add_argument('--save_file', metavar='<file>', default='.hci_tasks',
             help='file to save the tasks states')
     parser.add_argument('--delay', metavar='<seconds>', default=1800, type=int,
@@ -217,10 +222,12 @@ def main():
     global save_file
     global pr_status
     global pr_cmd_output
+    global uncond_single_run
 
     save_file = args.save_file
     pr_status = args.pr_status
     pr_cmd_output = args.pr_cmd_output
+    uncond_single_run = args.uncond_single_run
 
     tasks = load_tasks(save_file)
     finished = True
@@ -238,6 +245,8 @@ def main():
     nr_repeats = 0
     while args.count == 0 or nr_repeats < args.count:
         if nr_repeats >= 1:
+            if uncond_single_run:
+                break
             print('# wait %d seconds' % args.delay)
             time.sleep(args.delay)
             tasks = []
