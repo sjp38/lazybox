@@ -216,6 +216,8 @@ def main():
             help='print status whenever changed')
     parser.add_argument('--pr_cmd_output', action='store_true',
             help='print the cmds output')
+    parser.add_argument('--ignore_prev_tasks', action='store_true',
+            help='ignore stopped previous tasks')
     args = parser.parse_args()
 
     global tasks
@@ -236,7 +238,7 @@ def main():
             finished = False
             break
 
-    if finished:
+    if finished or args.ignore_prev_tasks:
         tasks = []
         for tree in args.tree_to_track:
             tasks.append(HciTasks(
