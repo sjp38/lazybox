@@ -5,7 +5,7 @@ pr_usage()
 	echo "Usage: $0 [OPTION]... [target kernel version]..."
 	echo
 	echo "OPTION"
-	echo "  --except_old <number>	Leave <number> oldest kernels"
+	echo "  --except <old> <new>	Leave <old> old and <new> new kernels"
 	echo "  --except_new <number>	Leave <number> latest kernels"
 	echo "  --dry			Make no change but notify what will do"
 	echo "  -h, --help		Show this message"
@@ -29,7 +29,7 @@ bindir=$(dirname "$0")
 kernels=($("$bindir/ls_kernels.py"))
 
 kernels_to_remove=()
-except_old_nr="unset"
+except_old_nr=${#kernels[@]}
 except_new_nr=${#kernels[@]}
 dry_run="false"
 target_specified="false"
@@ -37,26 +37,16 @@ target_specified="false"
 while [ $# -ne 0 ]
 do
 	case $1 in
-	"--except_old")
-		if [ $# -lt 2 ]
+	"--except")
+		if [ $# -lt 3 ]
 		then
 			echo "<number> not given"
 			pr_usage_exit 1
 		fi
 		except_old_nr=$2
+		except_new_nr=$3
 		target_specified="true"
-		shift 2
-		continue
-		;;
-	"--except_new")
-		if [ $# -lt 2 ]
-		then
-			echo "<number> not given"
-			pr_usage_exit 1
-		fi
-		except_new_nr=$2
-		target_specified="true"
-		shift 2
+		shift 3
 		continue
 		;;
 	"--dry")
