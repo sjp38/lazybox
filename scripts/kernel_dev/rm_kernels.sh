@@ -24,9 +24,13 @@ then
 	pr_usage_exit 1
 fi
 
+bindir=$(dirname "$0")
+# newest kernel comes first
+kernels=($("$bindir/ls_kernels.py"))
+
 kernels_to_remove=()
-except_old_nr=0
-except_new_nr=0
+except_old_nr="unset"
+except_new_nr=${#kernels[@]}
 dry_run="false"
 target_specified="false"
 
@@ -82,10 +86,6 @@ then
 	echo "Target kernels to remove are not specified"
 	pr_usage_exit 1
 fi
-
-bindir=$(dirname "$0")
-# newest kernel comes first
-kernels=($("$bindir/ls_kernels.py"))
 
 current_kernel=$(uname -r)
 rm_start=$except_new_nr
