@@ -7,7 +7,6 @@ pr_usage()
 	echo "OPTION"
 	echo "  --except_old <number>	Leave <number> oldest kernels"
 	echo "  --except_new <number>	Leave <number> latest kernels"
-	echo "  --except_current	Leave currently running kernel"
 	echo "  --dry			Make no change but notify what will do"
 	echo "  -h, --help		Show this message"
 }
@@ -28,7 +27,6 @@ fi
 kernels_to_remove=()
 except_old_nr=0
 except_new_nr=0
-except_current="false"
 dry_run="false"
 target_specified="false"
 
@@ -55,11 +53,6 @@ do
 		except_new_nr=$2
 		target_specified="true"
 		shift 2
-		continue
-		;;
-	"--except_current")
-		except_current="true"
-		shift 1
 		continue
 		;;
 	"--dry")
