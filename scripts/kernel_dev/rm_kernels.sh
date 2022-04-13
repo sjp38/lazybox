@@ -104,6 +104,14 @@ do
 	kernels_to_remove+=("${kernels[$i]}")
 done
 
+for ((i = 0 ; i < ${#kernels_to_remove[@]} ; i++))
+do
+	if [ "${kernels_to_remove[$i]}" = "$current_kernel" ]
+	then
+		unset 'kernels_to_remove[i]'
+	fi
+done
+
 if [ "$EUID" -ne 0 ] && [ "$dry_run" = "false" ]
 then
 	echo "run as root, please"
