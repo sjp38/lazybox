@@ -5,6 +5,7 @@ pr_usage()
 	echo "Usage: $0 [OPTION]... <cmd> <host>..."
 	echo
 	echo "OPTION"
+	echo "  --port <port>	Specify the ssh port to use"
 	echo "  -h, --help	Show this usage"
 }
 
@@ -20,9 +21,20 @@ then
 	pr_usage_exit 1
 fi
 
+ssh_port=22
+
 while [ $# -ne 0 ]
 do
 	case $1 in
+	"--port")
+		if [ $# -lt 2 ]
+		then
+			pr_usage_exit 1
+		fi
+		ssh_port=$2
+		shift 2
+		continue
+		;;
 	"--help" | "-h")
 		pr_usage_exit 0
 		;;
@@ -40,7 +52,7 @@ done
 
 for host in ${hosts[@]}
 do
-	ssh "$host" "$cmd" &
+	ssh -p "$ssh_port" "$host" "$cmd" &
 done
 
 wait
