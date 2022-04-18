@@ -5,8 +5,9 @@ pr_usage()
 	echo "Usage: $0 [OPTION]... <cmd> <host>..."
 	echo
 	echo "OPTION"
-	echo "  --port <port>	Specify the ssh port to use"
-	echo "  -h, --help	Show this usage"
+	echo "  --port <port>		Specify the ssh port to use"
+	echo "  --log_prefix <prefix>	Prefix of the log files"
+	echo "  -h, --help		Show this usage"
 }
 
 pr_usage_exit()
@@ -22,6 +23,7 @@ then
 fi
 
 ssh_port=22
+log_prefix=""
 
 while [ $# -ne 0 ]
 do
@@ -32,6 +34,15 @@ do
 			pr_usage_exit 1
 		fi
 		ssh_port=$2
+		shift 2
+		continue
+		;;
+	"--log")
+		if [ $# -lt 2 ]
+		then
+			pr_usage_exit 1
+		fi
+		log_prefix=$2
 		shift 2
 		continue
 		;;
@@ -52,7 +63,8 @@ done
 
 for host in ${hosts[@]}
 do
-	ssh -p "$ssh_port" "$host" "$cmd" &
+	log_file=$(mktemp "$log_prefix"ssh_parallel_"$host"_XXXX)
+	ssh -p "$ssh_port" "$host" "$cmd" > "$log_file" &
 done
 
 wait
