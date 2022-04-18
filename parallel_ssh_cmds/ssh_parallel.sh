@@ -1,17 +1,44 @@
 #!/bin/bash
 
-if [ $# -lt 2 ]
+pr_usage()
+{
+	echo "Usage: $0 [OPTION]... <cmd> <host>..."
+	echo
+	echo "OPTION"
+	echo "  -h, --help	Show this usage"
+}
+
+pr_usage_exit()
+{
+	exit_code=$1
+	pr_usage
+	exit "$exit_code"
+}
+
+if [ $# -lt 1 ]
 then
-	echo "Usage: $0 <cmd> <host>..."
-	exit 1
+	pr_usage_exit 1
 fi
 
-cmd=$1
+while [ $# -ne 0 ]
+do
+	case $1 in
+	"--help" | "-h")
+		pr_usage_exit 0
+		;;
+	*)
+		if [ $# -lt 2 ]
+		then
+			pr_usage_exit 1
+		fi
+		cmd=$1
+		hosts=( "$@" )
+		unset hosts[0]
+		break;;
+	esac
+done
 
-arguments=( "$@" )
-unset arguments[0]
-
-for host in ${arguments[@]}
+for host in ${hosts[@]}
 do
 	ssh "$host" "$cmd" &
 done
