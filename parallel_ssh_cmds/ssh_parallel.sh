@@ -73,7 +73,7 @@ do
 	if [ "$keep_log" = "true" ]
 	then
 		log_file=$(mktemp "$log_prefix"ssh_parallel_"$host"_XXXX)
-		ssh -p "$ssh_port" "$host" "$cmd" > "$log_file" &
+		ssh -p "$ssh_port" "$host" "$cmd" | tee "$log_file" &
 	else
 		ssh -p "$ssh_port" "$host" "$cmd" &
 	fi
