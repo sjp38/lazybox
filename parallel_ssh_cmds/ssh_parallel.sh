@@ -72,7 +72,9 @@ for host in ${hosts[@]}
 do
 	if [ "$keep_log" = "true" ]
 	then
-		log_file=$(mktemp "$log_prefix"ssh_parallel_"$host"_XXXX)
+		date_str=$(date +"%Y-%m-%d-%H-%M")
+		log_file="$log_prefix"ssh_parallel_"$host"_"$date_str"
+		log_file=$(mktemp "$log_file"_XXXX)
 		ssh -p "$ssh_port" "$host" "$cmd" | tee "$log_file" &
 	else
 		ssh -p "$ssh_port" "$host" "$cmd" &
