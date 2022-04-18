@@ -7,7 +7,7 @@ pr_usage()
 	echo "OPTION"
 	echo "  --port <port>		Specify the ssh port to use"
 	echo "  --log_prefix <prefix>	Prefix of the log files"
-	echo "  --no_log		Remove log files"
+	echo "  --keep_log		Keep log files"
 	echo "  -h, --help		Show this usage"
 }
 
@@ -25,7 +25,7 @@ fi
 
 ssh_port=22
 log_prefix=""
-keep_log="true"
+keep_log="false"
 
 while [ $# -ne 0 ]
 do
@@ -48,8 +48,8 @@ do
 		shift 2
 		continue
 		;;
-	"--no_log")
-		keep_log="false"
+	"--keep_log")
+		keep_log="true"
 		shift 1
 		continue
 		;;
