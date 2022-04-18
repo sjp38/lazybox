@@ -39,7 +39,7 @@ do
 		shift 2
 		continue
 		;;
-	"--log")
+	"--log_prefix")
 		if [ $# -lt 2 ]
 		then
 			pr_usage_exit 1
