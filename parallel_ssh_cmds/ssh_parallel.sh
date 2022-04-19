@@ -68,6 +68,8 @@ do
 	esac
 done
 
+declare -A log_files
+
 for host in ${hosts[@]}
 do
 	if [ "$keep_log" = "true" ]
@@ -75,6 +77,7 @@ do
 		date_str=$(date +"%Y-%m-%d-%H-%M")
 		log_file="$log_prefix"ssh_parallel_"$host"_"$date_str"
 		log_file=$(mktemp "$log_file"_XXXX)
+		log_files[$host]="$log_file"
 		ssh -p "$ssh_port" "$host" "$cmd" | tee "$log_file" &
 	else
 		ssh -p "$ssh_port" "$host" "$cmd" &
@@ -82,3 +85,8 @@ do
 done
 
 wait
+
+for host in ${!log_files[@]}
+do
+	echo "log for $host is at ${log_files[$host]}"
+done
