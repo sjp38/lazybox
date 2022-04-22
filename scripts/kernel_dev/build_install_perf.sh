@@ -12,7 +12,9 @@ linux_dir=$1
 perf_build_dir=$2
 perf_dir="$linux_dir/tools/perf"
 
-sudo apt install -y build-essential 
+sudo apt install -y build-essential libdw-dev systemtap-sdt-dev libunwind-dev \
+		libslang2-dev libperl-dev python-dev libiberty-dev liblzma-dev \
+		libzstd-dev libcap-dev libnuma-dev libbabeltrace-ctf-dev
 
 make -C "$perf_dir" O="$perf_build_dir"
 make -C "$perf_dir" O="$perf_build_dir" install
