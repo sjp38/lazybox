@@ -26,4 +26,4 @@ sudo apt install -y build-essential libdw-dev systemtap-sdt-dev libunwind-dev \
 
 make -C "$perf_dir" O="$perf_build_dir"
 make -C "$perf_dir" O="$perf_build_dir" install
-sudo ln -s "$HOME/bin/perf" "/usr/bin/perf"
+sudo ln -s "$HOME/bin/perf" "$perf_file"
