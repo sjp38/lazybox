@@ -8,6 +8,14 @@ then
 	exit 1
 fi
 
+perf_file="/usr/bin/perf"
+
+if [ -f "$perf_file" ]
+then
+	echo "$perf_file already exists"
+	exit 1
+fi
+
 linux_dir=$1
 perf_build_dir=$2
 perf_dir="$linux_dir/tools/perf"
