@@ -15,4 +15,4 @@ commit_range=$2
 author=$(git log -n 1 "$commit_to_find" --pretty=%an)
 subject=$(git log -n 1 "$commit_to_find" --pretty=%s)
 
-git log --author="$author" --oneline | grep -i -m 1 "$subject"
+git log --author="$author" --oneline "$commit_range" | grep -i -m 1 "$subject"
