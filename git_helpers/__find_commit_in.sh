@@ -13,5 +13,6 @@ author=$1
 subject=$2
 commit_range=$3
 
-hash=$(git log --author="$author" --oneline "$commit_range" | grep -i -m 1 "$subject" | awk '{print $1}')
+hash=$(git log --author="$author" --oneline "$commit_range" | \
+	grep -i -m 1 "$subject" | awk '{print $1}')
 git log -n 1 --pretty=%H $hash
