@@ -56,8 +56,7 @@ def main():
     new_description += 'Signed-off-by: %s <%s>\n' % (user_name, user_email)
     new_patch = '---\n'.join([new_description] + description_diff[1:])
 
-    with open(args.patch + '.new', 'w') as f:
-        f.write(new_patch)
+    print(new_patch)
 
 if __name__ == '__main__':
     main()
