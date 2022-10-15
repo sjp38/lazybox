@@ -4,7 +4,7 @@ set -e
 
 if [ $# -ne 3 ]
 then
-	echo "Usage: $0 <first commit> <last commit> <upstream remote name>"
+	echo "Usage: $0 <first commit> <last commit> <upstream tree>"
 	echo
 	echo "Adds upstream commit comments to <first commit>..<last commit>"
 	exit 1
