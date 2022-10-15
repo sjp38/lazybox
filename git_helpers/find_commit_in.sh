@@ -96,10 +96,10 @@ fi
 if [ "$author" = "" ]
 then
 	hash_subject=$(git log --oneline "$commit_range" | \
-		awk '{print $(NF-1)}' | grep -i -m 1 "$subject")
+		grep -i -m 1 "$subject")
 else
 	hash_subject=$(git log --author="$author" --oneline "$commit_range" | \
-		awk '{print $(NF-1)}' | grep -i -m 1 "$subject")
+		grep -i -m 1 "$subject")
 fi
 
 if [ "$hash_subject" = "" ]
