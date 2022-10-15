@@ -73,7 +73,7 @@ def main():
 
     new_description += 'Signed-off-by: %s <%s>\n' % (user_name, user_email)
     if 'cherry-pick' in upstream_commit_comment_styles:
-        new_description += cherry_pick_comment'\n'
+        new_description += cherry_pick_comment' + \n'
     new_patch = '---\n'.join([new_description] + description_diff[1:])
 
     print(new_patch)
