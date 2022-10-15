@@ -14,11 +14,6 @@ pr_usage()
 	exit 1
 }
 
-if [ $# -lt 2 ]
-then
-	pr_usage
-fi
-
 hash_only="false"
 while [ $# -ne 0 ]
 do
@@ -56,6 +51,10 @@ do
 	esac
 done
 
+if [ $# -ne 1 ]
+then
+	pr_usage
+fi
 commit_range=$1
 
 if [ "$commit_to_find" = "" ] && [ "$title_to_find" = "" ]
