@@ -50,7 +50,9 @@ def main():
     commit_hash = subprocess.check_output([find_commit_in, '--author' author,
         '--title', subject, args.upstream_remote]).decode().strip()
     if commit_hash == '':
-        print('upstream commit not found')
+        print('upstream commit for %s of %s not found' % (subject, author),
+                file=sys.stderr)
+        print(patch_content)
         exit(1)
 
     if args.upstream_commit_comment_style == 'all':
