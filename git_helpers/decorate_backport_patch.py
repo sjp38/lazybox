@@ -36,9 +36,9 @@ def main():
             exit(0)
 
     bindir = os.path.dirname(sys.argv[0])
-    __find_commit_in = os.path.join(bindir, '__find_commit_in.sh')
-    commit_hash = subprocess.check_output([__find_commit_in, author,
-        subject, args.upstream_remote]).decode().strip()
+    find_commit_in = os.path.join(bindir, 'find_commit_in.sh')
+    commit_hash = subprocess.check_output([find_commit_in, '--author' author,
+        '--title', subject, args.upstream_remote]).decode().strip()
     if commit_hash == '':
         print('upstream commit not found')
         exit(1)
