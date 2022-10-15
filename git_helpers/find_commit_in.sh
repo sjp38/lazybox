@@ -102,6 +102,11 @@ else
 		grep -i -m 1 "$subject")
 fi
 
+if [ "$hash_subject" = "" ]
+then
+	exit 1
+fi
+
 if [ "$hash_only" = "true" ]
 then
 	simple_hash=$(echo "$hash_subject" | awk '{print $1}')
