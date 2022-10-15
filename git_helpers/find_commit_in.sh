@@ -2,13 +2,14 @@
 
 pr_usage()
 {
-	echo "Usage: $0 [OPTION]... <commit> <commit range>"
+	echo "Usage: $0 [OPTION]... <commit range>"
 	echo
 	echo "	Find a commit in <commit range> that has the author name and"
 	echo "	subject of <commit>"
 	echo
 	echo "OPTION"
 	echo "  --hash_only	Print hash only"
+	echo "  --commit <hash>	Hash of the commit to find"
 	exit 1
 }
 
@@ -26,8 +27,17 @@ do
 		shift 1
 		continue
 		;;
+	"--commit")
+		if [ $# -lt 2 ]
+		then
+			pr_usage
+		fi
+		commit_to_find=$2
+		shift 2
+		continue
+		;;
 	*)
-		if [ $# -ne 2 ]
+		if [ $# -ne 1 ]
 		then
 			pr_usage
 		fi
@@ -36,8 +46,13 @@ do
 	esac
 done
 
-commit_to_find=$1
-commit_range=$2
+commit_range=$1
+
+if [ "$commit_to_find" = "" ]
+then
+	echo "--commit should given"
+	pr_usage
+fi
 
 author=$(git log -n 1 "$commit_to_find" --pretty=%an)
 subject=$(git log -n 1 "$commit_to_find" --pretty=%s)
