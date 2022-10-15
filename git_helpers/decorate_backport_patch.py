@@ -23,25 +23,39 @@ def main():
             help='git remote name of the upstream')
     args = parser.parse_args()
 
+    if args.upstream_commit_comment_style == 'all':
+        upstream_commit_comment_styles = ['stable', 'cherry-pick']
+    else:
+        upstream_commit_comment_styles = [args.upstream_commit_comment_style]
+
     with open(args.patch, 'r') as f:
         patch_content = f.read()
 
+    # get description and the diff of the patch
     description_diff = patch_content.split('---\n')
     description = description_diff[0]
+    diff = '---\n'.join(description_diff[1:])
+
+    # find author and subject of the patch from the description
     author = None
     subject = None
-    for line in description.split('\n'):
+    # description paragraphs
+    desc_pars = description.split('\n\n')
+    email_header = desc_pars[0]
+    for line in email_header.split('\n'):
         if line.startswith('From: '):
             author = line.split('From: ')[1].strip()
         if line.startswith('Subject: [PATCH'):
             subject_fields = line.split(']')[1:]
             subject = ']'.join(subject_fields).strip()
     if author == None or subject == None:
-        print('author and subject are not found')
+        print('Patch (%s) has no author and subject' % args.patch,
+                file=sys.stderr)
         exit(1)
 
-    bindir = os.path.dirname(sys.argv[0])
-    find_commit_in = os.path.join(bindir, 'find_commit_in.sh')
+    # find the upstream commit of the patch
+    find_commit_in = os.path.join(os.path.dirname(sys.argv[0]),
+        'find_commit_in.sh')
     commit_hash = subprocess.check_output([find_commit_in, '--author' author,
         '--title', subject, args.upstream_remote]).decode().strip()
     if commit_hash == '':
@@ -50,21 +64,16 @@ def main():
         print(patch_content)
         exit(1)
 
-    if args.upstream_commit_comment_style == 'all':
-        upstream_commit_comment_styles = ['stable', 'cherry-pick']
-    else:
-        upstream_commit_comment_styles = [args.upstream_commit_comment_style]
-
-    upstream_commit_line = 'commit %s upstream.' % commit_hash
+    # format the patch
     cherry_pick_comment = '(cherry picked from commit %s)' % commit_hash
 
-    header_msgs = description.split('\n\n')
+    # new description paragraphs
+    new_desc_pars = [email_header]
 
     if 'stable' in upstream_commit_comment_styles:
-        new_description = '\n\n'.join([header_msgs[0], upstream_commit_line] +
-            header_msgs[1:])
-    else:
-        new_description = '\n\n'.join([header_msgs[0]] + header_msgs[1:])
+        new_desc_pars.append('commit %s upstream.' % commit_hash)
+    new_desc_pars.append(desc_pars[1:])
+    new_desc = '\n\n'.join(new_desc_pars)
 
     user_name = subprocess.check_output(
             'git config --get user.name'.split()).decode().strip()
@@ -72,11 +81,11 @@ def main():
             'git config --get user.email'.split()).decode().strip()
     signed_off_by_line = 'Signed-off-by: %s <%s>' % (user_name, user_email)
 
-    if new_description.split('\n')[-1] != signed_off_by_line:
-        new_description += signed_off_by_line + '\n'
+    if new_desc.split('\n')[-1] != signed_off_by_line:
+        new_desc += '%s\n' % signed_off_by_line
     if 'cherry-pick' in upstream_commit_comment_styles:
-        new_description += cherry_pick_comment' + \n'
-    new_patch = '---\n'.join([new_description] + description_diff[1:])
+        new_desc += '(cherry picked from commit %s)\n'
+    new_patch = '---\n'.join([new_desc, diff])
 
     print(new_patch)
 
