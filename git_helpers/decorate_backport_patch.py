@@ -19,8 +19,8 @@ def main():
             help='style of comment for upstream commit')
     parser.add_argument('patch', metavar='<file>',
             help='patch file to add the upstream commit line')
-    parser.add_argument('upstream_remote', metavar='<remote>',
-            help='git remote name of the upstream')
+    parser.add_argument('upstream_remote', metavar='<remote tree>',
+            help='git reference for the upstream tree')
     args = parser.parse_args()
 
     if args.upstream_commit_comment_style == 'all':
