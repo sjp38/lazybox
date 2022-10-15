@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 if [ $# -ne 3 ]
 then
 	echo "Usage: $0 <first commit> <last commit> <upstream remote name>"
