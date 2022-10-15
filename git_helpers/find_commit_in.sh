@@ -10,6 +10,7 @@ pr_usage()
 	echo "OPTION"
 	echo "  --hash_only	Print hash only"
 	echo "  --commit <hash>	Hash of the commit to find"
+	echo "  --title <title>	Title of the commit to find"
 	exit 1
 }
 
@@ -36,6 +37,15 @@ do
 		shift 2
 		continue
 		;;
+	"--title")
+		if [ $# -lt 2 ]
+		then
+			pr_usage
+		fi
+		title_to_find=$2
+		shift 2
+		continue
+		;;
 	*)
 		if [ $# -ne 1 ]
 		then
@@ -48,17 +58,25 @@ done
 
 commit_range=$1
 
-if [ "$commit_to_find" = "" ]
+if [ "$commit_to_find" = "" ] && [ "$title_to_find" = "" ]
 then
-	echo "--commit should given"
+	echo "--commit or --title should given"
 	pr_usage
 fi
 
-author=$(git log -n 1 "$commit_to_find" --pretty=%an)
-subject=$(git log -n 1 "$commit_to_find" --pretty=%s)
+if [ "$title_to_find" = "" ]
+then
+	author=$(git log -n 1 "$commit_to_find" --pretty=%an)
+	subject=$(git log -n 1 "$commit_to_find" --pretty=%s)
+	hash_subject=$(git log --author="$author" --oneline "$commit_range" | \
+		grep -i -m 1 "$subject")
 
-hash_subject=$(git log --author="$author" --oneline "$commit_range" | \
-	grep -i -m 1 "$subject")
+else
+	subject="$title_to_find"
+	hash_subject=$(git log --oneline "$commit_range" | \
+		grep -i -m 1 "$subject")
+fi
+
 if [ "$hash_only" = "true" ]
 then
 	simple_hash=$(echo "$hash_subject" | awk '{print $1}')
