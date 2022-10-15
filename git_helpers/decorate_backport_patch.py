@@ -70,8 +70,10 @@ def main():
             'git config --get user.name'.split()).decode().strip()
     user_email = subprocess.check_output(
             'git config --get user.email'.split()).decode().strip()
+    signed_off_by_line = 'Signed-off-by: %s <%s>' % (user_name, user_email)
 
-    new_description += 'Signed-off-by: %s <%s>\n' % (user_name, user_email)
+    if new_description.split('\n')[-1] != signed_off_by_line:
+        new_description += signed_off_by_line + '\n'
     if 'cherry-pick' in upstream_commit_comment_styles:
         new_description += cherry_pick_comment' + \n'
     new_patch = '---\n'.join([new_description] + description_diff[1:])
