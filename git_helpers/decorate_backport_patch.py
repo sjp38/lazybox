@@ -40,11 +40,6 @@ def main():
         print('author and subject are not found')
         exit(1)
 
-    if subject.startswith('resolve conflict'):
-        with open(args.patch + '.new', 'w') as f:
-            f.write(patch_content)
-            exit(0)
-
     bindir = os.path.dirname(sys.argv[0])
     find_commit_in = os.path.join(bindir, 'find_commit_in.sh')
     commit_hash = subprocess.check_output([find_commit_in, '--author' author,
