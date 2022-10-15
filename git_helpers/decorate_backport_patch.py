@@ -56,7 +56,7 @@ def main():
     # find the upstream commit of the patch
     find_commit_in = os.path.join(os.path.dirname(sys.argv[0]),
         'find_commit_in.sh')
-    commit_hash = subprocess.check_output([find_commit_in, '--author' author,
+    commit_hash = subprocess.check_output([find_commit_in, '--author', author,
         '--title', subject, args.upstream_remote]).decode().strip()
     if commit_hash == '':
         print('upstream commit for %s of %s not found' % (subject, author),
