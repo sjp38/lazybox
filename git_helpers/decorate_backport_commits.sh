@@ -26,12 +26,17 @@ do
 		"$after_patches_dir/$patch_name"
 done
 
+head_commit=$(git rev-parse HEAD)
+commits_to_restore="${last_commit}..${head_commit}"
+
 git reset --hard "$first_commit"
 
 for patch in "$after_patches_dir"/*.patch
 do
 	git am "$patch"
 done
+
+git cherry-pick "$commits_to_restore"
 
 echo "original patches are in $before_patches_dir"
 echo "decorated patches are in $after_patches_dir"
