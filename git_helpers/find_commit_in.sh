@@ -1,7 +1,16 @@
 #!/bin/bash
 
-pr_usage()
+pr_usage_exit()
 {
+	message=$1
+	exit_code=$2
+
+	if [ ! "$message" = "" ]
+	then
+		echo
+		echo "$message"
+		echo
+	fi
 	echo "Usage: $0 [OPTION]... <commit range>"
 	echo
 	echo "	Find a commit in <commit range> that has the author name and"
@@ -11,7 +20,7 @@ pr_usage()
 	echo "  --hash_only	Print hash only"
 	echo "  --commit <hash>	Hash of the commit to find"
 	echo "  --title <title>	Title of the commit to find"
-	exit 1
+	exit $exit_code
 }
 
 hash_only="false"
@@ -26,7 +35,7 @@ do
 	"--commit")
 		if [ $# -lt 2 ]
 		then
-			pr_usage
+			pr_usage_exit "--commit wrong" 1
 		fi
 		commit_to_find=$2
 		shift 2
@@ -35,7 +44,7 @@ do
 	"--title")
 		if [ $# -lt 2 ]
 		then
-			pr_usage
+			pr_usage_exit "--title wrong" 1
 		fi
 		title_to_find=$2
 		shift 2
@@ -44,7 +53,7 @@ do
 	*)
 		if [ $# -ne 1 ]
 		then
-			pr_usage
+			pr_usage_exit "should have <commit range>" 1
 		fi
 		break
 		;;
@@ -53,14 +62,13 @@ done
 
 if [ $# -ne 1 ]
 then
-	pr_usage
+	pr_usage_exit "should have <commit range>" 1
 fi
 commit_range=$1
 
 if [ "$commit_to_find" = "" ] && [ "$title_to_find" = "" ]
 then
-	echo "--commit or --title should given"
-	pr_usage
+	pr_usage_exit "--commit or --title should given" 1
 fi
 
 if [ "$title_to_find" = "" ]
