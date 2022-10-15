@@ -82,7 +82,7 @@ def main():
             'git config --get user.email'.split()).decode().strip()
     signed_off_by_line = 'Signed-off-by: %s <%s>' % (user_name, user_email)
 
-    if new_desc.split('\n')[-1] != signed_off_by_line:
+    if new_desc.strip().split('\n')[-1] != signed_off_by_line:
         new_desc += '%s\n' % signed_off_by_line
     if 'cherry-pick' in upstream_commit_comment_styles:
         new_desc += '(cherry picked from commit %s)\n'
