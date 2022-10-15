@@ -6,6 +6,9 @@ pr_usage()
 	echo
 	echo "	Find a commit in <commit range> that has the author name and"
 	echo "	subject of <commit>"
+	echo
+	echo "OPTION"
+	echo "  --hash_only	Print hash only"
 	exit 1
 }
 
