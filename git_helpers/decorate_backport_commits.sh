@@ -24,8 +24,12 @@ after_patches_dir=$(mktemp -d after_patches-XXXX)
 for patch in "$before_patches_dir"/*.patch
 do
 	patch_name=$(basename $patch)
-	"$bindir/decorate_backport_patch.py" "$patch" "$remote" > \
+	if ! "$bindir/decorate_backport_patch.py" "$patch" "$remote" > \
 		"$after_patches_dir/$patch_name"
+	then
+		echo "decoration failed, maybe not backported one, no problem"
+	fi
+
 done
 
 head_commit=$(git rev-parse HEAD)
