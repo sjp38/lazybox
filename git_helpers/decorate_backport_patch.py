@@ -63,7 +63,7 @@ def main():
     except:
         print('upstream commit for %s of %s not found' % (subject, author),
                 file=sys.stderr)
-        print(patch_content)
+        sys.stdout.write(patch_content)
         exit(1)
 
     # format the patch
@@ -89,7 +89,7 @@ def main():
         new_desc += '(cherry picked from commit %s)\n'
     new_patch = '---\n'.join([new_desc, diff])
 
-    print(new_patch)
+    sys.stdout.write(new_patch)
 
 if __name__ == '__main__':
     main()
