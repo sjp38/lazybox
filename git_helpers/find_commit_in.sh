@@ -17,9 +17,10 @@ pr_usage_exit()
 	echo "	subject of <commit>"
 	echo
 	echo "OPTION"
-	echo "  --hash_only	Print hash only"
-	echo "  --commit <hash>	Hash of the commit to find"
-	echo "  --title <title>	Title of the commit to find"
+	echo "  --hash_only		Print hash only"
+	echo "  --commit <hash>		Hash of the commit to find"
+	echo "  --title <title>		Title of the commit to find"
+	echo "  --author <author>	Author of the commit to find"
 	exit $exit_code
 }
 
@@ -50,6 +51,15 @@ do
 		shift 2
 		continue
 		;;
+	"--author")
+		if [ $# -lt 2 ]
+		then
+			pr_usage_exit "<author> is not given" 1
+		fi
+		author=$2
+		shift 2
+		continue
+		;;
 	*)
 		if [ $# -ne 1 ]
 		then
@@ -73,14 +83,22 @@ fi
 
 if [ "$title_to_find" = "" ]
 then
-	author=$(git log -n 1 "$commit_to_find" --pretty=%an)
 	subject=$(git log -n 1 "$commit_to_find" --pretty=%s)
-	hash_subject=$(git log --author="$author" --oneline "$commit_range" | \
-		grep -i -m 1 "$subject")
-
 else
 	subject="$title_to_find"
+fi
+
+if [ "$author" = "" ] && [ ! "$commit_to_find" = "" ]
+then
+	author=$(git log -n 1 "$commit_to_find" --pretty=%an)
+fi
+
+if [ "$author" = "" ]
+then
 	hash_subject=$(git log --oneline "$commit_range" | \
+		grep -i -m 1 "$subject")
+else
+	hash_subject=$(git log --author="$author" --oneline "$commit_range" | \
 		grep -i -m 1 "$subject")
 fi
 
