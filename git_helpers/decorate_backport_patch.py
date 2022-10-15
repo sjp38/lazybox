@@ -56,8 +56,9 @@ def main():
     # find the upstream commit of the patch
     find_commit_in = os.path.join(os.path.dirname(sys.argv[0]),
         'find_commit_in.sh')
-    commit_hash = subprocess.check_output([find_commit_in, '--author', author,
-        '--title', subject, args.upstream_remote]).decode().strip()
+    commit_hash = subprocess.check_output([find_commit_in, '--hash_only',
+        '--author', author, '--title', subject,
+        args.upstream_remote]).decode().strip()
     if commit_hash == '':
         print('upstream commit for %s of %s not found' % (subject, author),
                 file=sys.stderr)
@@ -72,7 +73,7 @@ def main():
 
     if 'stable' in upstream_commit_comment_styles:
         new_desc_pars.append('commit %s upstream.' % commit_hash)
-    new_desc_pars.append(desc_pars[1:])
+    new_desc_pars += desc_pars[1:]
     new_desc = '\n\n'.join(new_desc_pars)
 
     user_name = subprocess.check_output(
