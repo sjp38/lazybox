@@ -18,16 +18,18 @@ remote=$3
 commit_range="${first_commit}..${last_commit}"
 
 before_patches_dir=$(mktemp -d before_patches-XXXX)
-git format-patch "$commit_range" -o "$before_patches_dir"
+echo "convert $commit_range into patches under \"$before_patches_dir/\""
+git format-patch "$commit_range" -o "$before_patches_dir" --quiet
 
 after_patches_dir=$(mktemp -d after_patches-XXXX)
 for patch in "$before_patches_dir"/*.patch
 do
+	echo "decorate $patch"
 	patch_name=$(basename $patch)
 	if ! "$bindir/decorate_backport_patch.py" "$patch" "$remote" > \
-		"$after_patches_dir/$patch_name"
+		"$after_patches_dir/$patch_name" 2> /dev/null
 	then
-		echo "decoration failed, maybe not backported one, no problem"
+		echo "	decoration failed, maybe not a backported one"
 	fi
 
 done
@@ -35,6 +37,7 @@ done
 head_commit=$(git rev-parse HEAD)
 commits_to_restore="${last_commit}..${head_commit}"
 
+echo "reset HEAD and apply decorated patches"
 git reset --hard "$first_commit"
 
 for patch in "$after_patches_dir"/*.patch
@@ -42,6 +45,7 @@ do
 	git am "$patch"
 done
 
+echo "apply after $last_commit commits ($commits_to_restore)"
 git cherry-pick "$commits_to_restore"
 
 echo "original patches are in $before_patches_dir"
