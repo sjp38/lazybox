@@ -32,3 +32,6 @@ for patch in "$after_patches_dir"/*.patch
 do
 	git am "$patch"
 done
+
+echo "original patches are in $before_patches_dir"
+echo "decorated patches are in $after_patches_dir"
