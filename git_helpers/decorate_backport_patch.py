@@ -7,6 +7,16 @@ import os
 
 def main():
     parser = argparse.ArgumentParser()
+    '''
+    'stable' style adds 'commit xxx upstream.' at the beginning.  Very same to
+    the usual stable commits.
+    'cherry-pick' style adds '(cherry picked from commit xxx' at the end.  Very
+    same to the 'git cherry-pick -x'.
+    'both' adds two styles of the comments.
+    '''
+    parser.add_argument('--upstream_commit_comment_style',
+            choices=['stable', 'cherry-pick', 'all'], default='stable',
+            help='style of comment for upstream commit')
     parser.add_argument('patch', metavar='<file>',
             help='patch file to add the upstream commit line')
     parser.add_argument('upstream_remote', metavar='<remote>',
@@ -42,11 +52,22 @@ def main():
     if commit_hash == '':
         print('upstream commit not found')
         exit(1)
+
+    if args.upstream_commit_comment_style == 'all':
+        upstream_commit_comment_styles = ['stable', 'cherry-pick']
+    else:
+        upstream_commit_comment_styles = [args.upstream_commit_comment_style]
+
     upstream_commit_line = 'commit %s upstream.' % commit_hash
+    cherry_pick_comment = '(cherry picked from commit %s)' % commit_hash
 
     header_msgs = description.split('\n\n')
-    new_description = '\n\n'.join([header_msgs[0], upstream_commit_line] +
-        header_msgs[1:])
+
+    if 'stable' in upstream_commit_comment_styles:
+        new_description = '\n\n'.join([header_msgs[0], upstream_commit_line] +
+            header_msgs[1:])
+    else:
+        new_description = '\n\n'.join([header_msgs[0]] + header_msgs[1:])
 
     user_name = subprocess.check_output(
             'git config --get user.name'.split()).decode().strip()
@@ -54,6 +75,8 @@ def main():
             'git config --get user.email'.split()).decode().strip()
 
     new_description += 'Signed-off-by: %s <%s>\n' % (user_name, user_email)
+    if 'cherry-pick' in upstream_commit_comment_styles:
+        new_description += cherry_pick_comment'\n'
     new_patch = '---\n'.join([new_description] + description_diff[1:])
 
     print(new_patch)
