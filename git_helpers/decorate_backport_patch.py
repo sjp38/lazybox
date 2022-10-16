@@ -15,7 +15,9 @@ class Patch:
     def decorate_for_backport(self, upstream_commit, comment_styles):
         texts_to_join = []
         if 'stable' in comment_styles:
-            texts_to_join.append('commit %s upstream.\n' % upstream_commit)
+            comment_line = 'commit %s upstream.' % upstream_commit
+            if not comment_line in self.description_body.strip().split('\n'):
+                texts_to_join.append('%s\n' % comment_line)
 
         texts_to_join.append(self.description_body.strip())
 
@@ -28,8 +30,9 @@ class Patch:
             texts_to_join.append(signed_off_by_line)
 
         if 'cherry-pick' in comment_styles:
-            texts_to_join.append('(cherry picked from commit %s)' %
-                    upstream_commit)
+            comment_line = '(cherry picked from commit %s)' % upstream_commit
+            if not comment_line in self.description_body.strip().split('\n'):
+                texts_to_join.append(comment_line)
 
         self.description_body = '\n'.join(texts_to_join)
 
