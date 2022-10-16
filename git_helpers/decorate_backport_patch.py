@@ -54,9 +54,9 @@ class Patch:
         self.diff = '---\n'.join(description_diff[1:])
 
         # description paragraphs
-        desc_pars = description.split('\n\n')
+        desc_pars = self.description.split('\n\n')
         self.email_header = desc_pars[0]
-        self.desc_body = '\n\n'.join(desc_pars[1:])
+        self.description_body = '\n\n'.join(desc_pars[1:]).strip()
 
         for line in self.email_header.split('\n'):
             if line.startswith('From: '):
@@ -97,9 +97,9 @@ def main():
     try:
         commit_hash = patch.commit_in(args.upstream_remote)
     except:
-        print('upstream commit for %s of %s not found' % (subject, author),
-                file=sys.stderr)
-        sys.stdout.write(patch_content)
+        print('upstream commit for %s of %s not found' %
+                (patch.subject, patch.author), file=sys.stderr)
+        sys.stdout.write('%s' % patch)
         exit(1)
 
     patch.decorate_for_backport(commit_hash, upstream_commit_comment_styles)
