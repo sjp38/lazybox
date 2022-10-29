@@ -5,6 +5,7 @@ pr_usage()
 	echo "Usage: $0 [OPTION]... <cmd> <host>..."
 	echo
 	echo "OPTION"
+	echo "  --user <username>	Specify the ssh username to use"
 	echo "  --port <port>		Specify the ssh port to use"
 	echo "  --log_prefix <prefix>	Prefix of the log files"
 	echo "  --keep_log		Keep log files"
@@ -23,6 +24,7 @@ then
 	pr_usage_exit 1
 fi
 
+ssh_user=$USER
 ssh_port=22
 log_prefix=""
 keep_log="false"
@@ -30,6 +32,15 @@ keep_log="false"
 while [ $# -ne 0 ]
 do
 	case $1 in
+	"--user")
+		if [ $# -lt 2 ]
+		then
+			pr_usage_exit 1
+		fi
+		ssh_user=$2
+		shift 2
+		continue
+		;;
 	"--port")
 		if [ $# -lt 2 ]
 		then
@@ -78,9 +89,9 @@ do
 		log_file="$log_prefix"ssh_parallel_"$host"_"$date_str"
 		log_file=$(mktemp "$log_file"_XXXX)
 		log_files[$host]="$log_file"
-		ssh -p "$ssh_port" "$host" "$cmd" | tee "$log_file" &
+		ssh -p "$ssh_port" "$ssh_user@$host" "$cmd" | tee "$log_file" &
 	else
-		ssh -p "$ssh_port" "$host" "$cmd" &
+		ssh -p "$ssh_port" "$ssh_user@$host" "$cmd" &
 	fi
 done
 
