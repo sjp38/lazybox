@@ -30,6 +30,7 @@ def main():
 
     bindir = os.path.dirname(sys.argv[0])
     __find_commit_in = os.path.join(bindir, '__find_commit_in.sh')
+    timeline = {}
     for tree in args.trees:
         commit_hash = subprocess.check_output([__find_commit_in, author,
             subject, tree]).decode().strip()
@@ -38,14 +39,19 @@ def main():
         author_date = subprocess.check_output(['git', 'log', '-n', '1',
                 '--date=iso-strict', '--pretty=%ad',
                 commit_hash]).decode().strip()
+        author_name_mail = subprocess.check_output(['git', 'log', '-n', '1',
+                '--pretty=%an <%ae>', commit_hash]).decode().strip()
+        timeline[author_date] = 'authored by %s' % author_name_mail
+
         committer = subprocess.check_output(['git', 'log', '-n', '1',
-                '--pretty=%cn', commit_hash]).decode().strip()
+                '--pretty=%cn <%ce>', commit_hash]).decode().strip()
         commit_date = subprocess.check_output(['git', 'log', '-n', '1',
                 '--date=iso-strict', '--pretty=%cd',
                 commit_hash]).decode().strip()
+        timeline[commit_date] = 'committed by %s into %s' % (committer, tree)
 
-        print('authored in %s, committed by %s in %s to %s' % (author_date,
-            committer, commit_date, tree))
+    for date in sorted(timeline.keys()):
+        print('%s: %s' % (date, timeline[date]))
 
 if __name__ == '__main__':
     main()
