@@ -29,13 +29,14 @@ def main():
         author = args.author
 
     bindir = os.path.dirname(sys.argv[0])
-    __find_commit_in = os.path.join(bindir, '__find_commit_in.sh')
+    find_commit_in = os.path.join(bindir, 'find_commit_in.sh')
     timeline = {}
     for tree in args.trees:
-        commit_hash = subprocess.check_output([__find_commit_in, author,
-            subject, tree]).decode().strip()
+        commit_hash = subprocess.check_output([find_commit_in, '--hash_only',
+            '--author', author, '--title', subject, tree]).decode().strip()
         if commit_hash == '':
             continue
+
         author_date = subprocess.check_output(['git', 'log', '-n', '1',
                 '--date=iso-strict', '--pretty=%ad',
                 commit_hash]).decode().strip()
