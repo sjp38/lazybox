@@ -5,6 +5,13 @@ import os
 import subprocess
 import sys
 
+def append_event(timeline, date, event):
+    if not date in timeline:
+        timeline[date] = []
+    events = timeline[date]
+    if not event in events:
+        events.append(event)
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--subject', help='subject of the patch')
@@ -42,17 +49,20 @@ def main():
                 commit_hash]).decode().strip()
         author_name_mail = subprocess.check_output(['git', 'log', '-n', '1',
                 '--pretty=%an <%ae>', commit_hash]).decode().strip()
-        timeline[author_date] = 'authored by %s' % author_name_mail
+        append_event(timeline, author_date,
+                'authored by %s' % author_name_mail)
 
         committer = subprocess.check_output(['git', 'log', '-n', '1',
                 '--pretty=%cn <%ce>', commit_hash]).decode().strip()
         commit_date = subprocess.check_output(['git', 'log', '-n', '1',
                 '--date=iso-strict', '--pretty=%cd',
                 commit_hash]).decode().strip()
-        timeline[commit_date] = 'committed by %s into %s' % (committer, tree)
+        append_event(timeline, commit_date,
+                'committed by %s into %s' % (committer, tree))
 
     for date in sorted(timeline.keys()):
-        print('%s: %s' % (date, timeline[date]))
+        for event in timeline[date]:
+            print('%s: %s' % (date, event))
 
 if __name__ == '__main__':
     main()
