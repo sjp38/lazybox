@@ -64,7 +64,10 @@ def main():
 
     for date in sorted(timeline.keys()):
         for event in timeline[date]:
-            print('%s: %s' % (date, event))
+            date_simple = date.split('T')[0]
+            time = date.split('T')[1]
+            print(date_simple)
+            print('    %s: %s' % (time, event))
 
 if __name__ == '__main__':
     main()
