@@ -39,9 +39,11 @@ def main():
     find_commit_in = os.path.join(bindir, 'find_commit_in.sh')
     timeline = {}
     for tree in args.trees:
-        commit_hash = subprocess.check_output([find_commit_in, '--hash_only',
-            '--author', author, '--title', subject, tree]).decode().strip()
-        if commit_hash == '':
+        try:
+            commit_hash = subprocess.check_output([find_commit_in,
+                '--hash_only', '--author', author, '--title', subject,
+                tree]).decode().strip()
+        except:
             continue
 
         author_date = subprocess.check_output(['git', 'log', '-n', '1',
