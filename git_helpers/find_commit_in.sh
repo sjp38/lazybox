@@ -1,5 +1,23 @@
 #!/bin/bash
 
+find_commit_of_result=""
+find_commit_of()
+{
+	subject=$1
+	author=$2
+	commit_range=$3
+
+	if [ "$author" = "" ]
+	then
+		hash_subject=$(git log --oneline "$commit_range" | \
+			grep -i -m 1 "$subject")
+	else
+		hash_subject=$(git log --author "$author" --oneline \
+			"$commit_range" | grep -i -m 1 "$subject")
+	fi
+	find_commit_of_result=$hash_subject
+}
+
 pr_usage_exit()
 {
 	message=$1
@@ -93,14 +111,8 @@ then
 	author=$(git log -n 1 "$commit_to_find" --pretty=%an)
 fi
 
-if [ "$author" = "" ]
-then
-	hash_subject=$(git log --oneline "$commit_range" | \
-		grep -i -m 1 "$subject")
-else
-	hash_subject=$(git log --author="$author" --oneline "$commit_range" | \
-		grep -i -m 1 "$subject")
-fi
+find_commit_of "$subject" "$author" "$commit_range"
+hash_subject=$find_commit_of_result
 
 if [ "$hash_subject" = "" ]
 then
