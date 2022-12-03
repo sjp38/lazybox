@@ -5,16 +5,26 @@ find_commit_of()
 {
 	subject=$1
 	author=$2
-	commit_range=$3
+	author_date=$3
+	commit_range=$4
+
+	pretty="%h %s"
+	string_to_grep=$subject
+	if [ ! "$author_date" = "" ]
+	then
+		pretty+=" (%ad)"
+		string_to_grep+=" ($author_date)"
+	fi
 
 	if [ "$author" = "" ]
 	then
-		hash_subject=$(git log --oneline "$commit_range" | \
-			grep -i -m 1 "$subject")
+		hash_subject=$(git log --pretty="$pretty" "$commit_range" | \
+			grep -i -m 1 "$string_to_grep")
 	else
-		hash_subject=$(git log --author "$author" --oneline \
-			"$commit_range" | grep -i -m 1 "$subject")
+		hash_subject=$(git log --author "$author" --pretty="$pretty" \
+			"$commit_range" | grep -i -m 1 "$string_to_grep")
 	fi
+
 	find_commit_of_result=$hash_subject
 }
 
@@ -35,10 +45,11 @@ Find a commit in <commit range> that has the author name and subject of
 <commit>
 
 OPTION
-  --hash_only		Print hash only
-  --commit <hash>	Hash of the commit to find
-  --title <title>	Title of the commit to find
-  --author <author>	Author of the commit to find
+  --hash_only			Print hash only
+  --commit <hash>		Hash of the commit to find
+  --title <title>		Title of the commit to find
+  --author <author>		Author of the commit to find
+  --author_date <author_date>	Author date of the commit to find
 "
 	exit $exit_code
 }
@@ -79,6 +90,15 @@ do
 		shift 2
 		continue
 		;;
+	"--author_date")
+		if [ $# -lt 2 ]
+		then
+			pr_usage_exit "<author_date> is not given" 1
+		fi
+		author_date=$2
+		shift 2
+		continue
+		;;
 	*)
 		if [ $# -ne 1 ]
 		then
@@ -112,7 +132,12 @@ then
 	author=$(git log -n 1 "$commit_to_find" --pretty=%an)
 fi
 
-find_commit_of "$subject" "$author" "$commit_range"
+if [ "$author_date" = "" ] && [ ! "$commit_to_find" = "" ]
+then
+	author_date=$(git log -n 1 "$commit_to_find" --pretty=%ad)
+fi
+
+find_commit_of "$subject" "$author" "$author_date" "$commit_range"
 hash_subject=$find_commit_of_result
 
 if [ "$hash_subject" = "" ]
