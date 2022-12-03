@@ -27,18 +27,19 @@ pr_usage_exit()
 	then
 		echo
 		echo "$message"
-		echo
 	fi
-	echo "Usage: $0 [OPTION]... <commit range>"
-	echo
-	echo "	Find a commit in <commit range> that has the author name and"
-	echo "	subject of <commit>"
-	echo
-	echo "OPTION"
-	echo "  --hash_only		Print hash only"
-	echo "  --commit <hash>		Hash of the commit to find"
-	echo "  --title <title>		Title of the commit to find"
-	echo "  --author <author>	Author of the commit to find"
+	echo "
+Usage: $0 [OPTION]... <commit range>
+
+Find a commit in <commit range> that has the author name and subject of
+<commit>
+
+OPTION
+  --hash_only		Print hash only
+  --commit <hash>	Hash of the commit to find
+  --title <title>	Title of the commit to find
+  --author <author>	Author of the commit to find
+"
 	exit $exit_code
 }
 
