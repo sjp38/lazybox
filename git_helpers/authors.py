@@ -64,10 +64,10 @@ def parse_git_output_by_lines(git_output, author_identity):
         if not author in authors:
             authors[author] = 0
         changes_fields = lines[idx + 2].strip().split()
-        for idx, field in enumerate(changes_fields):
+        for idx2, field in enumerate(changes_fields):
             if field in ['insertions(+),', 'insertions(+)', 'deletions(-)',
                     'insertion(+),', 'insertion(+)', 'deletion(-)']:
-                authors[author] += int(changes_fields[idx - 1])
+                authors[author] += int(changes_fields[idx2 - 1])
     return authors
 
 def parse_git_output(git_output, sortby, author_identity):
