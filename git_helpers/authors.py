@@ -108,6 +108,8 @@ def files_for_linux_subsystems(repo, subsystems):
 def get_authors(args):
     cmd = ('git -C %s log' % args.repo).split()
     cmd.append('--pretty=%an <%ae>')
+    if args.commits_range:
+        cmd.append('%s' % args.commits_range)
     if args.since:
         cmd.append('--since=%s' % args.since)
     if args.until:
@@ -157,6 +159,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('repo', metavar='<dir>',
             help='git repositories to get the stat from')
+    parser.add_argument('--commits_range', metavar='<commits range>',
+            help='git commits range to get the stat from')
     parser.add_argument('--files', nargs='+', metavar='<file>',
             help='authors for only the files')
     parser.add_argument('--linux_subsystems', nargs='+', metavar='<subsystem>',
