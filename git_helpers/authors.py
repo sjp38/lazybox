@@ -47,6 +47,7 @@ def parse_git_output_by_commits(git_output, author_identity):
 
 def parse_git_output_by_lines(git_output, author_identity):
     # example input is:
+    #     sj38.park@gmail.com <- empty commit
     #     sj38.park@gmail.com
     #
     #      1 file changed, 1 insertion(+), 1 deletion(-)
@@ -56,18 +57,26 @@ def parse_git_output_by_lines(git_output, author_identity):
 
     authors = {}
     lines = git_output.split('\n')
-    for idx in range(0, len(lines), 3):
-        if idx + 2 >= len(lines):
-            break
+    idx =0
+    while idx < len(lines):
         author = lines[idx].strip()
         author = author_id(author, author_identity)
+        if 'changed' in author:
+            print('changed in line %d (%s)' % (idx, author))
+            print('\n'.join(lines))
+            exit(0)
         if not author in authors:
             authors[author] = 0
+        if idx == len(lines) - 1 or lines[idx + 1] != '':
+            # empty commit
+            idx += 1
+            continue
         changes_fields = lines[idx + 2].strip().split()
         for idx2, field in enumerate(changes_fields):
             if field in ['insertions(+),', 'insertions(+)', 'deletions(-)',
                     'insertion(+),', 'insertion(+)', 'deletion(-)']:
                 authors[author] += int(changes_fields[idx2 - 1])
+        idx += 3
     return authors
 
 def parse_git_output(git_output, sortby, author_identity):
