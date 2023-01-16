@@ -11,7 +11,7 @@ linux_repo=$1
 echo "version	total	new"
 
 prev_nr_maintainers=0
-for major in 2.6 3 4 5
+for major in 2.6 3 4 5 6
 do
 	for minor in {1..40}
 	do
