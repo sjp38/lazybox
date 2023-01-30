@@ -45,16 +45,27 @@ class Patch:
             self.subject, remote_tree]).decode().strip()
 
     def __str__(self):
-        return '%s\n\n%s\n---\n%s' % (self.email_header, self.description_body,
-                self.diff)
+        if self.has_three_dash:
+            return '%s\n\n%s\n---\n%s' % (self.email_header, self.description_body,
+                    self.diff)
+        else:
+            return '%s\n\n%s\n\ndiff --git%s' % (self.email_header, self.description_body,
+                    self.diff)
 
     def __init__(self, filepath):
         with open(filepath, 'r') as f:
             patch_content = f.read()
 
-        description_diff = patch_content.split('---\n')
-        self.description = description_diff[0]
-        self.diff = '---\n'.join(description_diff[1:])
+        if '---\n' in patch_content:
+            description_diff = patch_content.split('---\n')
+            self.description = description_diff[0]
+            self.diff = '---\n'.join(description_diff[1:])
+            self.has_three_dash = True
+        else:
+            description_diff = patch_content.split('\ndiff --git')
+            self.description = description_diff[0]
+            self.diff = '\ndiff --git'.join(description_diff[1:])
+            self.has_three_dash = False
 
         # description paragraphs
         desc_pars = self.description.split('\n\n')
