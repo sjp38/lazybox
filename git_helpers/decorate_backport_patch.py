@@ -78,6 +78,8 @@ class Patch:
             if line.startswith('Subject: [PATCH'):
                 subject_fields = line.split(']')[1:]
                 self.subject = ']'.join(subject_fields).strip()
+            elif line.startswith('Subject: '):
+                self.subject = line[len('Subject: '):]
 
 def main():
     parser = argparse.ArgumentParser()
