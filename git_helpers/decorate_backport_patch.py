@@ -46,7 +46,7 @@ class Patch:
 
     def __str__(self):
         if self.has_three_dash:
-            return '%s\n\n%s\n---\n%s' % (self.email_header, self.description_body,
+            return '%s\n\n%s\n\n---\n%s' % (self.email_header, self.description_body,
                     self.diff)
         else:
             return '%s\n\n%s\n\ndiff --git%s' % (self.email_header, self.description_body,
@@ -56,10 +56,10 @@ class Patch:
         with open(filepath, 'r') as f:
             patch_content = f.read()
 
-        if '---\n' in patch_content:
-            description_diff = patch_content.split('---\n')
+        if '\n---\n' in patch_content:
+            description_diff = patch_content.split('\n---\n')
             self.description = description_diff[0]
-            self.diff = '---\n'.join(description_diff[1:])
+            self.diff = '\n---\n'.join(description_diff[1:])
             self.has_three_dash = True
         else:
             description_diff = patch_content.split('\ndiff --git')
