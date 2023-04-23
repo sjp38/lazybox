@@ -50,11 +50,13 @@ OPTION
   --title <title>		Title of the commit to find
   --author <author>		Author of the commit to find
   --author_date <author_date>	Author date of the commit to find
+  --repo <dir>			Path to the local git repo
 "
 	exit $exit_code
 }
 
 hash_only="false"
+repo="./"
 while [ $# -ne 0 ]
 do
 	case $1 in
@@ -99,6 +101,15 @@ do
 		shift 2
 		continue
 		;;
+	"--repo")
+		if [ $# -lt 2 ]
+		then
+			pr_usage_exit "<dir> is not given" 1
+		fi
+		repo=$2
+		shift 2
+		continue
+		;;
 	*)
 		if [ $# -ne 1 ]
 		then
@@ -119,6 +130,8 @@ if [ "$commit_to_find" = "" ] && [ "$title_to_find" = "" ]
 then
 	pr_usage_exit "--commit or --title should given" 1
 fi
+
+cd "$repo"
 
 if [ "$title_to_find" = "" ]
 then
