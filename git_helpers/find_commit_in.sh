@@ -135,7 +135,12 @@ cd "$repo"
 
 if [ "$title_to_find" = "" ]
 then
-	subject=$(git log -n 1 "$commit_to_find" --pretty=%s)
+	subject=$(git log -n 1 "$commit_to_find" --pretty=%s 2> /dev/null)
+	if [ "$subject" = "" ]
+	then
+		echo "wrong commit id ($commit_to_find)"
+		exit 1
+	fi
 else
 	subject="$title_to_find"
 fi
