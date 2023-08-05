@@ -9,7 +9,7 @@ def main():
     parser.add_argument('patch', metavar='<file>',
             help='patch file to read')
     parser.add_argument('fields', choices=['subject', 'date', 'author',
-        'mail_header', 'description', 'diff'],
+        'mail_header', 'description', 'diff', 'fixes'],
             nargs='+',
             help='fields to read from the patch')
     args = parser.parse_args()
@@ -28,6 +28,8 @@ def main():
             print(patch.description_body)
         elif field == 'diff':
             print(patch.diff)
+        elif field == 'fixes':
+            print('\n'.join(patch.fixes))
 
 if __name__ == '__main__':
     main()
