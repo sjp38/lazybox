@@ -53,6 +53,10 @@ class Patch:
             return '%s\n\n%s\n\ndiff --git%s' % (self.email_header, self.description_body,
                     self.diff)
 
+    def __eq__(self, other):
+        return (type(self) == type(other) and self.author == other.author and
+                self.subject == other.subject and self.fixes == other.fixes)
+
     def __init__(self, filepath):
         with open(filepath, 'r') as f:
             patch_content = f.read()
