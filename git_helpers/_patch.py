@@ -82,3 +82,7 @@ class Patch:
                 self.subject = ']'.join(subject_fields).strip()
             elif line.startswith('Subject: '):
                 self.subject = line[len('Subject: '):]
+
+        for line in self.description_body.split('\n'):
+            if line.startswith ('From: '):
+                self.author = line.split('From: ')[1].strip()
