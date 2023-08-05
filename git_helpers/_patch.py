@@ -42,7 +42,7 @@ class Patch:
                 'find_commit_in.sh')
         return subprocess.check_output([find_commit_in,
             '--hash_only', '--author', self.author, '--title', self.subject,
-            '--author_date', self.date, remote_tree]).decode().strip()
+            remote_tree]).decode().strip()
 
     def __str__(self):
         if self.has_three_dash:
