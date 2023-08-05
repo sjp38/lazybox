@@ -76,7 +76,7 @@ class Patch:
             if line.startswith('From: '):
                 self.author = line.split('From: ')[1].strip()
             if line.startswith('Date: '):
-                slef.date = line.split('Date: ')[1].strip()
+                self.date = line.split('Date: ')[1].strip()
             if line.startswith('Subject: [PATCH'):
                 subject_fields = line.split(']')[1:]
                 self.subject = ']'.join(subject_fields).strip()
