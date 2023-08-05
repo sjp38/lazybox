@@ -11,6 +11,7 @@ class Patch:
     author = None
     subject = None
     date = None
+    fixes = None
 
     def decorate_for_backport(self, upstream_commit, comment_styles):
         texts_to_join = []
@@ -83,6 +84,9 @@ class Patch:
             elif line.startswith('Subject: '):
                 self.subject = line[len('Subject: '):]
 
+        self.fixes = []
         for line in self.description_body.split('\n'):
             if line.startswith ('From: '):
                 self.author = line.split('From: ')[1].strip()
+            if line.startswith('Fixes: '):
+                self.fixes.append(line[len('Fixes: '):].strip())
