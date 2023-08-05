@@ -111,20 +111,16 @@ do
 		continue
 		;;
 	*)
-		if [ $# -ne 1 ]
+		if [ ! "$commit_range" = "" ]
 		then
-			pr_usage_exit "should have <commit range>" 1
+			pr_usage_exit "multiple <commit range>" 1
 		fi
-		break
+		commit_range=$1
+		shift 1
+		continue
 		;;
 	esac
 done
-
-if [ $# -ne 1 ]
-then
-	pr_usage_exit "should have <commit range>" 1
-fi
-commit_range=$1
 
 if [ "$commit_to_find" = "" ] && [ "$title_to_find" = "" ]
 then
