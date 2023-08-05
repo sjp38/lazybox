@@ -14,7 +14,8 @@ def main():
 
     patch = _patch.Patch(args.patch)
     try:
-        print(patch.commit_in(args.commits))
+        print('%s ("%s")' %
+                (patch.commit_in(args.commits)[:12], patch.subject))
     except:
         # not found
         exit(1)
