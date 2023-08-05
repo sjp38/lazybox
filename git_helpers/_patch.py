@@ -37,13 +37,16 @@ class Patch:
 
         self.description_body = '\n'.join(texts_to_join)
 
-    def commit_in(self, remote_tree):
+    def commit_in(self, remote_tree, repo=None):
         # find the upstream commit of the patch
         find_commit_in = os.path.join(os.path.dirname(sys.argv[0]),
                 'find_commit_in.sh')
-        return subprocess.check_output([find_commit_in,
-            '--hash_only', '--author', self.author, '--title', self.subject,
-            remote_tree]).decode().strip()
+        cmd = [find_commit_in, '--hash_only', '--author', self.author,
+                '--title', self.subject, remote_tree]
+        if repo != None:
+            cmd += ['--repo', repo]
+
+        return subprocess.check_output(cmd).decode().strip()
 
     def __str__(self):
         if self.has_three_dash:
