@@ -2,7 +2,7 @@
 
 import argparse
 
-import decorate_backport_patch
+import _patch
 
 def main():
     parser = argparse.ArgumentParser()
@@ -12,7 +12,7 @@ def main():
             help='commits range to find patch in')
     args = parser.parse_args()
 
-    patch = decorate_backport_patch.Patch(args.patch)
+    patch = _patch.Patch(args.patch)
     try:
         print(patch.commit_in(args.commits))
     except:
