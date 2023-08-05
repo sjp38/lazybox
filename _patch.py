@@ -10,6 +10,7 @@ class Patch:
     diff = None
     author = None
     subject = None
+    date = None
 
     def decorate_for_backport(self, upstream_commit, comment_styles):
         texts_to_join = []
@@ -40,8 +41,8 @@ class Patch:
         find_commit_in = os.path.join(os.path.dirname(sys.argv[0]),
                 'find_commit_in.sh')
         return subprocess.check_output([find_commit_in,
-            '--hash_only', '--author', self.author, '--title',
-            self.subject, remote_tree]).decode().strip()
+            '--hash_only', '--author', self.author, '--title', self.subject,
+            '--author_date', self.date, remote_tree]).decode().strip()
 
     def __str__(self):
         if self.has_three_dash:
@@ -74,6 +75,8 @@ class Patch:
         for line in self.email_header.split('\n'):
             if line.startswith('From: '):
                 self.author = line.split('From: ')[1].strip()
+            if line.startswith('Date: '):
+                slef.date = line.split('Date: ')[1].strip()
             if line.startswith('Subject: [PATCH'):
                 subject_fields = line.split(']')[1:]
                 self.subject = ']'.join(subject_fields).strip()
