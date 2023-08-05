@@ -61,8 +61,8 @@ class Patch:
                 self.subject == other.subject and self.fixes == other.fixes)
 
     def __init__(self, filepath):
-        with open(filepath, 'r') as f:
-            patch_content = f.read()
+        with open(filepath, 'rb') as f:
+            patch_content = f.read().decode(errors='replace')
 
         if '\n---\n' in patch_content:
             description_diff = patch_content.split('\n---\n')
