@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import subprocess
 
 class Change:
     subject = None
@@ -16,9 +17,9 @@ class Change:
                 self.author == other.author)
 
     def fixing(self, other, repo):
-        for buggy_change in fixing_changes:
+        for buggy_change in self.fixing_changes:
             if buggy_change.author == None and repo != None:
-                buggy_change.set_repo_and_missing_fields(repo)
+                buggy_change.commit.set_repo_and_missing_fields(repo)
             if buggy_change.maybe_same(other):
                 return True
         return False
