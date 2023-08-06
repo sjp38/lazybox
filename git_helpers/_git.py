@@ -98,8 +98,7 @@ class Patch:
                 # usual format is: Fixes: <hash 12 letter> ("<subject>")
                 fixes_content = line[len('Fixes: '):].strip()
                 commit_hash = fixes_content.split()[0]
-                fixing_changes.append(Commit(commit_hash, None).change)
-
+                change.fixing_changes.append(Commit(commit_hash, None).change)
         self.change = change
         change.patch = self
 
