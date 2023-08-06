@@ -30,7 +30,7 @@ class Patch:
     email_header = None
     has_three_dash = None
 
-    def __init__(self, filepath, set_diff):
+    def __init__(self, filepath, set_diff=False):
         self.file_name = filepath
 
         change = Change()
@@ -94,7 +94,7 @@ class Commit:
         git_cmd = ['git', '-C', self.repo, 'show', self.hashid, '--pretty=']
         return subprocess.check_output(git_cmd).decode().strip()
 
-    def set_repo_and_missing_fields(self, repo, set_diff):
+    def set_repo_and_missing_fields(self, repo, set_diff=False):
         self.repo = repo
         change = self.change
         change.subject = self.git_log('%s')
@@ -106,7 +106,7 @@ class Commit:
             change.diff = self.git_show()
         self.author_date = self.git_log('%ad')
 
-    def __init__(self, hashid, repo, set_diff):
+    def __init__(self, hashid, repo, set_diff=False):
         self.hashid = hashid
         self.repo = os.path.abspath(repo)
         self.change = Change()
