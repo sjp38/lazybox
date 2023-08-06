@@ -38,7 +38,7 @@ class Change:
         except:
             # the change is not in the commits
             return None
-        return Commit(hashid, repo)
+        return Commit(hashid, repo, None)
 
     def patch_in(self, patch_files):
         for patch_file in patch_files:
@@ -98,7 +98,9 @@ class Patch:
                 # usual format is: Fixes: <hash 12 letter> ("<subject>")
                 fixes_content = line[len('Fixes: '):].strip()
                 commit_hash = fixes_content.split()[0]
-                change.fixing_changes.append(Commit(commit_hash, None).change)
+                commit_subject = fixes_content[15:-2]
+                change.fixing_changes.append(
+                        Commit(commit_hash, None, commit_subject).change)
         self.change = change
         change.patch = self
 
@@ -129,9 +131,11 @@ class Commit:
             change.diff = self.git_show()
         self.author_date = self.git_log('%ad')
 
-    def __init__(self, hashid, repo, set_diff=False):
+    def __init__(self, hashid, repo, subject, set_diff=False):
         self.hashid = hashid
         self.change = Change()
+        if subject != None:
+            self.change.subject = subject
         self.change.commit = self
         if repo == None:
             return
