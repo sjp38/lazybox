@@ -132,10 +132,9 @@ class Commit:
 
     def __init__(self, hashid, repo, set_diff=False):
         self.hashid = hashid
-        self.repo = os.path.abspath(repo)
         self.change = Change()
         self.change.commit = self
         if repo == None:
             return
-
+        self.repo = os.path.abspath(repo)
         self.set_repo_and_missing_fields(repo, set_diff)
