@@ -42,7 +42,7 @@ class Change:
     def patch_in(self, patch_files):
         for patch_file in patch_files:
             patch = Patch(patch_file)
-            if self.maybe_same(patch):
+            if self.maybe_same(patch.change):
                 return patch
         return None
 
