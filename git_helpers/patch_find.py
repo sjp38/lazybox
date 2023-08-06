@@ -2,7 +2,7 @@
 
 import argparse
 
-import _patch
+import _git
 
 def main():
     parser = argparse.ArgumentParser()
@@ -21,18 +21,15 @@ def main():
         parser.print_help()
         exit(1)
 
-    patch = _patch.Patch(args.patch)
+    patch = _git.Patch(args.patch)
     if args.commits:
-        try:
-            print('%s ("%s")' %
-                    (patch.commit_in(args.commits, args.repo)[:12],
-                        patch.subject))
-        except:
-            # not found
+        commit = patch.change.commit_in(args.repo, args.commits)
+        if commit == None:
             exit(1)
+        print('%s ("%s")' % (commit.hashid[:12], patch.change.subject))
     else:
         for patch_file in args.patches:
-            if patch == _patch.Patch(patch_file):
+            if patch.change.maybe_same(_git.Patch(patch_file).change):
                 print(patch_file)
                 exit(0)
         print('no matching patch file found')
