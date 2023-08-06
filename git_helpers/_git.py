@@ -7,8 +7,6 @@ class Change:
     subject = None
     author = None
     description = None
-    fixes = None    # Fixes line
-    fixing_changes = None    # list of Change
     diff = None
     patch = None
     commit = None
@@ -17,19 +15,12 @@ class Change:
         return (type(self) == type(other) and self.subject == other.subject and
                 self.author == other.author)
 
-    def fixing(self, other, repo):
-        for buggy_change in self.fixing_changes:
-            if buggy_change.author == None and repo != None:
-                buggy_change.commit.set_repo_and_missing_fields(repo)
-            if buggy_change.maybe_same(other):
-                return True
-        return False
-
-    def setup_fixes(self):
-        self.fixes = []
+    def get_fixing_commit_refs(self):
+        fixes = []
         for line in self.description.split('\n'):
             if line.startswith('Fixes: '):
-                self.fixes.append(line[len('Fixes: '):])
+                fixes.append(line[len('Fixes: '):])
+        return fixes
 
     def commit_in(self, repo, commits):
         find_commit_in_sh = os.path.join(os.path.dirname(sys.argv[0]),
@@ -97,19 +88,6 @@ class Patch:
             elif line.startswith('Subject: '):
                 change.subject = line[len('Subject: '):]
 
-        change.setup_fixes()
-
-        change.fixing_changes = []
-        for line in change.description.split('\n'):
-            if line.startswith ('From: '):
-                change.author = line.split('From: ')[1].strip()
-            if line.startswith('Fixes: '):
-                # usual format is: Fixes: <hash 12 letter> ("<subject>")
-                fixes_content = line[len('Fixes: '):].strip()
-                commit_hash = fixes_content.split()[0]
-                commit_subject = fixes_content[15:-2]
-                change.fixing_changes.append(
-                        Commit(commit_hash, None, commit_subject).change)
         self.change = change
         change.patch = self
 
@@ -136,7 +114,6 @@ class Commit:
         author_email = self.git_log('%ae')
         change.author = '%s <%s>' % (author_name, author_email)
         change.description = self.git_log('%b')
-        change.setup_fixes()
         if set_diff:
             change.diff = self.git_show()
         self.author_date = self.git_log('%ad')
