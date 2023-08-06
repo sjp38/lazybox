@@ -40,6 +40,13 @@ class Change:
             return None
         return Commit(hashid, repo)
 
+    def patch_in(self, patch_files):
+        for patch_file in patch_files:
+            patch = Patch(patch_file)
+            if self.maybe_same(patch):
+                return patch
+        return None
+
 class Patch:
     change = None
     file_name = None
