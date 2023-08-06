@@ -24,6 +24,22 @@ class Change:
                 return True
         return False
 
+    def commit_in(self, repo, commits):
+        find_commit_in_sh = os.path.join(os.path.dirname(sys.argv[0]),
+                'find_commit_in.sh')
+        cmd = [find_commit_in_sh, '--repo', repo, '--hash_only']
+        if self.commit and self.commit.hashid:
+            cmd += ['--commit', self.commit.hashid]
+        else:
+            cmd += ['--author', self.author, '--title', self.subject]
+        cmd += [commits]
+        try:
+            hashid = subprocess.check_output(cmd).decode().strip()
+        except:
+            # the change is not in the commits
+            return None
+        return Commit(hashid, repo)
+
 class Patch:
     change = None
     file_name = None
