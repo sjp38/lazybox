@@ -7,6 +7,7 @@ class Change:
     subject = None
     author = None
     description = None
+    fixes = None    # Fixes line
     fixing_changes = None    # list of Change
     diff = None
     patch = None
@@ -23,6 +24,12 @@ class Change:
             if buggy_change.maybe_same(other):
                 return True
         return False
+
+    def setup_fixes(self):
+        self.fixes = []
+        for line in self.description.split('\n'):
+            if line.startswith('Fixes: '):
+                self.fixes.append(line[len('Fixes: '):])
 
     def commit_in(self, repo, commits):
         find_commit_in_sh = os.path.join(os.path.dirname(sys.argv[0]),
@@ -90,6 +97,8 @@ class Patch:
             elif line.startswith('Subject: '):
                 change.subject = line[len('Subject: '):]
 
+        change.setup_fixes()
+
         change.fixing_changes = []
         for line in change.description.split('\n'):
             if line.startswith ('From: '):
@@ -127,6 +136,7 @@ class Commit:
         author_email = self.git_log('%ae')
         change.author = '%s <%s>' % (author_name, author_email)
         change.description = self.git_log('%b')
+        change.setup_fixes()
         if set_diff:
             change.diff = self.git_show()
         self.author_date = self.git_log('%ad')
