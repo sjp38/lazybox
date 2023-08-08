@@ -127,7 +127,6 @@ class Change:
                 cmd += ['--title', self.subject]
         cmd += [commits]
         try:
-            print(cmd)
             hashid = subprocess.check_output(cmd).decode().strip()
         except:
             # the change is not in the commits
