@@ -121,7 +121,7 @@ class Change:
                 fixes.append(line[len('Fixes: '):])
         return fixes
 
-    def find_from_commits(self, repo, commits):
+    def find_matching_commit(self, repo, commits):
         find_commit_in_sh = os.path.join(os.path.dirname(sys.argv[0]),
                 'find_commit_in.sh')
         cmd = [find_commit_in_sh, '--repo', repo, '--hash_only']

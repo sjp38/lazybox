@@ -42,7 +42,7 @@ def main():
         change = _git.Change(subject=args.subject)
 
     if args.commits:
-        matching_change = change.find_from_commits(args.repo, args.commits)
+        matching_change = change.find_matching_commit(args.repo, args.commits)
         if matching_change == None:
             exit(1)
         print('%s ("%s")' %
