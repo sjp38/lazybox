@@ -140,7 +140,7 @@ class Change:
             return None
         return Change(commit=hashid, repo=repo)
 
-    def find_from_patches(self, patch_files):
+    def find_matching_patch(self, patch_files):
         for patch_file in patch_files:
             change = Change(patch_file=patch_file)
             if self.maybe_same(change):

@@ -48,7 +48,7 @@ def main():
         print('%s ("%s")' %
                 (matching_change.commit.hashid[:12], change.subject))
     else:
-        matching_change = change.find_from_patches(args.patches)
+        matching_change = change.find_matching_patch(args.patches)
         if matching_change != None:
             print(matching_change.patch.file_name)
             exit(0)
