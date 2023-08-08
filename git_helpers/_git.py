@@ -104,8 +104,15 @@ class Change:
             self.set_commit(repo, commit, set_diff)
 
     def maybe_same(self, other):
-        return (type(self) == type(other) and self.subject == other.subject and
-                self.author == other.author)
+        if type(self) != type(other):
+            return False
+        if (self.subject != None and other.subject != None and
+                self.subject != other.subject):
+            return False
+        if (self.author != None and other.author != None and
+                self.author != other.author):
+            return False
+        return True
 
     def get_fixing_commit_refs(self):
         fixes = []
