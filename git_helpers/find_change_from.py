@@ -17,6 +17,8 @@ def main():
             help='commit containing the change')
     parser.add_argument('--subject', metavar='<subject>',
             help='subject of the change')
+    parser.add_argument('--author', metavar='<author name <author email>>',
+            help='author of the change')
 
     parser.add_argument('--repo', metavar='<dir>', default='./',
             help='local repo to find the change from')
@@ -39,7 +41,7 @@ def main():
     elif args.commit:
         change = _git.Change(commit=args.commit, repo=args.repo)
     elif args.subject:
-        change = _git.Change(subject=args.subject)
+        change = _git.Change(subject=args.subject, author=args.author)
 
     if args.commits:
         matching_change = change.find_matching_commit(args.repo, args.commits)
