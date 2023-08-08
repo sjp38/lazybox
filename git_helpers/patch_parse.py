@@ -14,22 +14,22 @@ def main():
             help='fields to read from the patch')
     args = parser.parse_args()
 
-    patch = _git.Patch(args.patch, set_diff=True)
+    change = _git.Change(patch_file=args.patch, set_diff=True)
     for field in args.fields:
         if field == 'subject':
-            print(patch.change.subject)
+            print(change.subject)
         elif field == 'date':
-            print(patch.sent_date)
+            print(change.patch.sent_date)
         elif field == 'author':
-            print(patch.change.author)
+            print(change.author)
         elif field == 'mail_header':
-            print(patch.email_header)
+            print(change.patch.email_header)
         elif field == 'description':
-            print(patch.change.description)
+            print(change.description)
         elif field == 'diff':
-            print(patch.change.diff)
+            print(change.diff)
         elif field == 'fixes':
-            print('\n'.join(patch.change.get_fixing_commit_refs()))
+            print('\n'.join(change.get_fixing_commit_refs()))
 
 if __name__ == '__main__':
     main()

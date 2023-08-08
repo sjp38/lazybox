@@ -34,19 +34,20 @@ def main():
         exit(1)
 
     if args.patch:
-        change = _git.Patch(args.patch).change
+        change = _git.Change(patch_file=args.patch)
     else:
-        change = _git.Commit(args.commit, args.repo, None).change
+        change = _git.Change(commit=args.commit, repo=args.repo)
 
     if args.commits:
-        commit = change.commit_in(args.repo, args.commits)
-        if commit == None:
+        matching_change = change.find_from_commits(args.repo, args.commits)
+        if matching_change == None:
             exit(1)
-        print('%s ("%s")' % (commit.hashid[:12], commit.change.subject))
+        print('%s ("%s")' %
+                (matching_change.commit.hashid[:12], change.subject))
     else:
-        patch = change.patch_in(args.patches)
-        if patch != None:
-            print(patch.file_name)
+        matching_change = change.find_from_patches(args.patches)
+        if matching_change != None:
+            print(matching_change.patch.file_name)
             exit(0)
         print('no matching patch file found')
         exit(1)
