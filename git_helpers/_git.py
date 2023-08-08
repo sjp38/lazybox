@@ -33,6 +33,7 @@ class Commit:
 class Change:
     subject = None
     author = None
+    # TODO: Support author date
     description = None
     diff = None
     patch = None
