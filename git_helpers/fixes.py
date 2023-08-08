@@ -47,7 +47,7 @@ def main():
             try:
                 buggy_change = _git.Change(commit=hashid, repo=args.repo)
             except:
-                print('bug reference %s parsing failed' % bug_reference)
+                print('Failed parsing %s' % bug_reference)
                 continue
             for patch_or_commits_range in args.bugs:
                 if os.path.isfile(patch_or_commits_range):
