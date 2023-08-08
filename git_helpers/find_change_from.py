@@ -15,6 +15,8 @@ def main():
             help='patch containing the change')
     parser.add_argument('--commit', metavar='<commit>',
             help='commit containing the change')
+    parser.add_argument('--subject', metavar='<subject>',
+            help='subject of the change')
 
     parser.add_argument('--repo', metavar='<dir>', default='./',
             help='local repo to find the change from')
@@ -24,9 +26,8 @@ def main():
             help='patch files to find the change from')
     args = parser.parse_args()
 
-    if (args.patch == None and args.commit == None) or (args.patch != None and
-            args.commit != None):
-        print('--patch or --commit should be set (not both)')
+    if args.patch == None and args.commit == None and args.subject == None:
+        print('--patch, --commit, or --subject should be set')
         exit(1)
 
     if args.commits == None and args.patches == None:
@@ -35,8 +36,10 @@ def main():
 
     if args.patch:
         change = _git.Change(patch_file=args.patch)
-    else:
+    elif args.commit:
         change = _git.Change(commit=args.commit, repo=args.repo)
+    elif args.subject:
+        change = _git.Change(subject=args.subject)
 
     if args.commits:
         matching_change = change.find_from_commits(args.repo, args.commits)
