@@ -121,7 +121,10 @@ class Change:
         if self.commit and self.commit.hashid:
             cmd += ['--commit', self.commit.hashid]
         else:
-            cmd += ['--author', self.author, '--title', self.subject]
+            if self.author != None:
+                cmd += ['--author', self.author]
+            if self.subject != None:
+                cmd += ['--title', self.subject]
         cmd += [commits]
         try:
             print(cmd)
