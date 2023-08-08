@@ -18,17 +18,20 @@ class Commit:
     def git_log(self, pretty_format):
         git_cmd = ['git', '-C', self.repo, 'log', '-1', self.hashid,
                 '--pretty=%s' % pretty_format]
-        return subprocess.check_output(git_cmd).decode().strip()
+        return subprocess.check_output(
+                git_cmd, stderr=subprocess.DEVNULL).decode().strip()
 
     def git_show(self):
         git_cmd = ['git', '-C', self.repo, 'show', self.hashid, '--pretty=']
-        return subprocess.check_output(git_cmd).decode().strip()
+        return subprocess.check_output(
+                git_cmd, stderr=subprocess.DEVNULL).decode().strip()
 
     def __init__(self, repo, commit_ref):
         self.repo = repo
         git_cmd = ['git', '-C', self.repo, 'log', '-1', commit_ref,
                 '--pretty=%H']
-        self.hashid = subprocess.check_output(git_cmd).decode().strip()
+        self.hashid = subprocess.check_output(
+                git_cmd, stderr=subprocess.DEVNULL).decode().strip()
 
 class Change:
     subject = None
