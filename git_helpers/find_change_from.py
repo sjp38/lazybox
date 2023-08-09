@@ -25,6 +25,9 @@ def main():
     parser.add_argument('patch_or_commits', metavar='<file or commits>',
             nargs='+',
             help='commits range or patch files to find the change from')
+
+    parser.add_argument('--describe_contains', action='store_true',
+            help='show \'git describe --contains\' for found commit together')
     args = parser.parse_args()
 
     if args.patch == None and args.commit == None and args.subject == None:
@@ -44,6 +47,8 @@ def main():
         if matching_change.commit:
             print('%s ("%s")' %
                     (matching_change.commit.hashid[:12], change.subject))
+            if args.describe_contains:
+                print('%s' % matching_change.commit.describe(contains=True))
         else:
             print(matching_change.patch.file_name)
         exit(0)
