@@ -22,18 +22,13 @@ def main():
 
     parser.add_argument('--repo', metavar='<dir>', default='./',
             help='local repo to find the change from')
-    parser.add_argument('--commits', metavar='<commits range reference>',
-            help='commits range to find the change from')
-    parser.add_argument('--patches', metavar='<patch file>', nargs='+',
-            help='patch files to find the change from')
+    parser.add_argument('patch_or_commits', metavar='<file or commits>',
+            nargs='+',
+            help='commits range or patch files to find the change from')
     args = parser.parse_args()
 
     if args.patch == None and args.commit == None and args.subject == None:
         print('--patch, --commit, or --subject should be set')
-        exit(1)
-
-    if args.commits == None and args.patches == None:
-        print('--commits or --patches should be given')
         exit(1)
 
     if args.patch:
@@ -43,19 +38,16 @@ def main():
     elif args.subject:
         change = _git.Change(subject=args.subject, author=args.author)
 
-    if args.commits:
-        matching_change = change.find_matching_commit(args.repo, args.commits)
-        if matching_change == None:
-            exit(1)
-        print('%s ("%s")' %
-                (matching_change.commit.hashid[:12], change.subject))
-    else:
-        matching_change = change.find_matching_patch(args.patches)
-        if matching_change != None:
+    matching_change = change.find_matching_change(args.patch_or_commits,
+            args.repo)
+    if matching_change != None:
+        if matching_change.commit:
+            print('%s ("%s")' %
+                    (matching_change.commit.hashid[:12], change.subject))
+        else:
             print(matching_change.patch.file_name)
-            exit(0)
-        print('no matching patch file found')
-        exit(1)
+        exit(0)
+    exit(1)
 
 if __name__ == '__main__':
     main()
