@@ -151,6 +151,21 @@ class Change:
                 return change
         return None
 
+    def find_matching_change(self, files_and_or_commits, repo):
+        for file_or_commits in files_and_or_commits:
+            if os.path.isfile(file_or_commits):
+                patch_file = file_or_commits
+                matching_change = self.find_matching_patch([patch_file])
+                if matching_change != None:
+                    return matching_change
+            else:
+                commits_range = file_or_commits
+                matching_change = self.find_matching_commit(
+                        repo, commits_range)
+                if matching_change != None:
+                    return matching_change
+        return None
+
 def read_changes(files_and_or_commits, repo):
     changes = []
     for file_or_commits in files_and_or_commits:
