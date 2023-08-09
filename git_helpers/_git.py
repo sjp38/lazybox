@@ -33,6 +33,21 @@ class Commit:
         self.hashid = subprocess.check_output(
                 git_cmd, stderr=subprocess.DEVNULL).decode().strip()
 
+    def subject(self):
+        return self.git_log('%s')
+
+    def author(self):
+        return self.git_log('%an <%ae>')
+
+    def author_date(self):
+        return self.git_log('%ad')
+
+    def description(self):
+        return self.git_log('%b')
+
+    def diff(self):
+        return self.git_show()
+
 class Change:
     subject = None
     author = None
@@ -88,12 +103,12 @@ class Change:
     def set_commit(self, repo, commit_ref, set_diff):
         commit = Commit(repo, commit_ref)
 
-        self.subject = commit.git_log('%s')
-        self.author = commit.git_log('%an <%ae>')
-        self.description = commit.git_log('%b')
+        self.subject = commit.subject()
+        self.author = commit.author()
+        self.description = commit.description()
         if set_diff:
-            self.diff = commit.git_show()
-        commit.author_date = commit.git_log('%ad')
+            self.diff = commit.diff()
+        commit.author_date = commit.author_date()
         self.commit = commit
 
     def __init__(self, subject=None, author=None, patch_file=None,
