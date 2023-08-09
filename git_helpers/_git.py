@@ -48,6 +48,13 @@ class Commit:
     def diff(self):
         return self.git_show()
 
+    def describe(self, contains):
+        git_cmd = ['git', '-C', self.repo, 'describe']
+        if contains:
+            git_cmd.append('--contains')
+        return subprocess.check_output(
+                git_cmd, stderr=subprocess.DEVNULL).decode().strip()
+
 class Change:
     subject = None
     author = None
