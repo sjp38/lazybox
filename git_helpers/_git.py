@@ -150,3 +150,17 @@ class Change:
             if self.maybe_same(change):
                 return change
         return None
+
+def read_changes(files_and_or_commits, repo):
+    changes = []
+    for file_or_commits in files_and_or_commits:
+        if os.path.isfile(file_or_commits):
+            patch_file = file_or_commits
+            changes.append(_git.Change(patch_file=patch_file))
+        else:
+            commits_range = file_or_commits
+            cmd = ['git', '-C', repo, 'log', '--pretty=%H', commits_range]
+            commits = subprocess.check_output(cmd).decode().strip().split()
+            for commit in commits:
+                changes.append(_git.Change(commit=commit, repo=repo))
+    return changes
