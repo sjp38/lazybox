@@ -129,6 +129,18 @@ class Change:
         if commit != None:
             self.set_commit(repo, commit, set_diff)
 
+    def __str__(self):
+        sources = []
+        if self.patch:
+            sources.append(self.patch.file_name)
+        if self.commit:
+            sources.append(self.commit.hashid)
+        if len(sources):
+            sources = ', '.join(sources)
+        else:
+            sources = None
+        return '"%s" (source: %s)' % (self.subject, sources)
+
     def maybe_same(self, other):
         if type(self) != type(other):
             return False
