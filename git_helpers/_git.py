@@ -200,6 +200,15 @@ class Change:
                     return matching_change
         return None
 
+    def url(self, remote_git_url):
+        if self.commit:
+            if remote_git_url.startswith('https://git.kernel.org/'):
+                return '%s/c/%s' % (remote_git_url, self.commit.hashid)
+            elif remote_git_url.startswith('https://github.com/'):
+                return '%s/commit/%s' % (remote_git_url, self.commit.hashid)
+        else:
+            return None
+
 def read_changes(files_and_or_commits, repo):
     changes = []
     for file_or_commits in files_and_or_commits:
