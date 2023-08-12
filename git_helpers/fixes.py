@@ -11,7 +11,7 @@ def print_fix_bug(fix, bug, remote_git_url, remote_queue_url):
     if remote_git_url:
         print('  - url: %s' % fix.url(remote_git_url, remote_queue_url))
     print('  - bug: %s' % bug)
-    if remote_git_url:
+    if remote_queue_url:
         print('    - url: %s' % bug.url(remote_git_url, remote_queue_url))
 
 def main():
