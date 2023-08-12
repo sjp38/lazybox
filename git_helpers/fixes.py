@@ -6,23 +6,20 @@ import subprocess
 
 import _git
 
+def print_reference(change, git_url, queue_url):
+    if git_url or queue_url:
+        print('  - url: %s' % change.url(git_url, queue_url))
+    else:
+        if change.commit:
+            print('  - commit %s' % change.commit.hashid)
+        if change.patch:
+            print('  - patch %s' % change.patch.file_name)
+
 def print_fix_bug(fix, bug, remote_git_url, remote_queue_url):
     print('- fix: %s' % fix.subject)
-    if remote_git_url:
-        print('  - url: %s' % fix.url(remote_git_url, remote_queue_url))
-    else:
-        if fix.commit:
-            print('  - commit %s' % fix.commit.hashid)
-        if fix.patch:
-            print('  - patch %s' % fix.patch.file_name)
+    print_reference(fix, remote_git_url, remote_queue_url)
     print('- bug: %s' % bug.subject)
-    if remote_queue_url:
-        print('    - url: %s' % bug.url(remote_git_url, remote_queue_url))
-    else:
-        if bug.commit:
-            print('  - commit %s' % bug.commit.hashid)
-        if bug.patch:
-            print('  - patch %s' % bug.patch.file_name)
+    print_reference(bug, remote_git_url, remote_queue_url)
     print()
 
 def main():
