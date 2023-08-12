@@ -16,9 +16,9 @@ def print_reference(change, git_url, queue_url):
             print('  - patch %s' % change.patch.file_name)
 
 def print_fix_bug(fix, bug, remote_git_url, remote_queue_url):
-    print('- fix: %s' % fix.subject)
+    print('- fix: "%s"' % fix.subject)
     print_reference(fix, remote_git_url, remote_queue_url)
-    print('- bug: %s' % bug.subject)
+    print('- bug: "%s"' % bug.subject)
     print_reference(bug, remote_git_url, remote_queue_url)
     print()
 
