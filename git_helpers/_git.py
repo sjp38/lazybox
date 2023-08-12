@@ -224,3 +224,9 @@ def read_changes(files_and_or_commits, repo):
             for commit in commits:
                 changes.append(Change(commit=commit, repo=repo))
     return changes
+
+def is_hashid(hashid):
+    for c in hashid:
+        if not c in '0123456789abcdef':
+            return False
+    return True
