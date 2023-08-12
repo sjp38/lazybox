@@ -6,13 +6,13 @@ import subprocess
 
 import _git
 
-def print_fix_bug(fix, bug, remote_git_url):
+def print_fix_bug(fix, bug, remote_git_url, remote_queue_url):
     print('- fix: %s' % fix)
     if remote_git_url:
-        print('  - url: %s' % fix.url(remote_git_url))
+        print('  - url: %s' % fix.url(remote_git_url, remote_queue_url))
     print('  - bug: %s' % bug)
     if remote_git_url:
-        print('    - url: %s' % bug.url(remote_git_url))
+        print('    - url: %s' % bug.url(remote_git_url, remote_queue_url))
 
 def main():
     parser = argparse.ArgumentParser()
@@ -24,7 +24,9 @@ def main():
             nargs='+',
             help='potential bug patch files or commits')
     parser.add_argument('--remote_git_url', metavar='<url>',
-            help='show https url for the found bug/fix')
+            help='show https url for the found bug/fix commits using this')
+    parser.add_argument('--patches_queue_url', metavar='<url>',
+            help='show https url for the found bug/fix patches using this')
     args = parser.parse_args()
 
     if args.fixes == None or args.bugs == None:
@@ -48,13 +50,13 @@ def main():
                     patch_file = patch_or_commits_range
                     if buggy_change.find_matching_patch([patch_file]) != None:
                         print_fix_bug(potential_fix, buggy_change,
-                                args.remote_git_url)
+                                args.remote_git_url, args.patches_queue_url)
                 else:
                     commits = patch_or_commits_range
                     if buggy_change.find_matching_commit(
                             args.repo, commits) != None:
                         print_fix_bug(potential_fix, buggy_change,
-                                args.remote_git_url)
+                                args.remote_git_url, args.patches_queue_url)
 
 if __name__ == '__main__':
     main()
