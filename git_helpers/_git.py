@@ -58,6 +58,13 @@ class Commit:
         except:
             return None
 
+    def first_contained_version(self):
+        description = self.describe(True)
+        # describe output is something like v6.5-rc1~163^2~27^2~1
+        if description != None:
+            description = description.split('~')[0].split('^')[0]
+        return description
+
 class Change:
     subject = None
     author = None
