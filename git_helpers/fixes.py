@@ -7,12 +7,8 @@ import subprocess
 import _git
 
 def print_fix_bug(fix, bug):
-    if fix.patch:
-        fix_str = fix.patch.file_name
-    elif fix.commit:
-        fix_str = '%s ("%s")' % (fix.commit.hashid[:12], fix.subject)
-    print('- %s fixes' % fix_str)
-    print('  - %s ("%s")' % (bug.commit.hashid[:12], bug.subject))
+    print('- fix: %s' % fix)
+    print('  - bug: %s' % bug)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -38,7 +34,8 @@ def main():
             try:
                 buggy_change = _git.Change(commit=hashid, repo=args.repo)
             except:
-                print('# Failed parsing %s' % bug_reference)
+                print('# Failed parsing %s from %s' %
+                        (bug_reference, potential_fix))
                 continue
             for patch_or_commits_range in args.bugs:
                 if os.path.isfile(patch_or_commits_range):
