@@ -25,6 +25,11 @@ def main():
             help='potential bug patch files or commits')
     args = parser.parse_args()
 
+    if args.fixes == None or args.bugs == None:
+        print('--fixes and --bugs should be passed')
+        parser.print_usage()
+        exit(1)
+
     potential_fixes = _git.read_changes(args.fixes, args.repo)
     for potential_fix in potential_fixes:
         for bug_reference in potential_fix.get_fixing_commit_refs():
