@@ -7,12 +7,23 @@ import subprocess
 import _git
 
 def print_fix_bug(fix, bug, remote_git_url, remote_queue_url):
-    print('- fix: %s' % fix)
+    print('- fix: %s' % fix.subject)
     if remote_git_url:
         print('  - url: %s' % fix.url(remote_git_url, remote_queue_url))
-    print('  - bug: %s' % bug)
+    else:
+        if fix.commit:
+            print('  - commit %s' % fix.commit.hashid)
+        if fix.patch:
+            print('  - patch %s' % fix.patch.file_name)
+    print('- bug: %s' % bug.subject)
     if remote_queue_url:
         print('    - url: %s' % bug.url(remote_git_url, remote_queue_url))
+    else:
+        if bug.commit:
+            print('  - commit %s' % bug.commit.hashid)
+        if bug.patch:
+            print('  - patch %s' % bug.patch.file_name)
+    print()
 
 def main():
     parser = argparse.ArgumentParser()
