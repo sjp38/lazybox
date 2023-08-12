@@ -6,9 +6,13 @@ import subprocess
 
 import _git
 
-def print_fix_bug(fix, bug):
+def print_fix_bug(fix, bug, remote_git_url):
     print('- fix: %s' % fix)
+    if remote_git_url:
+        print('  - url: %s' % fix.url(remote_git_url))
     print('  - bug: %s' % bug)
+    if remote_git_url:
+        print('    - url: %s' % bug.url(remote_git_url))
 
 def main():
     parser = argparse.ArgumentParser()
@@ -19,6 +23,8 @@ def main():
     parser.add_argument('--bugs', metavar='<file or commits>',
             nargs='+',
             help='potential bug patch files or commits')
+    parser.add_argument('--remote_git_url', metavar='<url>',
+            help='show https url for the found bug/fix')
     args = parser.parse_args()
 
     if args.fixes == None or args.bugs == None:
@@ -41,12 +47,14 @@ def main():
                 if os.path.isfile(patch_or_commits_range):
                     patch_file = patch_or_commits_range
                     if buggy_change.find_matching_patch([patch_file]) != None:
-                        print_fix_bug(potential_fix, buggy_change)
+                        print_fix_bug(potential_fix, buggy_change,
+                                args.remote_git_url)
                 else:
                     commits = patch_or_commits_range
                     if buggy_change.find_matching_commit(
                             args.repo, commits) != None:
-                        print_fix_bug(potential_fix, buggy_change)
+                        print_fix_bug(potential_fix, buggy_change,
+                                args.remote_git_url)
 
 if __name__ == '__main__':
     main()
