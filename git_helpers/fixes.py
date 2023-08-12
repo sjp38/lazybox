@@ -60,15 +60,13 @@ def main():
             for patch_or_commits_range in args.bugs:
                 if os.path.isfile(patch_or_commits_range):
                     patch_file = patch_or_commits_range
-                    if buggy_change.find_matching_patch([patch_file]) != None:
-                        print_fix_bug(potential_fix, buggy_change,
-                                args.remote_git_url, args.patches_queue_url)
+                    bug = buggy_change.find_matching_patch([patch_file])
                 else:
                     commits = patch_or_commits_range
-                    if buggy_change.find_matching_commit(
-                            args.repo, commits) != None:
-                        print_fix_bug(potential_fix, buggy_change,
-                                args.remote_git_url, args.patches_queue_url)
+                    bug = buggy_change.find_matching_commit(args.repo, commits)
+                if bug != None:
+                    print_fix_bug(potential_fix, bug,
+                            args.remote_git_url, args.patches_queue_url)
 
 if __name__ == '__main__':
     main()
