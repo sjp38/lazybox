@@ -15,7 +15,7 @@ def print_reference(change, git_url, queue_url):
         if change.patch:
             print('  - patch %s' % change.patch.file_name)
     if change.commit:
-        print('  - in %s' % change.commit.describe(contains=True))
+        print('  - in %s' % change.commit.first_contained_version())
 
 def print_fix_bug(fix, bug, remote_git_url, remote_queue_url):
     print('- fix: "%s"' % fix.subject)
