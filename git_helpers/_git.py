@@ -52,8 +52,11 @@ class Commit:
         git_cmd = ['git', '-C', self.repo, 'describe', self.hashid]
         if contains:
             git_cmd.append('--contains')
-        return subprocess.check_output(
-                git_cmd, stderr=subprocess.DEVNULL).decode().strip()
+        try:
+            return subprocess.check_output(
+                    git_cmd, stderr=subprocess.DEVNULL).decode().strip()
+        except:
+            return None
 
 class Change:
     subject = None
