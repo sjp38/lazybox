@@ -202,10 +202,11 @@ class Change:
 
     def url(self, remote_git_url, patches_queue_url):
         if self.commit and remote_git_url:
+            hashid = self.commit.hashid[:12]
             if remote_git_url.startswith('https://git.kernel.org/'):
-                return '%s/c/%s' % (remote_git_url, self.commit.hashid)
+                return '%s/c/%s' % (remote_git_url, hashid)
             elif remote_git_url.startswith('https://github.com/'):
-                return '%s/commit/%s' % (remote_git_url, self.commit.hashid)
+                return '%s/commit/%s' % (remote_git_url, hashid)
         if self.patch and patches_queue_url:
             return '%s/%s' % (
                     patches_queue_url, os.path.basename(self.patch.file_name))
