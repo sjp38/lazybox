@@ -49,6 +49,8 @@ def main():
     for potential_fix in potential_fixes:
         for bug_reference in potential_fix.get_fixing_commit_refs():
             hashid = bug_reference.split()[0]
+            if not _git.is_hashid(hashid):
+                continue
             subject = bug_reference[len(hashid) + 3:-2]
             try:
                 buggy_change = _git.Change(commit=hashid, repo=args.repo)
