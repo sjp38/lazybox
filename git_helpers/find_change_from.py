@@ -28,6 +28,8 @@ def main():
 
     parser.add_argument('--describe_contains', action='store_true',
             help='show \'git describe --contains\' for found commit together')
+    parser.add_argument('--remote_repo', metavar='<url>',
+            help='show https url for the found commit using this')
     args = parser.parse_args()
 
     if args.patch == None and args.commit == None and args.subject == None:
@@ -50,6 +52,9 @@ def main():
             if args.describe_contains:
                 print('first appeared in %s' %
                         matching_change.commit.first_contained_version())
+            if args.remote_repo:
+                print('available at %s' %
+                        matching_change.url(args.remote_repo, None))
         else:
             print(matching_change.patch.file_name)
         exit(0)
