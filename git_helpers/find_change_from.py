@@ -50,10 +50,10 @@ def main():
             print('%s ("%s")' %
                     (matching_change.commit.hashid[:12], change.subject))
             if args.describe_contains:
-                print('first appeared in %s' %
+                print('- merged in %s' %
                         matching_change.commit.first_contained_version())
             if args.remote_repo:
-                print('available at %s' %
+                print('- url: %s' %
                         matching_change.url(args.remote_repo, None))
         else:
             print(matching_change.patch.file_name)
