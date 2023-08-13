@@ -48,7 +48,8 @@ def main():
             print('%s ("%s")' %
                     (matching_change.commit.hashid[:12], change.subject))
             if args.describe_contains:
-                print('%s' % matching_change.commit.describe(contains=True))
+                print('first appeared in %s' %
+                        matching_change.commit.first_contained_version())
         else:
             print(matching_change.patch.file_name)
         exit(0)
