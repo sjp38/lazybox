@@ -8,14 +8,14 @@ import _git
 
 def print_reference(change, git_url, queue_url):
     if git_url or queue_url:
-        print('  - url: %s' % change.url(git_url, queue_url))
+        print('    - url: %s' % change.url(git_url, queue_url))
     else:
         if change.commit:
-            print('  - commit %s' % change.commit.hashid)
+            print('    - commit %s' % change.commit.hashid)
         if change.patch:
-            print('  - patch %s' % change.patch.file_name)
+            print('    - patch %s' % change.patch.file_name)
     if change.commit:
-        print('  - in %s' % change.commit.first_contained_version())
+        print('    - in %s' % change.commit.first_contained_version())
 
 def print_fix_bug(fix, bug, remote_git_url, remote_queue_url):
     print('- fix: "%s"' % fix.subject)
