@@ -43,9 +43,15 @@ def main():
     elif args.subject:
         change = _git.Change(subject=args.subject, author=args.author)
 
-    matching_change = change.find_matching_change(args.patch_or_commits,
-            args.repo)
-    if matching_change != None:
+    found = False
+    for to_find_from in args.patch_or_commits:
+        matching_change = change.find_matching_change([to_find_from],
+                args.repo)
+        if matching_change == None:
+            continue
+        found = True
+        if len(args.patch_or_commits) > 1:
+            print('found it from %s' % to_find_from)
         if matching_change.commit:
             print('%s ("%s")' %
                     (matching_change.commit.hashid[:12], change.subject))
@@ -57,8 +63,7 @@ def main():
                         matching_change.url(args.remote_repo, None))
         else:
             print(matching_change.patch.file_name)
-        exit(0)
-    exit(1)
+    exit(0 if found else 1)
 
 if __name__ == '__main__':
     main()
