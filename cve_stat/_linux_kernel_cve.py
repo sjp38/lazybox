@@ -35,6 +35,7 @@ class LinuxKernelCve:
     fix_commits = None      # {kernel tree: CommitInfo}
     cvss_scores = None      # {CVSS version: score}
     added_date = None       # unix timestamp
+    add_commit_id = None
 
     def __init__(self, name, linux_kernel_cves_repo,
             main_infos, stream_breaks, stream_fixes, linux_repo):
@@ -101,14 +102,14 @@ class LinuxKernelCve:
         cve_line_number = int(subprocess.check_output([
             'grep', '-n', '--max-count=1', '    "%s":' % name,
             data_file]).decode().split(':')[0])
-        touch_commit_id = subprocess.check_output([
+        self.add_commit_id = subprocess.check_output([
             'git', '-C', linux_kernel_cves_repo, 'blame',
             os.path.join('data', 'kernel_cves.json'),
             '-L', '%d,%d' % (cve_line_number,
                 cve_line_number)]).decode().split()[0]
         self.added_date = int(subprocess.check_output([
             'git', '-C', linux_kernel_cves_repo, 'log', '-1', '--date=unix',
-            '--pretty=%ad', touch_commit_id]).decode().strip())
+            '--pretty=%ad', self.add_commit_id]).decode().strip())
 
     def to_kvpairs(self):
         kvpairs = self.__dict__
