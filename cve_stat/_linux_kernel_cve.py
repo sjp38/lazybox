@@ -14,10 +14,13 @@ class CommitInfo:
         self.hash_id = hash_id
         if not self.hash_id:
             return
-        self.authored_date, self.committed_date = [int(timestamp)
-                for timestamp in subprocess.check_output(
-                    ['git', '-C', linux_repo, 'log', '--date=unix',
+        try:
+            self.authored_date, self.committed_date = [int(timestamp)
+                    for timestamp in subprocess.check_output([
+                        'git', '-C', linux_repo, 'log', '--date=unix',
                         '--pretty=%ad %cd', hash_id, '-1']).decode().split()]
+        except Exception as e:
+            print('failed getting commit info for %s (%s)' % (hash_id, e))
 
     def days_from_authored_to_committed(self):
         return (self.committed_date - self.authored_date) / (3600 * 24)
