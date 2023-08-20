@@ -1,0 +1,8 @@
+Questions to answer
+
+- How many CVEs comes out?
+  - How long it takes from found to be fixed?
+  - How long it takes to be found?
+- How is it for different stable kernels?
+- How is it for specific time period?
+- How is it for specific CVSS scores?
