@@ -35,34 +35,22 @@ def main():
     args = parser.parse_args()
 
     cves = _linux_kernel_cve.load_kernel_cves_from_json(args.dumpfile).values()
-    for tree in ['mainline', '6.4', '6.1', '5.15', '5.10', '5.4', '4.19',
-            '4.14']:
-        pr_fix_to_report_stat(cves, tree,
-                [
-                    1,
-                    7 * 24 * 3600,
-                    2 * 7 * 24 * 3600,
-                    4 * 7 * 24 * 3600,
-                    8 * 7 * 24 * 3600,
-                    16 * 7 * 24 * 3600,
-                    32 * 7 * 24 * 3600,
-                    64 * 7 * 24 * 3600,
-                    128 * 7 * 24 * 3600,
-                    ], before=True)
-        print()
-        pr_fix_to_report_stat(cves, tree,
-                [
-                    1,
-                    7 * 24 * 3600,
-                    2 * 7 * 24 * 3600,
-                    4 * 7 * 24 * 3600,
-                    8 * 7 * 24 * 3600,
-                    16 * 7 * 24 * 3600,
-                    32 * 7 * 24 * 3600,
-                    64 * 7 * 24 * 3600,
-                    128 * 7 * 24 * 3600,
-                    ], before=False)
-        print()
+    for before in [True, False]:
+        for tree in ['mainline', '6.4', '6.1', '5.15', '5.10', '5.4', '4.19',
+                '4.14']:
+            pr_fix_to_report_stat(cves, tree,
+                    [
+                        1,
+                        7 * 24 * 3600,
+                        2 * 7 * 24 * 3600,
+                        4 * 7 * 24 * 3600,
+                        8 * 7 * 24 * 3600,
+                        16 * 7 * 24 * 3600,
+                        32 * 7 * 24 * 3600,
+                        64 * 7 * 24 * 3600,
+                        128 * 7 * 24 * 3600,
+                        ], before)
+            print()
 
 if __name__ == '__main__':
     main()
