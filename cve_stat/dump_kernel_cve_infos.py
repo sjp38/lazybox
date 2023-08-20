@@ -17,6 +17,9 @@ def main():
     parser.add_argument('--linux', metavar='<dir>',
             default=os.path.join(bindir, '..', '..', 'linux'),
             help='path to local linux repo')
+    parser.add_argument('--output', metavar='<file>',
+            default='dumped_cve_info.json',
+            help='path to json file to dump the information')
     args = parser.parse_args()
 
     data_dir = os.path.join(args.linux_kernel_cves, 'data')
@@ -33,6 +36,8 @@ def main():
                 args.linux_kernel_cves, main_infos, stream_breaks,
                 stream_fixes, args.linux).to_kvpairs()
         print(json.dumps(to_dump[cve_name], indent=4))
+    with open(args.output, 'w') as f:
+        json.dump(to_dump, f, indent=4)
 
 if __name__ == '__main__':
     main()
