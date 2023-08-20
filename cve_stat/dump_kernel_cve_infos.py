@@ -32,6 +32,9 @@ def main():
 
     to_dump = {}
     for cve_name in main_infos:
+        cve_year = int(cve_name.split('-')[1])
+        if cve_year < 2019:
+            continue
         to_dump[cve_name] = _linux_kernel_cve.LinuxKernelCve(cve_name,
                 args.linux_kernel_cves, main_infos, stream_breaks,
                 stream_fixes, args.linux).to_kvpairs()
