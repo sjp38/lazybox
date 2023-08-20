@@ -29,11 +29,12 @@ class LinuxKernelCve:
     added_date = None       # unix timestamp
 
     def __init__(self, name, linux_kernel_cves_repo,
-            main_infos, stream_breaks, stream_fixes):
+            main_infos, stream_breaks, stream_fixes, linux_repo):
         # linux_kernel_cves_repo: path to linux_kernel_cves local repo
         # main_infos: linux_kernel_cves/data/kernel_cves.json parsed dict
         # stream_breaks: linux_kernel_cves/data/stream_data.json parsed dict
         # stream_fixes: linux_kernel_cves/data/stream_fixes.json parsed dict
+        # linux_repo: path to linux local repo
 
         data_dir=os.path.join(linux_kernel_cves_repo, 'data')
         if main_infos == None:
@@ -54,7 +55,8 @@ class LinuxKernelCve:
 
         self.break_commits = {}
         if 'breaks' in main_info:
-            self.break_commits['mainline'] = main_info['breaks']
+            self.break_commits['mainline'] = CommitInfo(
+                    main_info['breaks'], linux_repo)
             for stable_series, series_breaks in stream_breaks.items():
                 for stable_release, breaks in series_breaks.items():
                     if not name in breaks:
@@ -62,11 +64,13 @@ class LinuxKernelCve:
                     break_info = breaks[name]
                     if not 'cmt_id' in break_info:
                         continue
-                    self.break_commits[stable_series] = break_info['cmt_id']
+                    self.break_commits[stable_series] = CommitInfo(
+                            break_info['cmt_id'], linux_repo)
 
         self.fix_commits = {}
         if 'fixes' in main_info:
-            self.fix_commits['mainline'] = main_info['fixes']
+            self.fix_commits['mainline'] = CommitInfo(
+                    main_info['fixes'], linux_repo)
             for stable_series, series_fixes in stream_fixes.items():
                 for stable_release, fixes in series_fixes.items():
                     if not name in fixes:
@@ -74,7 +78,8 @@ class LinuxKernelCve:
                     fix_info = fixes[name]
                     if not 'cmt_id' in fix_info:
                         continue
-                    self.fix_commits[stable_series] = fix_info['cmt_id']
+                    self.fix_commits[stable_series] = CommitInfo(
+                            fix_info['cmt_id'], linux_repo)
 
         self.cvss_scores = {}
         if 'cvss1' in main_info and 'score' in main_info['cvss1']:
