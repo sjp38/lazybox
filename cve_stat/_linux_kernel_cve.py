@@ -20,6 +20,9 @@ class CommitInfo:
     def days_from_authored_to_committed(self):
         return (self.committed_date - self.authored_date) / (3600 * 24)
 
+    def to_kvpairs(self):
+        return self.__dict__
+
 # For supporting https://github.com/nluedtke/linux_kernel_cves.git
 class LinuxKernelCve:
     name = None             # CVE-ABCD-EFGH
@@ -101,3 +104,11 @@ class LinuxKernelCve:
         self.added_date = int(subprocess.check_output([
             'git', '-C', linux_kernel_cves_repo, 'log', '-1', '--date=unix',
             '--pretty=%ad', touch_commit_id]).decode().strip())
+
+    def to_kvpairs(self):
+        kvpairs = self.__dict__
+        for tree, commitinfo in self.fix_commits.items():
+            kvpairs['fix_commits'][tree] = commitinfo.to_kvpairs()
+        for tree, commitinfo in self.break_commits.items():
+            kvpairs['break_commits'][tree] = commitinfo.to_kvpairs()
+        return kvpairs
