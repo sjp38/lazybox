@@ -147,3 +147,9 @@ class LinuxKernelCve:
         obj.added_date = kvpairs['added_date']
         obj.add_commit_id = kvpairs['add_commit_id']
         return obj
+
+def load_kernel_cves_from_json(json_file):
+    with open(json_file, 'r') as f:
+        kvpairs = json.load(f)
+    return {name: LinuxKernelCve.from_kvpairs(cve_kvpairs)
+            for name, cve_kvpairs in kvpairs.items()}
