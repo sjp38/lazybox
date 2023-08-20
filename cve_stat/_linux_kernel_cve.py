@@ -88,15 +88,11 @@ class LinuxKernelCve:
         if 'fixes' in main_info:
             self.fix_commits['mainline'] = CommitInfo(
                     main_info['fixes'], linux_repo)
-            for stable_series, series_fixes in stream_fixes.items():
-                for stable_release, fixes in series_fixes.items():
-                    if not name in fixes:
-                        continue
-                    fix_info = fixes[name]
-                    if not 'cmt_id' in fix_info:
-                        continue
-                    self.fix_commits[stable_series] = CommitInfo(
-                            fix_info['cmt_id'], linux_repo)
+            if not name in stream_fixes:
+                continue
+            for series, fixes in stream_fixes[name].items():
+                self.fix_commits[series] = CommitInfo(
+                        fixes['cmd_id'], linux_repo)
 
         self.cvss_scores = {}
         if 'cvss1' in main_info and 'score' in main_info['cvss1']:
