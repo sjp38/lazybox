@@ -28,6 +28,14 @@ class CommitInfo:
     def to_kvpairs(self):
         return self.__dict__
 
+    @classmethod
+    def from_kvpairs(cls, kvpairs):
+        obj = cls.__new__(cls)
+        obj.hash_id = kvpairs['hash_id']
+        obj.authored_date = kvpairs['authored_date']
+        obj.committed_date = kvpairs['committed_date']
+        return obj
+
 # For supporting https://github.com/nluedtke/linux_kernel_cves.git
 class LinuxKernelCve:
     name = None             # CVE-ABCD-EFGH
