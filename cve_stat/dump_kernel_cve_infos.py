@@ -18,7 +18,6 @@ def main():
             default=os.path.join(bindir, '..', '..', 'linux'),
             help='path to local linux repo')
     args = parser.parse_args()
-    print(args)
 
     data_dir = os.path.join(args.linux_kernel_cves, 'data')
     with open(os.path.join(data_dir, 'kernel_cves.json'), 'r') as f:
