@@ -11,7 +11,7 @@ def main():
     args = parser.parse_args()
 
     cves = _linux_kernel_cve.load_kernel_cves_from_json(args.dumpfile).values()
-    print('total: %d' % len(cves))
+    nr_cves = len(cves)
     nr_fixed_before_added = {
             1: 0,
             7 * 24 * 3600: 0,
@@ -32,9 +32,10 @@ def main():
             if committed_date <= cve.added_date - thres:
                 nr_fixed_before_added[thres] += 1
     for thres in sorted(nr_fixed_before_added.keys()):
-        print('fixed %d weeks before added: %d (%f)' %
-                (thres / 7 / 24 / 3600, nr_fixed_before_added[thres],
-                    nr_fixed_before_added[thres] / len(cves)))
+        print('%d/%d (%.3f %%) CVEs are fixed %d weeks before being added' %
+                (nr_fixed_before_added[thres], nr_cves,
+                    nr_fixed_before_added[thres] / nr_cves * 100,
+                    thres / 7 / 24 / 3600))
 
 if __name__ == '__main__':
     main()
