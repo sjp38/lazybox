@@ -126,3 +126,24 @@ class LinuxKernelCve:
         for tree, commitinfo in self.break_commits.items():
             kvpairs['break_commits'][tree] = commitinfo.to_kvpairs()
         return kvpairs
+
+    @classmethod
+    def from_kvpairs(cls, kvpairs):
+        obj = cls.__new__(cls)
+        obj.name = kvpairs['name']
+        obj.break_commits = {}
+        for tree, commit_info in kvpairs['break_commits'].items():
+            try:
+                obj.break_commits[tree] = CommitInfo.from_kvpairs(commit_info)
+            except:
+                pass
+        obj.fix_commits = {}
+        for tree, commit_info in kvpairs['fix_commits'].items():
+            try:
+                obj.fix_commits[tree] = CommitInfo.from_kvpairs(commit_info)
+            except:
+                pass
+        obj.cvss_scores = kvpairs['cvss_scores']
+        obj.added_date = kvpairs['added_date']
+        obj.add_commit_id = kvpairs['add_commit_id']
+        return obj
