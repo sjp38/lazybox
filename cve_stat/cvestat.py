@@ -4,7 +4,7 @@ import argparse
 
 import _linux_kernel_cve
 
-def pr_fix_to_report_stat(cves, tree, thresholds):
+def pr_fix_to_report_stat(cves, tree, thresholds, before):
     nrs_for_thres = {thres: 0 for thres in thresholds}
     nr_total = 0
     for cve in cves:
@@ -16,14 +16,17 @@ def pr_fix_to_report_stat(cves, tree, thresholds):
         committed_date = cve.fix_commits[tree].committed_date
 
         for thres in thresholds:
-            if committed_date <= cve.added_date - thres:
+            if before and committed_date <= cve.added_date - thres:
+                nrs_for_thres[thres] += 1
+            if not before and committed_date >= cve.added_date + thres:
                 nrs_for_thres[thres] += 1
     print('%s tree' % tree)
     for thres in thresholds:
-        print('%d/%d (%.3f %%) CVEs are fixed %d weeks before being added' %
+        print('%d/%d (%.3f %%) CVEs are fixed %d weeks %s being added' %
                 (nrs_for_thres[thres], nr_total,
                     nrs_for_thres[thres] / nr_total * 100,
-                    thres / 7 / 24 / 3600))
+                    thres / 7 / 24 / 3600,
+                    'before' if before else 'after'))
 
 def main():
     parser = argparse.ArgumentParser()
