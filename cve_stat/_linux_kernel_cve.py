@@ -12,6 +12,8 @@ class CommitInfo:
     def __init__(self, hash_id, linux_repo):
         # linux_repo: path to the local linux repo
         self.hash_id = hash_id
+        if not self.hash_id:
+            return
         self.authored_date, self.committed_date = [int(timestamp)
                 for timestamp in subprocess.check_output(
                     ['git', '-C', linux_repo, 'log', '--date=unix',
