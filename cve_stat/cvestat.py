@@ -7,11 +7,13 @@ import _linux_kernel_cve
 def pr_fix_to_report_stat(cves, tree, thresholds, before):
     nrs_for_thres = {thres: 0 for thres in thresholds}
     nr_total = 0
+    nr_not_yet_fixed = 0
     for cve in cves:
         if not tree in cve.break_commits:
             continue
         nr_total += 1
         if not tree in cve.fix_commits:
+            nr_not_yet_fixed += 1
             continue
         committed_date = cve.fix_commits[tree].committed_date
 
@@ -27,6 +29,10 @@ def pr_fix_to_report_stat(cves, tree, thresholds, before):
                     nrs_for_thres[thres] / nr_total * 100,
                     thres / 7 / 24 / 3600,
                     'before' if before else 'after'))
+        if not before:
+            print('%d/%d (%.3f %%) CVEs are not fixed yet' %
+                    (nr_not_yet_fixed, nr_total,
+                        nr_not_yet_fixed / nr_total * 100))
 
 def main():
     parser = argparse.ArgumentParser()
