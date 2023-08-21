@@ -10,7 +10,7 @@ cve_json=$1
 
 bindir=$(dirname "$0")
 
-"$bindir/cvestat_percentile.py" "$cve_json" \
+"$bindir/percentile.py" "$cve_json" \
 	--metric broken_to_reported | \
 	"$bindir/../gnuplot/plot.py" --data_fmt recs --type scatter \
 	--pointsize 1 --xtitle "Percentile" \
@@ -18,7 +18,7 @@ bindir=$(dirname "$0")
 	--size 1024,768 \
 	--font "TimesNewRoman" "broken_to_reported_linear.png"
 
-"$bindir/cvestat_percentile.py" "$cve_json" \
+"$bindir/percentile.py" "$cve_json" \
 	--metric broken_to_reported --min_val 1 | \
 	"$bindir/../gnuplot/plot.py" --data_fmt recs --type scatter \
 	--pointsize 1 --xtitle "Percentile" \
@@ -26,7 +26,7 @@ bindir=$(dirname "$0")
 	--size 1024,768 \
 	--font "TimesNewRoman" --ylog "broken_to_reported.png"
 
-"$bindir/cvestat_percentile.py" "$cve_json" \
+"$bindir/percentile.py" "$cve_json" \
 	--metric report_to_fix_authored | \
 	"$bindir/../gnuplot/plot.py" --data_fmt recs --type scatter \
 	--pointsize 1 --xtitle "Percentile" \
@@ -34,7 +34,7 @@ bindir=$(dirname "$0")
 	--size 1024,768 \
 	--font "TimesNewRoman" "report_to_fix_authored_linear.png"
 
-"$bindir/cvestat_percentile.py" "$cve_json" \
+"$bindir/percentile.py" "$cve_json" \
 	--metric report_to_fix_committed | \
 	"$bindir/../gnuplot/plot.py" --data_fmt recs --type scatter \
 	--pointsize 1 --xtitle "Percentile" \
@@ -42,7 +42,7 @@ bindir=$(dirname "$0")
 	--size 1024,768 \
 	--font "TimesNewRoman" "report_to_fix_committed_linear.png"
 
-"$bindir/cvestat_percentile.py" "$cve_json" \
+"$bindir/percentile.py" "$cve_json" \
 	--metric report_to_fix_authored --min_val 1 | \
 	"$bindir/../gnuplot/plot.py" --data_fmt recs --type scatter \
 	--pointsize 1 --xtitle "Percentile" \
@@ -50,7 +50,7 @@ bindir=$(dirname "$0")
 	--size 1024,768 \
 	--font "TimesNewRoman" --ylog "report_to_fix_authored.png"
 
-"$bindir/cvestat_percentile.py" "$cve_json" \
+"$bindir/percentile.py" "$cve_json" \
 	--metric report_to_fix_committed --min_val 1 | \
 	"$bindir/../gnuplot/plot.py" --data_fmt recs --type scatter \
 	--pointsize 1 --xtitle "Percentile" \
