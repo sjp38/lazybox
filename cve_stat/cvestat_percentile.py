@@ -25,8 +25,8 @@ def main():
                 'broken_to_reported',
                 ],
             help='metric to show')
-    parser.add_argument('--skip_negatives', action='store_true',
-            help='ignore negative metrics (useful for logscale plotting)')
+    parser.add_argument('--min_val', type=int,
+            help='minimum value of the metric to count')
     args = parser.parse_args()
 
     cves = _linux_kernel_cve.load_kernel_cves_from_json(args.dumpfile).values()
@@ -47,17 +47,17 @@ def main():
                 broken_to_reported_secs[tree] = []
 
             secs = cve.fix_commits[tree].committed_date - cve.added_date
-            if not args.skip_negatives or secs >= 0:
+            if not args.min_val or secs >= args.min_val:
                 report_to_fix_committed_secs[tree].append(secs)
 
             secs = cve.fix_commits[tree].authored_date - cve.added_date
-            if not args.skip_negatives or secs >= 0:
+            if not args.min_val or secs >= args.min_val:
                 report_to_fix_authored_secs[tree].append(secs)
 
             if not tree in cve.break_commits:
                 continue
             secs = cve.added_date - cve.break_commits[tree].committed_date
-            if not args.skip_negatives or secs >= 0:
+            if not args.min_val or secs >= args.min_val:
                 broken_to_reported_secs[tree].append(secs)
 
     for tree in ['mainline', '6.4', '6.1', '5.15', '5.10', '5.4', '4.19',
