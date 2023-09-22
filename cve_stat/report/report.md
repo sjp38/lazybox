@@ -110,14 +110,14 @@ such bugs or wrong interpretation of the results.  I now arrived to my
 destination, but I might continue some more hacks on this, so asking of more
 statistics and features is also welcome.
 
-[1] https://kernel-recipes.org/en/2019/talks/cves-are-dead-long-live-the-cve/
-[2] https://lore.kernel.org/ksummit/2023081540-vindicate-caterer-33c6@gregkh/
-[3] https://github.com/sjp38/lazybox/tree/bec4ed0259da655ea47e5478c8fe6f7850c1156b/cve_stat
-[4] https://github.com/nluedtke/linux_kernel_cves
-[5] https://github.com/sjp38/lazybox/blob/bec4ed0259da655ea47e5478c8fe6f7850c1156b/cve_stat/report/broken_to_reported_linear.png
-[6] https://github.com/sjp38/lazybox/blob/bec4ed0259da655ea47e5478c8fe6f7850c1156b/cve_stat/report/broken_to_reported.png
-[7] https://github.com/sjp38/lazybox/blob/bec4ed0259da655ea47e5478c8fe6f7850c1156b/cve_stat/report/report_to_fix_authored_linear.png
-[8] https://github.com/sjp38/lazybox/blob/bec4ed0259da655ea47e5478c8fe6f7850c1156b/cve_stat/report/report_to_fix_authored.png
-[9] https://github.com/sjp38/lazybox/blob/bec4ed0259da655ea47e5478c8fe6f7850c1156b/cve_stat/report/report_to_fix_committed_linear.png
-[10] https://github.com/sjp38/lazybox/blob/bec4ed0259da655ea47e5478c8fe6f7850c1156b/cve_stat/report/report_to_fix_committed.png
+[1] https://kernel-recipes.org/en/2019/talks/cves-are-dead-long-live-the-cve/  
+[2] https://lore.kernel.org/ksummit/2023081540-vindicate-caterer-33c6@gregkh/  
+[3] https://github.com/sjp38/lazybox/tree/bec4ed0259da655ea47e5478c8fe6f7850c1156b/cve_stat  
+[4] https://github.com/nluedtke/linux_kernel_cves  
+[5] https://github.com/sjp38/lazybox/blob/bec4ed0259da655ea47e5478c8fe6f7850c1156b/cve_stat/report/broken_to_reported_linear.png  
+[6] https://github.com/sjp38/lazybox/blob/bec4ed0259da655ea47e5478c8fe6f7850c1156b/cve_stat/report/broken_to_reported.png  
+[7] https://github.com/sjp38/lazybox/blob/bec4ed0259da655ea47e5478c8fe6f7850c1156b/cve_stat/report/report_to_fix_authored_linear.png  
+[8] https://github.com/sjp38/lazybox/blob/bec4ed0259da655ea47e5478c8fe6f7850c1156b/cve_stat/report/report_to_fix_authored.png  
+[9] https://github.com/sjp38/lazybox/blob/bec4ed0259da655ea47e5478c8fe6f7850c1156b/cve_stat/report/report_to_fix_committed_linear.png  
+[10] https://github.com/sjp38/lazybox/blob/bec4ed0259da655ea47e5478c8fe6f7850c1156b/cve_stat/report/report_to_fix_committed.png  
 [11] https://github.com/sjp38/lazybox/blob/bec4ed0259da655ea47e5478c8fe6f7850c1156b/cve_stat/plot.sh
