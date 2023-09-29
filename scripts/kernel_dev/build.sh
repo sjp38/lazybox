@@ -93,7 +93,7 @@ fi
 make -C "$src_dir" O="$build_dir" olddefconfig
 make -C "$src_dir" O="$build_dir" -j$(nproc)
 
-if [ "$do_install" ]
+if [ "$do_install" = "true" ]
 then
 	sudo make -C "$src_dir" O="$build_dir" modules_install install
 	kernelversion=$(make -C "$src_dir" O="$build_dir" -s kernelrelease)
