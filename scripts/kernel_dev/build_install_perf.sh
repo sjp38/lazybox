@@ -20,8 +20,13 @@ linux_dir=$1
 perf_build_dir=$2
 perf_dir="$linux_dir/tools/perf"
 
+if ! sudo apt install -y python-dev
+then
+	sudo apt install -y python-dev-is-python3
+fi
+
 sudo apt install -y build-essential libdw-dev systemtap-sdt-dev libunwind-dev \
-		libslang2-dev libperl-dev python-dev libiberty-dev liblzma-dev \
+		libslang2-dev libperl-dev libiberty-dev liblzma-dev \
 		libzstd-dev libcap-dev libnuma-dev libbabeltrace-ctf-dev
 
 make -C "$perf_dir" O="$perf_build_dir"
