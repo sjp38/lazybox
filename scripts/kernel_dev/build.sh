@@ -60,7 +60,7 @@ do
 			pr_msg_usage_exit "more than one src dir given" 1
 		fi
 		src_dir=$1
-		build_dir=$2
+		build_dir=$(realpath $2)
 		shift 2
 		;;
 	esac
