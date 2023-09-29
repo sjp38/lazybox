@@ -100,7 +100,7 @@ then
 	sudo "$bindir/set_kernel.py" "$kernelversion"
 fi
 
-if [ "$do_reboot" ]
+if [ "$do_reboot" = "true" ]
 then
 	echo "reboot now"
 	sudo shutdown -r now
