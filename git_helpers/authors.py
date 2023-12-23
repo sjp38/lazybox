@@ -148,18 +148,24 @@ def get_authors(args):
         authors_sorted = authors_sorted[:args.max_nr_authors]
     return authors_sorted, authors
 
-def pr_authors(authors_sorted, authors, sortby, hide_rank):
+def pr_authors(authors_sorted, authors, sortby, hide_rank, pr_for_plot):
+    if pr_for_plot:
+        print(sortby)
     for idx, author in enumerate(authors_sorted):
-        line = '%s: %d %s' % (author, authors[author], sortby)
-        if not hide_rank:
-            line = '%d. %s' % (idx + 1, line)
+        if pr_for_plot:
+            line = '%d %d' % (idx, authors[author])
+        else:
+            line = '%s: %d %s' % (author, authors[author], sortby)
+            if not hide_rank:
+                line = '%d. %s' % (idx + 1, line)
         print(line)
 
     print('# %d authors, %d %s in total' % (len(authors),
         sum(authors.values()), sortby))
 
 def get_pr_authors(args):
-    pr_authors(*get_authors(args), args.sortby, args.hide_rank)
+    pr_authors(*get_authors(args), args.sortby, args.hide_rank,
+            args.pr_for_plot)
 
 def yyyymmdd_to_date(yyyymmdd):
     return datetime.date(*[int(x) for x in yyyymmdd.split('-')])
@@ -196,6 +202,8 @@ def main():
             help='do not print rank')
     parser.add_argument('--pr_by_authors', action='store_true',
             help='print output by authors')
+    parser.add_argument('--pr_for_plot', action='store_true',
+            help='print output for easy plotting')
     args = parser.parse_args()
 
     if args.interval:
