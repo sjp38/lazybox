@@ -28,7 +28,7 @@ fi
 sudo apt install -y build-essential libdw-dev systemtap-sdt-dev libunwind-dev \
 		libslang2-dev libperl-dev libiberty-dev liblzma-dev \
 		libzstd-dev libcap-dev libnuma-dev libbabeltrace-ctf-dev \
-		libpfm4-dev libtraceevent-dev
+		libpfm4-dev libtraceevent-dev python3-setuptools pkg-config
 
 make -C "$perf_dir" O="$perf_build_dir"
 make -C "$perf_dir" O="$perf_build_dir" install
