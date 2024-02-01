@@ -88,6 +88,8 @@ fi
 if [ ! "$additional_config" = "" ]
 then
 	cat "$additional_config" >> "$build_dir/.config"
+	sed -i 's/CONFIG_DEBUG_INFO_BTF=y/# CONFIG_DEBUG_INFO_BTF/' \
+		"$build_dir/.config"
 fi
 
 make -C "$src_dir" O="$build_dir" olddefconfig
