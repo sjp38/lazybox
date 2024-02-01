@@ -73,6 +73,8 @@ then
 	pr_msg_usage_exit "src dir not given" 1
 fi
 
+sudo apt install -y build-essential libssl-dev bc bison flex libelf-dev
+
 orig_config=$build_dir/.config
 
 if [ ! -d "$build_dir" ]
