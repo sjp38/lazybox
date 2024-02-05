@@ -85,15 +85,15 @@ fi
 if [ ! -f "$orig_config" ]
 then
 	cp "/boot/config-$(uname -r)" "$orig_config"
+	sed -i 's/CONFIG_DEBUG_INFO_BTF=y/# CONFIG_DEBUG_INFO_BTF/' \
+		"$build_dir/.config"
+	make -C "$src_dir" O="$build_dir" olddefconfig
+	make -C "$src_dir" O="$build_dir" localmodconfig
 fi
 
 if [ ! "$additional_config" = "" ]
 then
 	cat "$additional_config" >> "$build_dir/.config"
-	sed -i 's/CONFIG_DEBUG_INFO_BTF=y/# CONFIG_DEBUG_INFO_BTF/' \
-		"$build_dir/.config"
-	make -C "$src_dir" O="$build_dir" olddefconfig
-	make -C "$src_dir" O="$build_dir" localmodconfig
 fi
 
 make -C "$src_dir" O="$build_dir" olddefconfig
