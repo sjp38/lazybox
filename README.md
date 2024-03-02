@@ -25,6 +25,11 @@ try to make non-destructive ways.  We will keep old files and copy those to new
 location, notify the alternatives, wait until existing users update to use the
 new location, and finally destroy old things.
 
+As of 2024-03-02, the original part of this project (`run_exps.py` and its
+frieds) is copied to `parallel_runs`.  All users should update their setups to
+use the tools under the new directory.  The files under the root will soon be
+deleted.
+
 Version Compatibility
 =====================
 
