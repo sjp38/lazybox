@@ -1,0 +1,24 @@
+#!/usr/bin/expect --
+set timeout -1
+
+# Reboot remote machine via ssh
+#
+# Usage:
+# expect remote_reboot.exp <username> <target> <ssh port> <password>
+
+if { [llength $argv] < 4 } {
+	puts "usage: "
+	puts "expect remote_reboot.exp \\"
+	puts "			<username> <target> <ssh port> <password> \\"
+	exit 1
+}
+
+set username [lindex $argv 0]
+set target [lindex $argv 1]
+set ssh_port [lindex $argv 2]
+set password [lindex $argv 3]
+
+source "remote.tcl"
+
+remote_sudocmd $username $target $ssh_port $password \
+		"shutdown -r now"

@@ -1,0 +1,32 @@
+#!/usr/bin/expect --
+set timeout -1
+
+# Do experiments from a remote target machine using run_exps.py
+#
+# Because run_exps.py is a part of lazybox, lazybox should be installed on the
+# remote target machine before execcution of this program.
+#
+# Usage:
+# expect remote_exps.exp <username> <target> <ssh port> \
+#                           <lazybox path> <exp>
+
+if { [llength $argv] < 5 } {
+	puts "usage: "
+	puts "expect remote_exps.exp \\"
+        puts "              <username> <target> <ssh port> \\"
+        puts "              <lazybox path> <exp>"
+	exit 1
+}
+
+set username [lindex $argv 0]
+set target [lindex $argv 1]
+set ssh_port [lindex $argv 2]
+set lbpath [lindex $argv 3]
+set exp [lindex $argv 4]
+
+source "remote.tcl"
+
+remote_sudocmd_registered $username $target $ssh_port $password \
+	"cd $lbpath; sudo ./run_exps.py $exp"
+
+puts "\nremote_exps_registered.exp FINISHED"
