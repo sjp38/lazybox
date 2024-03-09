@@ -12,7 +12,7 @@ do
 		do
 			echo "$i iter of $exp/$var"
 			"$BINDIR"/_gen_exp_cfg.sh "$exp" "$var" | \
-			sudo "$LBX"/run_exps.py stdin
+			sudo "$LBX"/parallel_runs/run_exps.py stdin
 		done
 	done
 done
