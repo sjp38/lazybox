@@ -16,6 +16,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('text', metavar='<file>',
                         help='file containing the text to decode, or stdin')
+    parser.add_argument('--repo', metavar='<repo>',
+                        help='path to the repo of the commits')
     args = parser.parse_args()
 
     if args.text == 'stdin':
@@ -29,9 +31,12 @@ def main():
             line = line.replace(separator, ' ')
         for word in line.split():
             if is_hash(word):
+                git_cmd = ['git']
+                if args.repo is not None:
+                    git_cmd += ['-C', args.repo]
                 try:
                     decoded = subprocess.check_output(
-                            ['git', 'describe', word]).decode().strip()
+                            git_cmd + ['describe', word]).decode().strip()
                 except:
                     decoded = 'unknown'
                 print('# decoding commit %s: %s' % (word, decoded))
