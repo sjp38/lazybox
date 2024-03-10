@@ -1,5 +1,25 @@
 #!/usr/bin/env python3
 
+'''
+Find commits on a given text and print various information of those.
+
+E.g.,
+
+    $ curl https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/-/raw/master/issues/CVE-2023-4244.yml \
+         | ~/lazybox/git_helpers/commits_on_text.py stdin --repo ~/linux --contains
+      % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                     Dload  Upload   Total   Spent    Left  Speed
+    100  5185  100  5185    0     0  60617      0 --:--:-- --:--:-- --:--:-- 61000
+    commits on the text
+    - 02c6c24402bf: ("netfilter: nf_tables: GC transaction race with netns dismantle")
+      - merged in v6.5-rc7
+    - 0b9af4860a61: ("netfilter: nf_tables: remove busy mark and gc batch API")
+      - merged in v6.1.56
+    - 1398a0eee290: ("netfilter: nf_tables: remove busy mark and gc batch API")
+      - merged in v5.4.262
+    [...]
+'''
+
 import argparse
 import sys
 import subprocess
