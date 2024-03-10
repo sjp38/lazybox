@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import sys
 import subprocess
 
@@ -12,7 +13,17 @@ def is_hash(word):
     return True
 
 def main():
-    for line in sys.stdin:
+    parser = argparse.ArgumentParser()
+    parser.add_argument('text', metavar='<file>',
+                        help='file containing the text to decode, or stdin')
+    args = parser.parse_args()
+
+    if args.text == 'stdin':
+        lines = sys.stdin.read().split('\n')
+    else:
+        with open(args.text, 'r') as f:
+            lines = f.read().split('\n')
+    for line in lines:
         print(line.strip())
         for word in line.split():
             if is_hash(word):
