@@ -28,7 +28,8 @@ def main():
         for word in line.split():
             if is_hash(word):
                 try:
-                    decoded = subprocess.check_output(['git', 'describe', word])
+                    decoded = subprocess.check_output(
+                            ['git', 'describe', word]).decode().strip()
                 except:
                     decoded = 'unknown'
                 print('# decoding commit %s: %s' % (word, decoded))
