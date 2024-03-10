@@ -25,21 +25,25 @@ def main():
     else:
         with open(args.text, 'r') as f:
             lines = f.read().split('\n')
+    commits_to_decode = {}
     for line in lines:
         print(line.strip())
         for separator in [',', '(', ')', '/']:
             line = line.replace(separator, ' ')
         for word in line.split():
             if is_hash(word):
-                git_cmd = ['git']
-                if args.repo is not None:
-                    git_cmd += ['-C', args.repo]
-                try:
-                    decoded = subprocess.check_output(
-                            git_cmd + ['describe', word]).decode().strip()
-                except:
-                    decoded = 'unknown'
-                print('# decoding commit %s: %s' % (word, decoded))
+                commits_to_decode[word] = True
+
+    for commit in commits_to_decode:
+        git_cmd = ['git']
+        if args.repo is not None:
+            git_cmd += ['-C', args.repo]
+        try:
+            decoded = subprocess.check_output(
+                    git_cmd + ['describe', commit]).decode().strip()
+        except:
+            decoded = 'unknown'
+        print('# decoding commit %s: %s' % (commit, decoded))
 
 if __name__ == '__main__':
     main()
