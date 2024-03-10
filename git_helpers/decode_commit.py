@@ -34,7 +34,8 @@ def main():
             line = line.replace(separator, ' ')
         for word in line.split():
             if is_hash(word):
-                if len(word) > 12 and word[:12] in commits_to_decode:
+                if len(word) > 12:
+                    word = word[:12]
                     continue
                 commits_to_decode[word] = True
 
