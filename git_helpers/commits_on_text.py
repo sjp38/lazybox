@@ -26,6 +26,8 @@ def main():
                         help='print author information')
     parser.add_argument('--matching', nargs='+', metavar='<git reference>',
                         help='find matching changes from given references')
+    parser.add_argument('--show_original_text', action='store_true',
+                        help='show original text')
     args = parser.parse_args()
 
     if args.text == 'stdin':
@@ -35,7 +37,8 @@ def main():
             lines = f.read().split('\n')
     commits_to_decode = {}
     for line in lines:
-        print(line.strip())
+        if args.show_original_text:
+            print(line.strip())
         for separator in [',', '(', ')', '/', '[', ']']:
             line = line.replace(separator, ' ')
         for word in line.split():
