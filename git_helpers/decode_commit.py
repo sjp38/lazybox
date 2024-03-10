@@ -24,6 +24,8 @@ def main():
                         help='print containing version of the commits')
     parser.add_argument('--author', action='store_true',
                         help='print author information')
+    parser.add_argument('--matching', nargs='+', metavar='<git reference>',
+                        help='find matching changes from given references')
     args = parser.parse_args()
 
     if args.text == 'stdin':
@@ -53,6 +55,17 @@ def main():
                   (change.author, change.commit.author_date))
         if args.contains:
             print('  - merged in %s' % change.commit.first_contained_version())
+        if args.matching:
+            for to_find_from in args.matching:
+                matching_change = change.find_matching_change(
+                        [to_find_from], args.repo)
+                if matching_change == None:
+                    continue
+                print('  - matching change (%s) found from %s' %
+                      (matching_change.commit.hashid[:12], to_find_from))
+                if args.contains:
+                    print('    - merged in %s' %
+                          matching_change.commit.first_contained_version())
 
 if __name__ == '__main__':
     main()
