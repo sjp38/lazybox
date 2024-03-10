@@ -34,6 +34,7 @@ def main():
             if is_hash(word):
                 commits_to_decode[word] = True
 
+    print('commits on the text')
     for commit in commits_to_decode:
         git_cmd = ['git']
         if args.repo is not None:
@@ -43,7 +44,7 @@ def main():
                     git_cmd + ['describe', commit]).decode().strip()
         except:
             decoded = 'unknown'
-        print('# decoding commit %s: %s' % (commit, decoded))
+        print('- %s: %s' % (commit, decoded))
 
 if __name__ == '__main__':
     main()
