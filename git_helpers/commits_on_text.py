@@ -48,7 +48,11 @@ def main():
     for commit in sorted(commits_to_decode.keys()):
         if args.repo is None:
             args.repo = '.'
-        change = _git.Change(commit=commit, repo=args.repo)
+        try:
+            change = _git.Change(commit=commit, repo=args.repo)
+        except:
+            # probably wrong commit.  Ignore.
+            continue
         print('- %s: ("%s")' % (change.commit.hashid[:12], change.subject))
         if args.author:
             print('  - authored by %s at %s' %
