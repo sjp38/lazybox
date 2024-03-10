@@ -22,6 +22,8 @@ def main():
                         help='path to the repo of the commits')
     parser.add_argument('--contains', action='store_true',
                         help='print containing version of the commits')
+    parser.add_argument('--author', action='store_true',
+                        help='print author information')
     args = parser.parse_args()
 
     if args.text == 'stdin':
@@ -46,6 +48,9 @@ def main():
             args.repo = '.'
         change = _git.Change(commit=commit, repo=args.repo)
         print('- %s: ("%s")' % (change.commit.hashid[:12], change.subject))
+        if args.author:
+            print('  - authored by %s at %s' %
+                  (change.author, change.commit.author_date))
         if args.contains:
             print('  - merged in %s' % change.commit.first_contained_version())
 
