@@ -45,7 +45,7 @@ def main():
                 commits_to_decode[word] = True
 
     print('commits on the text')
-    for commit in commits_to_decode:
+    for commit in sorted(commits_to_decode.keys()):
         if args.repo is None:
             args.repo = '.'
         change = _git.Change(commit=commit, repo=args.repo)
