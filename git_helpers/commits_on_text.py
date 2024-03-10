@@ -15,7 +15,8 @@ def is_hash(word):
     return True
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+            description='print information of commits on a given text')
     parser.add_argument('text', metavar='<file>',
                         help='file containing the text to decode, or stdin')
     parser.add_argument('--repo', metavar='<repo>',
