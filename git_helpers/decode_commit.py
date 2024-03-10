@@ -4,6 +4,8 @@ import argparse
 import sys
 import subprocess
 
+import _git
+
 def is_hash(word):
     if len(word) < 10:
         return False
@@ -38,15 +40,10 @@ def main():
 
     print('commits on the text')
     for commit in commits_to_decode:
-        git_cmd = ['git']
-        if args.repo is not None:
-            git_cmd += ['-C', args.repo]
-        try:
-            decoded = subprocess.check_output(
-                    git_cmd + ['describe', commit]).decode().strip()
-        except:
-            decoded = 'unknown'
-        print('- %s: %s' % (commit, decoded))
+        if args.repo is None:
+            args.repo = '.'
+        change = _git.Change(commit=commit, repo=args.repo)
+        print('- %s: ("%s")' % (change.commit.hashid, change.subject))
 
 if __name__ == '__main__':
     main()
