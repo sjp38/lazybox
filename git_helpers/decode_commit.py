@@ -36,7 +36,6 @@ def main():
             if is_hash(word):
                 if len(word) > 12:
                     word = word[:12]
-                    continue
                 commits_to_decode[word] = True
 
     print('commits on the text')
@@ -44,7 +43,7 @@ def main():
         if args.repo is None:
             args.repo = '.'
         change = _git.Change(commit=commit, repo=args.repo)
-        print('- %s: ("%s")' % (change.commit.hashid, change.subject))
+        print('- %s: ("%s")' % (change.commit.hashid[:12], change.subject))
 
 if __name__ == '__main__':
     main()
