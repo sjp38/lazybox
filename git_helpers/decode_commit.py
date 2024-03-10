@@ -11,12 +11,16 @@ def is_hash(word):
             return False
     return True
 
-for line in sys.stdin:
-    print(line.strip())
-    for word in line.split():
-        if is_hash(word):
-            try:
-                decoded = subprocess.check_output(['git', 'describe', word])
-            except:
-                decoded = 'unknown'
-            print('# decoding commit %s: %s' % (word, decoded))
+def main():
+    for line in sys.stdin:
+        print(line.strip())
+        for word in line.split():
+            if is_hash(word):
+                try:
+                    decoded = subprocess.check_output(['git', 'describe', word])
+                except:
+                    decoded = 'unknown'
+                print('# decoding commit %s: %s' % (word, decoded))
+
+if __name__ == '__main__':
+    main()
