@@ -25,6 +25,8 @@ def main():
             lines = f.read().split('\n')
     for line in lines:
         print(line.strip())
+        for separator in [',', '(', ')', '/']:
+            line = line.replace(separator, ' ')
         for word in line.split():
             if is_hash(word):
                 try:
