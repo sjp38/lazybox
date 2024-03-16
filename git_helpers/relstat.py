@@ -216,14 +216,18 @@ def pr_report(stat, stats):
     nr_versions = len(stats)
     print('# Among the %d releases, %s has' % (nr_versions, stat.version))
 
-    order = sorted(stats, key=lambda x: x.changed_files).index(stat) + 1
-    print('#    %s smallest file changes' % order_str(order))
-    order = sorted(stats, key=lambda x: x.insertions).index(stat) + 1
-    print('#    %s smallest insertions' % order_str(order))
-    order = sorted(stats, key=lambda x: x.deletions).index(stat) + 1
-    print('#    %s smallest deletions' % order_str(order))
-    order = sorted(stats, key=lambda x: x.diff).index(stat) + 1
-    print('#    %s smallest diffs' % order_str(order))
+    order = sorted(stats, reverse=True,
+                   key=lambda x: x.changed_files).index(stat) + 1
+    print('#    %s largest file changes' % order_str(order))
+    order = sorted(stats, reverse=True,
+                   key=lambda x: x.insertions).index(stat) + 1
+    print('#    %s largest insertions' % order_str(order))
+    order = sorted(stats, reverse=True,
+                   key=lambda x: x.deletions).index(stat) + 1
+    print('#    %s largest deletions' % order_str(order))
+    order = sorted(stats, reverse=True,
+                   key=lambda x: x.diff).index(stat) + 1
+    print('#    %s largest diffs' % order_str(order))
 
 def pr_release_cadence(stats):
     nr_releases = len(stats)
