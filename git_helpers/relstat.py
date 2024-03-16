@@ -171,7 +171,7 @@ def get_stable_versions(major_version, since, before):
             versions.append(version)
     return versions
 
-def get_versions(since, before):
+def get_versions(since, before, no_extra_version):
     versions_all = gitcmd_str_output(['tag']).split('\n')
 
     versions = []
@@ -192,6 +192,8 @@ def get_versions(since, before):
         try:
             minor_version = int(minors[0], 10)
             if len(minors) == 2:
+                if no_extra_version:
+                    continue
                 rc = int(minors[1], 10)
             cdate = version_commit_date(version)
             if cdate > since and cdate < before:
@@ -248,6 +250,8 @@ def set_argparser(parser):
             help='show stat of releases before this date')
     parser.add_argument('--extra_version', metavar='<extra version name>',
             help='show stat for specific extra versions only')
+    parser.add_argument('--no_extra_version', action='store_true',
+            help='ignore -rc releases')
     parser.add_argument('--stables', metavar='<major version name>',
             help='show stat for stable releases of specific major version')
     parser.add_argument('--files_to_stat', metavar='<file>', nargs='+',
@@ -297,7 +301,7 @@ def main():
         if args.stables:
             versions = get_stable_versions(args.stables, since, before)
         else:
-            versions = get_versions(since, before)
+            versions = get_versions(since, before, args.no_extra_version)
             master_date = version_commit_date('master')
             if master_date > since and master_date < before:
                 versions.append('master')
