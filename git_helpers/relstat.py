@@ -235,7 +235,7 @@ def infer_next_version(version_name):
     return version_name[:len(version_name) - len(last_number)] + '%d' % (
             int(last_number) + 1)
 
-def pr_release_cadence(stats, schedule_expect_date):
+def pr_release_cadence(stats, before):
     if len(stats) <= 1:
         return
     nr_releases = len(stats)
@@ -246,18 +246,20 @@ def pr_release_cadence(stats, schedule_expect_date):
     print('# %d releases made in %d days (release per %.2f days)' %
           (nr_releases, duration.days, days_per_release))
 
-    if schedule_expect_date is None:
+    if before is None:
         return
-    schedule_expect_date = datetime.datetime.strptime(
-            schedule_expect_date, '%Y-%m-%d')
+    before = datetime.datetime.strptime(before, '%Y-%m-%d')
     nr_future_releases = 1
     next_version = infer_next_version(stats[-1].version)
-    print('# future release expectations based on the release cadence')
+    head_printed = False
     while True:
         days = nr_future_releases * days_per_release
         rel_date = last_date + datetime.timedelta(days=days)
-        if rel_date > schedule_expect_date:
+        if rel_date > before:
             break
+        if head_printed is False:
+            print('# future release expectations based on the release cadence')
+            head_printed = True
         print('# - %s: %s' % (rel_date.strftime('%Y-%m-%d'), next_version))
         next_version = infer_next_version(next_version)
         nr_future_releases += 1
@@ -297,8 +299,6 @@ def set_argparser(parser):
             help='sort stat with the given key')
     parser.add_argument('--dry', action='store_true',
             help='show the list of versions only')
-    parser.add_argument('--expect_schedule', metavar='<date (YYYY-MM-DD)>',
-            help='expect future release schedule')
 
 def main():
     global git_cmd
@@ -436,7 +436,7 @@ def main():
                 sum(s.deletions for s in stats),
                 sum(s.insertions for s in stats),
                 sum(s.diff for s in stats)))
-    pr_release_cadence(stats, args.expect_schedule)
+    pr_release_cadence(stats, args.before)
 
     if report_for in stats_map:
         pr_report(stats_map[report_for], stats)
