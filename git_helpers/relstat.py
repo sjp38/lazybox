@@ -252,6 +252,8 @@ def set_argparser(parser):
             help='show stat for specific extra versions only')
     parser.add_argument('--no_extra_version', action='store_true',
             help='ignore -rc releases')
+    parser.add_argument('--no_master', action='store_true',
+            help='ignore master branch')
     parser.add_argument('--stables', metavar='<major version name>',
             help='show stat for stable releases of specific major version')
     parser.add_argument('--files_to_stat', metavar='<file>', nargs='+',
@@ -302,9 +304,10 @@ def main():
             versions = get_stable_versions(args.stables, since, before)
         else:
             versions = get_versions(since, before, args.no_extra_version)
-            master_date = version_commit_date('master')
-            if master_date > since and master_date < before:
-                versions.append('master')
+            if not args.no_master:
+                master_date = version_commit_date('master')
+                if master_date > since and master_date < before:
+                    versions.append('master')
     versions = [v for v in versions if is_valid_version(v)]
     versions = sorted(versions, key=lambda x: version_commit_date(x))
     if not versions:
