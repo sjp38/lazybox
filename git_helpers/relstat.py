@@ -264,6 +264,7 @@ def main():
 
     if not os.path.isdir(args.gitdir) or not os.path.exists(args.gitdir):
         print('Wrong git directory \'%s\'' % args.gitdir)
+        exit(1)
     git_cmd = ['git', '--git-dir=%s' % args.gitdir]
 
     versions = args.versions
