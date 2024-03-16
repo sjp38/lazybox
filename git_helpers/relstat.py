@@ -229,6 +229,12 @@ def pr_report(stat, stats):
                    key=lambda x: x.diff).index(stat) + 1
     print('#    %s largest diffs' % order_str(order))
 
+def infer_next_version(version_name):
+    last_number = version_name.split('.')[-1]
+    last_number = last_number.split('-')[-1]
+    return version_name[:len(version_name) - len(last_number)] + '%d' % (
+            int(last_number) + 1)
+
 def pr_release_cadence(stats, schedule_expect_days):
     if len(stats) <= 1:
         return
@@ -237,18 +243,21 @@ def pr_release_cadence(stats, schedule_expect_days):
     last_date = version_commit_date(stats[-1].version)
     duration = last_date - first_date
     days_per_release = duration.days / (nr_releases - 1)
-    print('# %d release within %d days (release per %.2f days)' %
+    print('# %d releases made in %d days (release per %.2f days)' %
           (nr_releases, duration.days, days_per_release))
 
     if schedule_expect_days is None:
         return
     nr_future_releases = 1
+    next_version = infer_next_version(stats[-1].version)
+    print('# future release expectations based on the release cadence')
     while True:
         days = nr_future_releases * days_per_release
         if days > schedule_expect_days:
             break
         date = (last_date + datetime.timedelta(days=days)).strftime('%Y-%m-%d')
-        print('# +%d release by %s expected' % (nr_future_releases, date))
+        print('# - %s: %s' % (date, next_version))
+        next_version = infer_next_version(next_version)
         nr_future_releases += 1
 
 def set_argparser(parser):
