@@ -223,6 +223,14 @@ def pr_report(stat, stats):
     order = sorted(stats, key=lambda x: x.diff).index(stat) + 1
     print('#    %s smallest diffs' % order_str(order))
 
+def pr_release_cadence(stats):
+    nr_releases = len(stats)
+    first_date = version_commit_date(stats[0].version)
+    last_date = version_commit_date(stats[-1].version)
+    duration = last_date - first_date
+    print('# %d release within %d days (release per %.2f days)' %
+          (nr_releases, duration.days, duration.days / (nr_releases - 1)))
+
 def set_argparser(parser):
     parser.add_argument('--gitdir', metavar='<dir>', default='./.git',
             help='git directory of the project')
@@ -390,6 +398,7 @@ def main():
                 sum(s.deletions for s in stats),
                 sum(s.insertions for s in stats),
                 sum(s.diff for s in stats)))
+    pr_release_cadence(stats)
 
     if report_for in stats_map:
         pr_report(stats_map[report_for], stats)
