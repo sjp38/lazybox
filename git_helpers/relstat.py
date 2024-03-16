@@ -229,13 +229,25 @@ def pr_report(stat, stats):
                    key=lambda x: x.diff).index(stat) + 1
     print('#    %s largest diffs' % order_str(order))
 
-def pr_release_cadence(stats):
+def pr_release_cadence(stats, schedule_expect_days):
     nr_releases = len(stats)
     first_date = version_commit_date(stats[0].version)
     last_date = version_commit_date(stats[-1].version)
     duration = last_date - first_date
+    days_per_release = duration.days / (nr_releases - 1)
     print('# %d release within %d days (release per %.2f days)' %
-          (nr_releases, duration.days, duration.days / (nr_releases - 1)))
+          (nr_releases, duration.days, days_per_release))
+
+    if schedule_expect_days is None:
+        return
+    nr_future_releases = 1
+    while True:
+        days = nr_future_releases * days_per_release
+        if days > schedule_expect_days:
+            break
+        date = (last_date + datetime.timedelta(days=days)).strftime('%Y-%m-%d')
+        print('# +%d release by %s expected' % (nr_future_releases, date))
+        nr_future_releases += 1
 
 def set_argparser(parser):
     parser.add_argument('--gitdir', metavar='<dir>', default='./.git',
@@ -272,6 +284,8 @@ def set_argparser(parser):
             help='sort stat with the given key')
     parser.add_argument('--dry', action='store_true',
             help='show the list of versions only')
+    parser.add_argument('--expect_schedule', metavar='<days>', type=int,
+            help='expect future release schedule')
 
 def main():
     global git_cmd
@@ -409,7 +423,7 @@ def main():
                 sum(s.deletions for s in stats),
                 sum(s.insertions for s in stats),
                 sum(s.diff for s in stats)))
-    pr_release_cadence(stats)
+    pr_release_cadence(stats, args.expect_schedule)
 
     if report_for in stats_map:
         pr_report(stats_map[report_for], stats)
