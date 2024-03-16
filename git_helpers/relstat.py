@@ -235,7 +235,7 @@ def infer_next_version(version_name):
     return version_name[:len(version_name) - len(last_number)] + '%d' % (
             int(last_number) + 1)
 
-def pr_release_cadence(stats, schedule_expect_days):
+def pr_release_cadence(stats, schedule_expect_date):
     if len(stats) <= 1:
         return
     nr_releases = len(stats)
@@ -246,17 +246,19 @@ def pr_release_cadence(stats, schedule_expect_days):
     print('# %d releases made in %d days (release per %.2f days)' %
           (nr_releases, duration.days, days_per_release))
 
-    if schedule_expect_days is None:
+    if schedule_expect_date is None:
         return
+    schedule_expect_date = datetime.datetime.strptime(
+            schedule_expect_date, '%Y-%m-%d')
     nr_future_releases = 1
     next_version = infer_next_version(stats[-1].version)
     print('# future release expectations based on the release cadence')
     while True:
         days = nr_future_releases * days_per_release
-        if days > schedule_expect_days:
+        rel_date = last_date + datetime.timedelta(days=days)
+        if rel_date > schedule_expect_date:
             break
-        date = (last_date + datetime.timedelta(days=days)).strftime('%Y-%m-%d')
-        print('# - %s: %s' % (date, next_version))
+        print('# - %s: %s' % (rel_date.strftime('%Y-%m-%d'), next_version))
         next_version = infer_next_version(next_version)
         nr_future_releases += 1
 
@@ -295,7 +297,7 @@ def set_argparser(parser):
             help='sort stat with the given key')
     parser.add_argument('--dry', action='store_true',
             help='show the list of versions only')
-    parser.add_argument('--expect_schedule', metavar='<days>', type=int,
+    parser.add_argument('--expect_schedule', metavar='<date (YYYY-MM-DD)>',
             help='expect future release schedule')
 
 def main():
