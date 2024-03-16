@@ -230,6 +230,8 @@ def pr_report(stat, stats):
     print('#    %s largest diffs' % order_str(order))
 
 def pr_release_cadence(stats, schedule_expect_days):
+    if len(stats) <= 1:
+        return
     nr_releases = len(stats)
     first_date = version_commit_date(stats[0].version)
     last_date = version_commit_date(stats[-1].version)
