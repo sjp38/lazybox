@@ -2,6 +2,20 @@
 
 # Show how total number of Linux kernel CVEs that published and rejected by the
 # community's CNA changes per day, for last N days.
+#
+# Example usage:
+#     git clone git://git.kernel.org/pub/scm/linux/security/vulns.git
+#     ./vulns_stat.sh vulns 30
+#    $ ./vulns_stat.sh ~/vulns 30
+#    <date> <published> <rejected>
+#    2024-02-16      0       0
+#    2024-02-17      0       0
+#    2024-02-18      0       0
+#    2024-02-19      0       0
+#    2024-02-20      7       0
+#    2024-02-21      14      0
+#    2024-02-22      31      1
+#    [...]
 
 set -e
 
