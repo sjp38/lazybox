@@ -4,8 +4,8 @@
 # community's CNA changes per day, for last N days.
 #
 # Example usage:
-#     git clone git://git.kernel.org/pub/scm/linux/security/vulns.git
-#     ./vulns_stat.sh vulns 30
+#    $ git clone git://git.kernel.org/pub/scm/linux/security/vulns.git
+#    $ ./vulns_stat.sh vulns 30
 #    $ ./vulns_stat.sh ~/vulns 30
 #    <date> <published> <rejected>
 #    2024-02-16      0       0
