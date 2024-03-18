@@ -60,7 +60,7 @@ def main():
     for line in lines:
         if args.show_original_text:
             print(line.strip())
-        for separator in [',', '(', ')', '/', '[', ']']:
+        for separator in [',', '(', ')', '/', '[', ']', '"']:
             line = line.replace(separator, ' ')
         for word in line.split():
             if is_hash(word):
