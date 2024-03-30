@@ -9,6 +9,8 @@ def main():
                         help='cve description mbox file')
     parser.add_argument('--root', metavar='<dir>', nargs='+',
                         help='root of files to count')
+    parser.add_argument('--max_depth', type=int, metavar='<int>',
+                        help='similar to that of du')
     args = parser.parse_args()
 
     counts = {}
@@ -34,6 +36,8 @@ def main():
                                 break
                         if skip:
                             continue
+                    if args.max_depth:
+                        f = '/'.join(f.split('/')[:args.max_depth])
                     if not f in counts:
                         counts[f] = 0
                     counts[f] += 1
