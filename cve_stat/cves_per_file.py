@@ -1,5 +1,43 @@
 #!/usr/bin/env python3
 
+'''
+Count number of CVEs that affecting specific files and print the output sorted
+by the numbers.  Files can be specified using root directory and maximum depth,
+like 'du' command.
+
+Examples:
+
+    $ git clone git://git.kernel.org/pub/scm/linux/security/vulns.git \
+            ../../vulns
+    $ ./cves_per_file.py ../../vulns/cve/published/*/*.mbox --root mm/damon/
+    1 mm/damon/vaddr-test.h
+    2 mm/damon/dbgfs.c
+    $
+    $ ./cves_per_file.py ../../vulns/cve/published/*/*.mbox --max_depth 1 \
+            | tail -n 5
+    22 kernel
+    62 arch
+    99 fs
+    119 net
+    351 drivers
+    $
+    $ ./cves_per_file.py ../../vulns/cve/published/*/*.mbox --max_depth 1 \
+            --root drivers | tail -n 5
+    11 drivers/i2c
+    11 drivers/usb
+    20 drivers/infiniband
+    56 drivers/gpu
+    81 drivers/net
+    $
+    $ ./cves_per_file.py ../../vulns/cve/published/*/*.mbox --max_depth 1 \
+            --root drivers/net | tail -n 5
+    2 drivers/net/can
+    2 drivers/net/dsa
+    6 drivers/net/usb
+    26 drivers/net/wireless
+    39 drivers/net/ethernet
+'''
+
 import argparse
 import sys
 
