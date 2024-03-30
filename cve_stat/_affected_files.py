@@ -7,6 +7,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('cve_mbox', metavar='<file>', nargs='+',
                         help='cve description mbox file')
+    parser.add_argument('--root', metavar='<dir>', nargs='+',
+                        help='root of files to count')
     args = parser.parse_args()
 
     counts = {}
@@ -24,6 +26,14 @@ def main():
             if lines[0] == 'The file(s) affected by this issue are:':
                 for f in lines[1:]:
                     f = f.strip()
+                    if args.root is not None:
+                        skip = True
+                        for r in args.root:
+                            if f.startswith(r):
+                                skip = False
+                                break
+                        if skip:
+                            continue
                     if not f in counts:
                         counts[f] = 0
                     counts[f] += 1
