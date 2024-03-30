@@ -13,6 +13,9 @@ def main():
                         help='similar to that of du')
     args = parser.parse_args()
 
+    if args.max_depth is not None and args.root:
+        args.max_depth += len(args.root.split('/'))
+
     counts = {}
 
     for mbox in args.cve_mbox:
@@ -31,10 +34,7 @@ def main():
                     if args.root is not None and not f.startswith(args.root):
                         continue
                     if args.max_depth:
-                        root_depth = 0
-                        if args.root is not None:
-                            root_depth = len(args.root.split('/'))
-                        f = '/'.join(f.split('/')[:args.max_depth + root_depth])
+                        f = '/'.join(f.split('/')[:args.max_depth])
                     if not f in counts:
                         counts[f] = 0
                     counts[f] += 1
