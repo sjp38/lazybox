@@ -19,14 +19,15 @@
 
 set -e
 
-if [ $# -ne 2 ]
+if [ $# -ne 3 ]
 then
-	echo "Usage: $0 <vulns repo> <max days to stat>"
+	echo "Usage: $0 <vulns repo> <max days to stat> <interval days>"
 	exit 1
 fi
 
 vulns_path=$1
 max_days=$2
+interval=$3
 
 if [ ! -d "$vulns_path" ]
 then
@@ -40,7 +41,7 @@ git remote update &> /dev/null
 git checkout origin/master &> /dev/null
 
 echo "<date> <published> <rejected>"
-for ((i = "$max_days" ; i > 0 ; i-- ))
+for ((i = "$max_days" ; i > 0 ; i -= "$interval" ))
 do
 	date=$(date -d "-$i day" '+%Y-%m-%d')
 	commit=$(git log origin/master --until "$date" -1 --pretty=%H)
