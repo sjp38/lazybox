@@ -6,34 +6,25 @@ Find how much changes the author made to what files
 e.g.,
 
 $ ./profile_author.py "SeongJae Park" --repo ~/linux \
-        --since 2023-12-01 --until 2023-12-31 --interval 7
-since 2023-12-01 until 2023-12-31
-<changed_lines> <file>
-322 tools/testing/selftests/damon/_damon_sysfs.py
-321 mm/damon/sysfs-schemes.c
-171 Documentation/admin-guide/mm/damon/usage.rst
-77 mm/damon/core.c
-60 mm/damon/core-test.h
-55 ..._update_schemes_tried_regions_wss_estimation.py
-41 tools/testing/selftests/damon/access_memory.c
-37 Documentation/mm/damon/design.rst
-33 .../sysfs_update_schemes_tried_regions_hang.py
-33 Documentation/ABI/testing/sysfs-kernel-mm-damon
-27 tools/testing/selftests/damon/sysfs.sh
-27 mm/damon/sysfs.c
-24 include/linux/damon.h
-3 tools/testing/selftests/damon/Makefile
-3 mm/damon/sysfs-common.h
-2 mm/damon/dbgfs-test.h
-2 mm/damon/dbgfs.c
-2 mm/damon/modules-common.c
-2 mm/damon/vaddr-test.h
-2 mm/damon/vaddr.c
-# 1244 total lines
-# 20 total files
-# 24 commits
+        --since 2023-01-01 --until 2023-12-31 --interval 60 \
+        --max_depth 2 --max_files 3
+since 2023-01-01 until 2023-03-02
+# <changed_lines> <file>
+724 mm/damon
+138 Documentation/admin-guide
+94 Documentation/mm
+# 1233 total lines
+# 30 total files
+# 45 commits
 
-since 2023-12-08 until 2023-12-31
+since 2023-03-02 until 2023-05-01
+# <changed_lines> <file>
+14 tools/Makefile
+5 mm/damon
+# 19 total lines
+# 2 total files
+# 3 commits
+
 [...]
 '''
 
