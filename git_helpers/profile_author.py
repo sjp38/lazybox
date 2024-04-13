@@ -96,10 +96,11 @@ def main():
         interval = datetime.timedelta(days=args.interval)
 
     while since < until:
+        next_since = min(since + interval, until)
         changes, nr_commits = changes_made(
-                args.author, since, until, args.repo, args.max_depth)
+                args.author, since, next_since, args.repo, args.max_depth)
         print('since %s until %s' %
-              (since.strftime('%Y-%m-%d'), until.strftime('%Y-%m-%d')))
+              (since.strftime('%Y-%m-%d'), next_since.strftime('%Y-%m-%d')))
         print('# <changed_lines>', '<file>')
         files = sorted(changes.keys(), key=lambda k: changes[k], reverse=True)
         if args.max_files is not None:
@@ -111,7 +112,7 @@ def main():
         print('#', len(changes), 'total files')
         print('#', nr_commits, 'commits')
         print()
-        since += interval
+        since = next_since
 
 if __name__ == '__main__':
     main()
