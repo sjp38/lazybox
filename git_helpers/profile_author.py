@@ -32,11 +32,13 @@ import argparse
 import datetime
 import subprocess
 
-def changes_made(author, since, until, repo, max_depth):
+def changes_made(author, since, until, repo, branch, max_depth):
     cmd = ['git', '-C', repo, 'log', '--pretty=%h', '--stat',
            '--author=%s' % author,
            '--since=%s' % since.strftime('%Y-%m-%d'),
            '--until=%s' % until.strftime('%Y-%m-%d')]
+    if branch is not None:
+        cmd.append(branch)
     output = subprocess.check_output(cmd).decode()
     changes = {}
     nr_commits = 0
@@ -66,6 +68,8 @@ def main():
                         help='days to generate sub-profile for')
     parser.add_argument('--repo', metavar='<repo>', default='./',
                         help='path to the git repository')
+    parser.add_argument('--branch', metavar='<branch>',
+                        help='branch of the repo to generate profile for')
     parser.add_argument('--max_depth', metavar='<int>', type=int,
                         help='maximum depth of files to count')
     parser.add_argument('--max_files', metavar='<int>', type=int,
@@ -89,7 +93,8 @@ def main():
     while since < until:
         next_since = min(since + interval, until)
         changes, nr_commits = changes_made(
-                args.author, since, next_since, args.repo, args.max_depth)
+                args.author, since, next_since, args.repo, args.branch,
+                args.max_depth)
         print('since %s until %s' %
               (since.strftime('%Y-%m-%d'), next_since.strftime('%Y-%m-%d')))
         print('# <changed_lines>', '<file>')
