@@ -41,7 +41,7 @@ import argparse
 import datetime
 import subprocess
 
-def changes_made(author, since, until, repo):
+def changes_made(author, since, until, repo, max_depth):
     cmd = ['git', '-C', repo, 'log', '--pretty=%h', '--stat',
            '--author=%s' % author,
            '--since=%s' % since.strftime('%Y-%m-%d'),
@@ -56,6 +56,8 @@ def changes_made(author, since, until, repo):
         elif len(fields) == 4:
             filename = fields[0]
             lines = int(fields[2])
+            if max_depth is not None:
+                filename  = '/'.join(filename.split('/')[:max_depth])
             if not filename in changes:
                 changes[filename] = 0
             changes[filename] += lines
@@ -73,6 +75,8 @@ def main():
                         help='days to generate sub-profile for')
     parser.add_argument('--repo', metavar='<repo>', default='./',
                         help='path to the git repository')
+    parser.add_argument('--max_depth', metavar='<int>', type=int,
+                        help='maximum depth of files to count')
     args = parser.parse_args()
 
     if args.until is None:
@@ -91,7 +95,7 @@ def main():
 
     while since < until:
         changes, nr_commits = changes_made(
-                args.author, since, until, args.repo)
+                args.author, since, until, args.repo, args.max_depth)
         print('since %s until %s' %
               (since.strftime('%Y-%m-%d'), until.strftime('%Y-%m-%d')))
         print('# <changed_lines>', '<file>')
