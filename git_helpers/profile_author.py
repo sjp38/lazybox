@@ -77,6 +77,8 @@ def main():
                         help='path to the git repository')
     parser.add_argument('--max_depth', metavar='<int>', type=int,
                         help='maximum depth of files to count')
+    parser.add_argument('--max_files', metavar='<int>', type=int,
+                        help='maximum number of files to show on profile')
     args = parser.parse_args()
 
     if args.until is None:
@@ -99,8 +101,10 @@ def main():
         print('since %s until %s' %
               (since.strftime('%Y-%m-%d'), until.strftime('%Y-%m-%d')))
         print('# <changed_lines>', '<file>')
-        for filename in sorted(changes.keys(), key=lambda k: changes[k],
-                               reverse=True):
+        files = sorted(changes.keys(), key=lambda k: changes[k], reverse=True)
+        if args.max_files is not None:
+            files = files[:args.max_files]
+        for filename in files:
             lines = changes[filename]
             print(lines, filename)
         print('#', sum(changes.values()), 'total lines')
