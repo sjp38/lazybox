@@ -5,14 +5,18 @@ Find commits for stable in specific commits range is in given trees
 
 E.g.,
 
-$ ./stable_commits_check.py --repo ~/linux --src v5.15..linus/master \
-        --dest v6.6..stable/linux-6.6.y --files mm/damon/ include/linux/damon.h
+$ ../lazybox/linux_hack/stable_commits_check.py \
+        --src v5.15..linus/master --files mm/damon include/linux/damon \
+        --dest v5.15..stable/linux-6.6.y
 - 13d0599ab3b2 ("mm/damon/lru_sort: fix quota status loss due to online tunings")
-  - merged in v6.6..stable/linux-6.6.y (3c4441b23bf7)
+  - Cc: <stable@vger.kernel.org>        [6.0+]
+  - merged in v5.15..stable/linux-6.6.y (3c4441b23bf7)
 - 1b0ca4e4ff10 ("mm/damon/reclaim: fix quota stauts loss due to online tunings")
-  - merged in v6.6..stable/linux-6.6.y (9cad9a2e896c)
+  - Cc: <stable@vger.kernel.org>        [5.19+]
+  - merged in v5.15..stable/linux-6.6.y (9cad9a2e896c)
 - e9e3db69966d ("mm/damon/core: check apply interval in damon_do_apply_schemes()")
-  - not merged in v6.6..stable/linux-6.6.y
+  - Cc: <stable@vger.kernel.org>        [6.7.x]
+  - not merged in v5.15..stable/linux-6.6.y
 '''
 
 import argparse
@@ -23,6 +27,14 @@ os.sys.path.insert(0, os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..', 'git_helpers')))
 
 import _git
+
+def get_stable_cc_line(change):
+    for line in change.description.split('\n'):
+        fields = line.split()
+        if len(fields) < 2 or fields[0] != 'Cc:':
+            continue
+        if fields[1].startswith('stable') or fields[1].startswith('<stable'):
+            return line
 
 def main():
     parser = argparse.ArgumentParser()
@@ -49,6 +61,7 @@ def main():
     for commit in stable_commits:
         change = _git.Change(commit=commit, repo=args.repo)
         print('- %s ("%s")' % (change.commit.hashid[:12], change.subject))
+        print('  - %s' % get_stable_cc_line(change))
         for dest in args.dest:
             matching_change = change.find_matching_change([dest], args.repo)
             if matching_change is None:
