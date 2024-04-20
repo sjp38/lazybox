@@ -36,6 +36,10 @@ def get_stable_cc_line(change):
         if fields[1].startswith('stable') or fields[1].startswith('<stable'):
             return line
 
+def pr_stable_change(change):
+    print('- %s ("%s")' % (change.commit.hashid[:12], change.subject))
+    print('  - %s' % get_stable_cc_line(change))
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--src', metavar='<changes>',
@@ -46,6 +50,8 @@ def main():
                         help='the repo')
     parser.add_argument('--dest', metavar='<changes>', nargs='+',
                         help='changes to find if the stable changes in')
+    parser.add_argument('--unmerged', action='store_true',
+                        help='show unmerged cases only')
     args = parser.parse_args()
 
     if args.src is None or args.dest is None:
@@ -60,13 +66,15 @@ def main():
     stable_commits = subprocess.check_output(cmd).decode().strip().split('\n')
     for commit in stable_commits:
         change = _git.Change(commit=commit, repo=args.repo)
-        print('- %s ("%s")' % (change.commit.hashid[:12], change.subject))
-        print('  - %s' % get_stable_cc_line(change))
         for dest in args.dest:
             matching_change = change.find_matching_change([dest], args.repo)
             if matching_change is None:
+                pr_stable_change(change)
                 print('  - not merged in %s' % dest)
                 continue
+            if args.unmerged is True:
+                continue
+            pr_stable_change(change)
             print('  - merged in %s (%s)' %
                   (dest, matching_change.commit.hashid[:12]))
 
