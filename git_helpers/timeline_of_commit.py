@@ -36,7 +36,7 @@ def main():
         author = args.author
 
     bindir = os.path.dirname(sys.argv[0])
-    find_commit_in = os.path.join(bindir, 'find_commit_in.sh')
+    find_commit_in = os.path.join(bindir, '__find_commit_in.sh')
     timeline = {}
     for tree in args.trees:
         try:

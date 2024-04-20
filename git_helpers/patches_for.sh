@@ -19,8 +19,9 @@ do
 	bugs=$("$bindir/patch_parse.py" "$patch_file" fixes | awk '{print $1}')
 	for bug in $bugs
 	do
-		bug_in_commits=$("$bindir/find_commit_in.sh" --commit "$bug" \
-			--repo "$repo_dir" "$potential_bug_commits")
+		bug_in_commits=$("$bindir/__find_commit_in.sh" \
+			--commit "$bug" --repo "$repo_dir" \
+			"$potential_bug_commits")
 		if [ ! "$bug_in_commits" = "" ]
 		then
 			echo "- $patch_file fixes"

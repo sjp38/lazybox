@@ -171,7 +171,7 @@ class Change:
 
     def find_matching_commit(self, repo, commits):
         find_commit_in_sh = os.path.join(os.path.dirname(__file__),
-                'find_commit_in.sh')
+                '__find_commit_in.sh')
         cmd = [find_commit_in_sh, '--repo', repo, '--hash_only']
         if self.commit and self.commit.hashid:
             cmd += ['--commit', self.commit.hashid]

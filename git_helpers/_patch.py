@@ -40,7 +40,7 @@ class Patch:
     def commit_in(self, remote_tree, repo=None):
         # find the upstream commit of the patch
         find_commit_in = os.path.join(os.path.dirname(sys.argv[0]),
-                'find_commit_in.sh')
+                '__find_commit_in.sh')
         cmd = [find_commit_in, '--hash_only', '--author', self.author,
                 '--title', self.subject, remote_tree]
         if repo != None:

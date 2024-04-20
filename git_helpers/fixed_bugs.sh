@@ -20,7 +20,7 @@ do
 		continue
 	fi
 	bug_commit=$(echo "$fixes_line" | awk '{print $2}')
-	if "$bindir/find_commit_in.sh" --repo "$repo" \
+	if "$bindir/__find_commit_in.sh" --repo "$repo" \
 		--commit "$bug_commit" "$potential_bugs" &> /dev/null
 	then
 		echo "$bug_commit in $potential_bugs fixed by $fix in $potential_fixes"
