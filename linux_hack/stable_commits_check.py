@@ -28,14 +28,6 @@ os.sys.path.insert(0, os.path.abspath(
 
 import _git
 
-def get_stable_cc_line(change):
-    for line in change.description.split('\n'):
-        fields = line.split()
-        if len(fields) < 2 or fields[0] != 'Cc:':
-            continue
-        if fields[1].startswith('stable') or fields[1].startswith('<stable'):
-            return line
-
 def pr_stable_change(change):
     print('- %s ("%s")' % (change.commit.hashid[:12], change.subject))
 
