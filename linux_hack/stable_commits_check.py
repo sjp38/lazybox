@@ -56,6 +56,8 @@ def main():
         cmd += ['--'] + args.files
     stable_commits = subprocess.check_output(cmd).decode().strip().split('\n')
     for commit in stable_commits:
+        if commit == '':
+            continue
         change = _git.Change(commit=commit, repo=args.repo)
         for dest in args.dest:
             matching_change = change.find_matching_change([dest], args.repo)
