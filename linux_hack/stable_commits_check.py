@@ -38,7 +38,6 @@ def get_stable_cc_line(change):
 
 def pr_stable_change(change):
     print('- %s ("%s")' % (change.commit.hashid[:12], change.subject))
-    print('  - %s' % get_stable_cc_line(change))
 
 def main():
     parser = argparse.ArgumentParser()
