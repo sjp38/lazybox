@@ -41,8 +41,8 @@ def main():
                         help='the repo')
     parser.add_argument('--dest', metavar='<changes>', nargs='+',
                         help='changes to find if the stable changes in')
-    parser.add_argument('--unmerged', action='store_true',
-                        help='show unmerged cases only')
+    parser.add_argument('--need_merge', action='store_true',
+                        help='show merge-needed cases only')
     args = parser.parse_args()
 
     if args.src is None or args.dest is None:
@@ -60,8 +60,9 @@ def main():
         for dest in args.dest:
             matching_change = change.find_matching_change([dest], args.repo)
             if matching_change is None:
-                pr_stable_change(change)
-                print('  - not merged in %s' % dest)
+                if args.need_merge is False:
+                    pr_stable_change(change)
+                    print('  - not merged in %s' % dest)
                 for line in change.description.strip().split('\n'):
                     fields = line.split()
                     if len(fields) < 3:
@@ -76,10 +77,13 @@ def main():
                         matching_bug = bug.find_matching_change([dest],
                                                                 args.repo)
                         if matching_bug is not None:
+                            if args.need_merge is True:
+                                pr_stable_change(change)
+                                print('  - not merged in %s' % dest)
                             print('  - !!! the bug (%s) is merged in' %
                                   matching_bug.subject)
                 continue
-            if args.unmerged is True:
+            if args.need_merge is True:
                 continue
             pr_stable_change(change)
             print('  - merged in %s (%s)' %
