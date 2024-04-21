@@ -9,14 +9,22 @@ $ ../lazybox/linux_hack/stable_commits_check.py \
         --src v5.15..linus/master --files mm/damon include/linux/damon \
         --dest v5.15..stable/linux-6.6.y
 - 13d0599ab3b2 ("mm/damon/lru_sort: fix quota status loss due to online tunings")
-  - Cc: <stable@vger.kernel.org>        [6.0+]
   - merged in v5.15..stable/linux-6.6.y (3c4441b23bf7)
 - 1b0ca4e4ff10 ("mm/damon/reclaim: fix quota stauts loss due to online tunings")
-  - Cc: <stable@vger.kernel.org>        [5.19+]
   - merged in v5.15..stable/linux-6.6.y (9cad9a2e896c)
 - e9e3db69966d ("mm/damon/core: check apply interval in damon_do_apply_schemes()")
-  - Cc: <stable@vger.kernel.org>        [6.7.x]
   - not merged in v5.15..stable/linux-6.6.y
+
+--need_merge option can be useful for finding commits that need monitoring.
+
+E.g.,
+
+$ ./linux_hack/stable_commits_check.py --src v6.1..linus/master \
+        --dest v6.1..stable/linux-6.1.y --need_merge --repo ../linux
+- c6ff459037b2 ("smb: client: instantiate when creating SFU files")
+  - not merged in v6.1..stable/linux-6.1.y
+  - !!! the bug (smb3: fix creating FIFOs when mounting with "sfu" mount option) is merged in
+
 '''
 
 import argparse
