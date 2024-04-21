@@ -71,6 +71,22 @@ def main():
             if matching_change is None:
                 pr_stable_change(change)
                 print('  - not merged in %s' % dest)
+                for line in change.description.strip().split('\n'):
+                    fields = line.split()
+                    if len(fields) < 3:
+                        continue
+                    if fields[0] == 'Fixes:':
+                        try:
+                            bug = _git.Change(commit=fields[1], repo=args.repo)
+                        except:
+                            print('failed getting bug (%s) for fix (%s)' %
+                                  (fields[1], change.commit.hashid[:12]))
+                            continue
+                        matching_bug = bug.find_matching_change([dest],
+                                                                args.repo)
+                        if matching_bug is not None:
+                            print('  - !!! the bug (%s) is merged in' %
+                                  matching_bug.subject)
                 continue
             if args.unmerged is True:
                 continue
