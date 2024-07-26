@@ -33,8 +33,8 @@ import datetime
 import subprocess
 
 def changes_made(author, since, until, repo, branch, max_depth):
-    cmd = ['git', '-C', repo, 'log', '--pretty=%h', '--stat',
-           '--author=%s' % author,
+    cmd = ['git', '-C', repo, 'log', '--pretty=commit %h %an <%ae>',
+           '--stat', '--author=%s' % author,
            '--since=%s' % since.strftime('%Y-%m-%d'),
            '--until=%s' % until.strftime('%Y-%m-%d')]
     if branch is not None:
@@ -42,10 +42,14 @@ def changes_made(author, since, until, repo, branch, max_depth):
     output = subprocess.check_output(cmd).decode()
     changes = {}
     nr_commits = 0
+    authors = {}
     for line in output.split('\n'):
         fields = line.split()
-        if len(fields) == 1:
+        if line.startswith('commit'):
             nr_commits += 1
+            author = ' '.join(fields[2:])
+            if not author in authors:
+                authors[author] = True
         elif len(fields) == 4:
             filename = fields[0]
             lines = int(fields[2])
@@ -54,7 +58,7 @@ def changes_made(author, since, until, repo, branch, max_depth):
             if not filename in changes:
                 changes[filename] = 0
             changes[filename] += lines
-    return changes, nr_commits
+    return changes, nr_commits, list(authors.keys())
 
 def main():
     parser = argparse.ArgumentParser()
@@ -92,10 +96,13 @@ def main():
 
     while since < until:
         next_since = min(since + interval, until)
-        changes, nr_commits = changes_made(
+        changes, nr_commits, authors = changes_made(
                 args.author, since, next_since, args.repo, args.branch,
                 args.max_depth)
-        print('since %s until %s' %
+        print('# below changes made by')
+        for author in authors:
+            print('# - %s' % author)
+        print('# since %s until %s' %
               (since.strftime('%Y-%m-%d'), next_since.strftime('%Y-%m-%d')))
         print('# <changed_lines>', '<file>')
         files = sorted(changes.keys(), key=lambda k: changes[k], reverse=True)
