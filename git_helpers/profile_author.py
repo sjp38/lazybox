@@ -61,6 +61,16 @@ def changes_made(author, since, until, repo, branch, max_depth):
             changes[filename] += lines
     return changes, commits, list(authors.keys())
 
+def pr_commit_dates(repo, commits):
+    if len(commits) == 0:
+        return
+    cmd = ['git', '-C', repo, 'log', '--pretty=%cd', '-1', '--date=iso-local']
+    oldest_commit_date = subprocess.check_output(
+            cmd + [commits[-1]]).decode().strip()
+    latest_commit_date = subprocess.check_output(
+            cmd + [commits[0]]).decode().strip()
+    print('# since %s until %s' % (oldest_commit_date, latest_commit_date))
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('author', metavar='<author>',
@@ -103,12 +113,7 @@ def main():
         print('# below changes made by')
         for author in authors:
             print('# - %s' % author)
-        cmd = ['git', '-C', args.repo, 'log', '--pretty=%cd', '-1']
-        oldest_commit_date = subprocess.check_output(
-                cmd + [commits[-1]]).decode().strip()
-        latest_commit_date = subprocess.check_output(
-                cmd + [commits[0]]).decode().strip()
-        print('# since %s until %s' % (oldest_commit_date, latest_commit_date))
+        pr_commit_dates(args.repo, commits)
         print('# <changed_lines>', '<file>')
         files = sorted(changes.keys(), key=lambda k: changes[k], reverse=True)
         if args.max_files is not None:
