@@ -43,10 +43,11 @@ def changes_made(author, since, until, repo, branch, max_depth):
     changes = {}
     nr_commits = 0
     authors = {}
+    commits = []
     for line in output.split('\n'):
         fields = line.split()
         if line.startswith('commit'):
-            nr_commits += 1
+            commits.append(fields[1])
             author = ' '.join(fields[2:])
             if not author in authors:
                 authors[author] = True
@@ -58,7 +59,7 @@ def changes_made(author, since, until, repo, branch, max_depth):
             if not filename in changes:
                 changes[filename] = 0
             changes[filename] += lines
-    return changes, nr_commits, list(authors.keys())
+    return changes, commits, list(authors.keys())
 
 def main():
     parser = argparse.ArgumentParser()
@@ -96,14 +97,18 @@ def main():
 
     while since < until:
         next_since = min(since + interval, until)
-        changes, nr_commits, authors = changes_made(
+        changes, commits, authors = changes_made(
                 args.author, since, next_since, args.repo, args.branch,
                 args.max_depth)
         print('# below changes made by')
         for author in authors:
             print('# - %s' % author)
-        print('# since %s until %s' %
-              (since.strftime('%Y-%m-%d'), next_since.strftime('%Y-%m-%d')))
+        cmd = ['git', '-C', args.repo, 'log', '--pretty=%cd', '-1']
+        oldest_commit_date = subprocess.check_output(
+                cmd + [commits[-1]]).decode().strip()
+        latest_commit_date = subprocess.check_output(
+                cmd + [commits[0]]).decode().strip()
+        print('# since %s until %s' % (oldest_commit_date, latest_commit_date))
         print('# <changed_lines>', '<file>')
         files = sorted(changes.keys(), key=lambda k: changes[k], reverse=True)
         if args.max_files is not None:
@@ -113,7 +118,7 @@ def main():
             print(lines, filename)
         print('#', sum(changes.values()), 'total lines')
         print('#', len(changes), 'total files')
-        print('#', nr_commits, 'commits')
+        print('# %s commits' % len(commits))
         print()
         since = next_since
 
