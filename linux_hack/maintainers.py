@@ -3,16 +3,7 @@
 import argparse
 import os
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--repo', metavar='<dir>', help='linux repo')
-    args = parser.parse_args()
-
-    maintainers_file = os.path.join(args.repo, 'MAINTAINERS')
-    if not os.path.isfile(maintainers_file):
-        print('wrong --repo')
-        exit(1)
-
+def parse_maintainers(maintainers_file):
     with open(maintainers_file, 'r') as f:
         content = f.read()
 
@@ -43,6 +34,19 @@ def main():
                         subsystem[converted_key] = []
                     subsystem[converted_key].append(' '.join(line.split()[1:]))
         subsystems[lines[0]] = subsystem
+    return subsystems
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--repo', metavar='<dir>', help='linux repo')
+    args = parser.parse_args()
+
+    maintainers_file = os.path.join(args.repo, 'MAINTAINERS')
+    if not os.path.isfile(maintainers_file):
+        print('wrong --repo')
+        exit(1)
+
+    subsystems = parse_maintainers(maintainers_file)
 
     print(subsystems)
 
