@@ -33,7 +33,10 @@ def main():
         for line in lines[1:]:
             for key in keys:
                 if line.startswith(key):
-                    subsystem[keys[key]] = ' '.join(line.split()[1:])
+                    converted_key = keys[key]
+                    if not converted_key in subsystem:
+                        subsystem[converted_key] = []
+                    subsystem[converted_key].append(' '.join(line.split()[1:]))
         subsystems[lines[0]] = subsystem
 
     print(subsystems)
