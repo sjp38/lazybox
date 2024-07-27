@@ -17,6 +17,9 @@ def main():
         content = f.read()
 
     subsystems = {}
+    keys = {
+            'M:': 'maintainer',
+            }
 
     lists_started = False
     for paragraph in content.split('\n\n'):
@@ -28,9 +31,11 @@ def main():
         lines = paragraph.split('\n')
         subsystem = {'name': lines[0]}
         for line in lines[1:]:
-            if line.startswith('M:'):
-                subsystem['maintainer'] = line
+            for key in keys:
+                if line.startswith(key):
+                    subsystem[keys[key]] = ' '.join(line.split()[1:])
         subsystems[lines[0]] = subsystem
+
     print(subsystems)
 
 if __name__ == '__main__':
