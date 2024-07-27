@@ -19,6 +19,11 @@ def main():
     subsystems = {}
     keys = {
             'M:': 'maintainer',
+            'R:': 'reviewer',
+            'L:': 'list',
+            'S:': 'status',
+            'W:': 'webpage',
+            'F:': 'files',
             }
 
     lists_started = False
