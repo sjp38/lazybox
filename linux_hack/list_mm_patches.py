@@ -2,6 +2,7 @@
 
 import subprocess
 
+mm_master = 'akpm.korg.mm/master'
 mm_stable = 'akpm.korg.mm/mm-stable'
 mm_unstable = 'akpm.korg.mm/mm-unstable'
 mm_new = 'akpm.korg.mm/mm-new'
@@ -49,14 +50,7 @@ def list_patches_in(commits_base, commits_end):
     return None
 
 def main():
-    res = subprocess.run(
-            ['git', 'describe', '--match=v*', '--abbrev=0',
-             mm_stable], capture_output=True, text=True)
-    if res.returncode != 0:
-        print('git describe fail (%s)' % res.stderr)
-        exit(1)
-    baseline = res.stdout.strip()
-    err = list_patches_in(baseline, mm_stable)
+    err = list_patches_in(mm_master, mm_stable)
     if err is not None:
         print(err)
         exit(1)
