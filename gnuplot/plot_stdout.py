@@ -148,6 +148,10 @@ def plot(data, args):
         if not max_y or max_y < y:
             max_y = y
 
+        if title is None:
+            title = 'unknown'
+            records[title] = []
+
         records[title].append([x, y])
 
     # one space between x and y, one space between y and bar, and '|' at start
@@ -156,7 +160,8 @@ def plot(data, args):
     sz_col = (max_y - min_y) / max_len_bar
 
     for title, values in records.items():
-        print(title)
+        if title != 'unknown':
+            print(title)
         for pair in values:
             x = pair[0]
             y = pair[1]
