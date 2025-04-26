@@ -132,7 +132,7 @@ def plot(data, args):
 
         try:
             x = fields[0]
-            y = int(fields[1])
+            y = float(fields[1])
         except ValueError:
             continue
 
