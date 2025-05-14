@@ -28,6 +28,8 @@ def list_patches_in(commits_base, commits_end):
             return 'git log -1 fail (%s)' % cproc.stderr
         commit_msg = cproc.stdout.strip()
         pars = commit_msg.split('\n\n')
+        if len(pars) < 2:
+            continue
         patch_series_par = pars[1]
         if patch_series_par.strip().startswith('Patch series '):
             unwrapped = ' '.join(patch_series_par.split('\n'))
