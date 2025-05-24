@@ -34,10 +34,11 @@ def single_file_stat(path):
     to_print = []
     with open(path, 'r') as f:
         for l in f:
+            fields = l.split()
             if not key:
-                key = l.split()[0]
+                key = fields[0]
                 to_print.append(key)
-            nrs.append(float(l.split()[1]))
+            nrs.append(float(fields[1]))
     if target == 'avg':
         to_print.append(sum(nrs) / len(nrs))
     elif target == 'min':
