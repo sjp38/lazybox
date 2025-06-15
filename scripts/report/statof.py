@@ -31,16 +31,20 @@ paths = vars(args)['files']
 def single_file_stat(path):
     nrs = []
     to_print = []
-    with open(path, 'r') as f:
-        for l in f:
-            fields = l.split()
-            if len(nrs) == 0 and len(fields) > 1:
-                key = fields[0]
-                to_print.append(key)
-            if len(fields) > 1:
-                nrs.append(float(fields[1]))
-            elif len(fields) == 1:
-                nrs.append(float(fields[0]))
+    if path == 'stdin':
+        content = sys.stdin.read()
+    else:
+        with open(path, 'r') as f:
+            content = f.read()
+    for l in content.split('\n'):
+        fields = l.split()
+        if len(nrs) == 0 and len(fields) > 1:
+            key = fields[0]
+            to_print.append(key)
+        if len(fields) > 1:
+            nrs.append(float(fields[1]))
+        elif len(fields) == 1:
+            nrs.append(float(fields[0]))
     if target == 'avg':
         to_print.append(sum(nrs) / len(nrs))
     elif target == 'min':
