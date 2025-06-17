@@ -13,10 +13,6 @@ import math
 import os
 import sys
 
-fpath = os.path.realpath(os.path.dirname(__file__))
-sys.path.append(fpath + '/../gen_report')
-import ltldat
-
 parser = argparse.ArgumentParser(description=program_decr,
         formatter_class=argparse.RawDescriptionHelpFormatter)
 parser.add_argument('stat', choices=['avg', 'min', 'max', 'stdev'],
