@@ -59,8 +59,8 @@ def main():
             help='paths to files')
     args = parser.parse_args()
 
-    target = vars(args)['stat']
-    paths = vars(args)['files']
+    target = args.stat
+    paths = args.files
 
     if len(paths) == 0:
         parser.print_help()
