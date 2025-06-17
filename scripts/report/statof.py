@@ -28,6 +28,18 @@ args = parser.parse_args()
 target = vars(args)['stat']
 paths = vars(args)['files']
 
+def get_stat(target, nrs):
+    if target == 'avg':
+        return sum(nrs) / len(nrs)
+    elif target == 'min':
+        return min(nrs)
+    elif target == 'max':
+        return max(nrs)
+    elif target == 'stdev':
+        avg = sum(nrs) / len(nrs)
+        variance = sum([pow(v - avg, 2) for v in nrs]) / len(nrs)
+        return math.sqrt(variance)
+
 def single_file_stat(path):
     nrs = []
     to_print = []
@@ -45,16 +57,7 @@ def single_file_stat(path):
             nrs.append(float(fields[1]))
         elif len(fields) == 1:
             nrs.append(float(fields[0]))
-    if target == 'avg':
-        to_print.append(sum(nrs) / len(nrs))
-    elif target == 'min':
-        to_print.append(min(nrs))
-    elif target == 'max':
-        to_print.append(max(nrs))
-    elif target == 'stdev':
-        avg = sum(nrs) / len(nrs)
-        variance = sum([pow(v - avg, 2) for v in nrs]) / len(nrs)
-        to_print.append(math.sqrt(variance))
+    to_print.append(get_stat(target, nrs))
     print('\t'.join([str(x) for x in to_print]))
 
 def pr_stderr(msg):
@@ -84,16 +87,9 @@ for lidx in range(len(datas[0])):
         value = ""
         try:
             nrs = [float(f) for f in fields]
-            if target == 'avg':
-                value = sum(nrs) / len(nrs)
-            elif target == 'min':
-                value = min(nrs)
-            elif target == 'max':
-                value = max(nrs)
-            elif target == 'stdev':
+            value = get_stat(target, nrs)
+            if target == 'stdev':
                 avg = sum(nrs) / len(nrs)
-                variance = sum([pow(v - avg, 2) for v in nrs]) / len(nrs)
-                value = math.sqrt(variance)
                 if value > avg / 10:
                     pr_stderr("[WARNING] stdev %s, avg %s, %.2f stdev/avg!" % (
                         value, avg, float(value) / avg))
