@@ -13,17 +13,6 @@ import math
 import os
 import sys
 
-parser = argparse.ArgumentParser(description=program_decr,
-        formatter_class=argparse.RawDescriptionHelpFormatter)
-parser.add_argument('stat', choices=['avg', 'min', 'max', 'stdev'],
-        help='type of stat you want')
-parser.add_argument('files', metavar='file', type=str, nargs='+',
-        help='paths to files')
-args = parser.parse_args()
-
-target = vars(args)['stat']
-paths = vars(args)['files']
-
 def get_stat(target, nrs):
     if target == 'avg':
         return sum(nrs) / len(nrs)
@@ -58,6 +47,17 @@ def single_file_stat(path):
 
 def pr_stderr(msg):
     sys.stderr.write(msg + "\n")
+
+parser = argparse.ArgumentParser(description=program_decr,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+parser.add_argument('stat', choices=['avg', 'min', 'max', 'stdev'],
+        help='type of stat you want')
+parser.add_argument('files', metavar='file', type=str, nargs='+',
+        help='paths to files')
+args = parser.parse_args()
+
+target = vars(args)['stat']
+paths = vars(args)['files']
 
 if len(paths) == 0:
     parser.print_help()
