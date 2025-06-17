@@ -27,7 +27,7 @@ def get_stat(target, nrs):
     elif target == 'median':
         return sorted(nrs)[int(len(nrs) / 2)]
 
-def single_file_stat(path):
+def single_file_stat(target, path):
     nrs = []
     to_print = []
     if path == 'stdin':
@@ -66,7 +66,7 @@ if len(paths) == 0:
     exit(1)
 
 if len(paths) == 1:
-    single_file_stat(paths[0])
+    single_file_stat(target, paths[0])
     exit(0)
 
 datas = []
