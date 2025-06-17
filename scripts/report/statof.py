@@ -24,6 +24,8 @@ def get_stat(target, nrs):
         avg = sum(nrs) / len(nrs)
         variance = sum([pow(v - avg, 2) for v in nrs]) / len(nrs)
         return math.sqrt(variance)
+    elif target == 'median':
+        return sorted(nrs)[int(len(nrs) / 2)]
 
 def single_file_stat(path):
     nrs = []
@@ -50,7 +52,7 @@ def pr_stderr(msg):
 
 parser = argparse.ArgumentParser(description=program_decr,
         formatter_class=argparse.RawDescriptionHelpFormatter)
-parser.add_argument('stat', choices=['avg', 'min', 'max', 'stdev'],
+parser.add_argument('stat', choices=['avg', 'min', 'max', 'stdev', 'median'],
         help='type of stat you want')
 parser.add_argument('files', metavar='file', type=str, nargs='+',
         help='paths to files')
