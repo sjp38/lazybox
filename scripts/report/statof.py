@@ -62,10 +62,6 @@ def main():
     target = args.stat
     paths = args.files
 
-    if len(paths) == 0:
-        parser.print_help()
-        exit(1)
-
     if len(paths) == 1:
         single_file_stat(target, paths[0])
         exit(0)
