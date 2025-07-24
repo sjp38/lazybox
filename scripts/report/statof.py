@@ -13,6 +13,11 @@ import math
 import os
 import sys
 
+def is_supported_stat_metric(stat_metric):
+    if stat_metric in ['avg', 'min', 'max', 'stdev', 'median']:
+        return True
+    return False
+
 def get_stat(target, nrs):
     if target == 'avg':
         return sum(nrs) / len(nrs)
@@ -53,11 +58,17 @@ def pr_stderr(msg):
 def main():
     parser = argparse.ArgumentParser(description=program_decr,
             formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('stat', choices=['avg', 'min', 'max', 'stdev', 'median'],
-            help='type of stat you want')
+    parser.add_argument(
+            'stat',
+            help='type of stat you want.  ' \
+                    'avg, min, max, stdev, median are supported.')
     parser.add_argument('files', metavar='file', type=str, nargs='+',
             help='paths to files')
     args = parser.parse_args()
+
+    if not is_supported_stat_metric(args.stat):
+        print('unsupported stat metric')
+        exit(1)
 
     target = args.stat
     paths = args.files
