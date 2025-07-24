@@ -16,6 +16,12 @@ import sys
 def is_supported_stat_metric(stat_metric):
     if stat_metric in ['avg', 'min', 'max', 'stdev', 'median']:
         return True
+    if len(stat_metric) > 1 and stat_metric[0].lower() == 'p':
+        try:
+            percentile = float(stat_metric[1:])
+            return True
+        except:
+            return False
     return False
 
 def get_stat(target, nrs):
@@ -31,6 +37,10 @@ def get_stat(target, nrs):
         return math.sqrt(variance)
     elif target == 'median':
         return sorted(nrs)[int(len(nrs) / 2)]
+    elif len(target) > 0 and target[0].lower() == 'p':
+        percentile = int(target[1:])
+        idx = int(percentile / 100 * len(nrs))
+        return sorted(nrs)[idx]
 
 def single_file_stat(target, path):
     nrs = []
@@ -61,7 +71,7 @@ def main():
     parser.add_argument(
             'stat',
             help='type of stat you want.  ' \
-                    'avg, min, max, stdev, median are supported.')
+                    'avg, min, max, stdev, median, pXX are supported.')
     parser.add_argument('files', metavar='file', type=str, nargs='+',
             help='paths to files')
     args = parser.parse_args()
