@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]
+then
+	echo "Usage: $0 <broken commit>"
+	echo "e.g., $0 0123456789ab"
+	exit 1
+fi
+
+broken=$1
+commit_str=$(git log -1 --pretty='%h ("%s")' "$broken")
+echo "Fixes ${commit_str}"
