@@ -84,6 +84,10 @@ def main():
     parser.description = 'Convert commits to/from patches series.'
     args = parser.parse_args()
 
+    if args.series is None:
+        print('--series is not provided')
+        exit(1)
+
     if args.commits is None:
         assemble_tree(args.repo, args.series)
     else:
