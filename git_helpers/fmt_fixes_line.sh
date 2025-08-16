@@ -9,4 +9,5 @@ fi
 
 broken=$1
 commit_str=$(git log -1 --pretty='%h ("%s")' "$broken")
-echo "Fixes ${commit_str}"
+version=$(git describe --contains --match "v*" "$broken")
+echo "Fixes: ${commit_str} # ${version}"
