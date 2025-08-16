@@ -80,7 +80,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--series')
     parser.add_argument('--commits')
-    parser.add_argument('--repo')
+    parser.add_argument('--repo', default='./',)
     parser.description = 'Convert commits to/from patches series.'
     args = parser.parse_args()
 
