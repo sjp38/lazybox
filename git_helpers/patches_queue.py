@@ -2,9 +2,32 @@
 # SPDX-License-Identifier: GPL-2.0
 
 import argparse
+import os
+import subprocess
 
 def assemble_tree(repo, series_file):
-    print('assemble %s on %s' % (series_file, repo))
+    patches_dir = os.path.dirname(series_file)
+    git_cmd = ['git', '-C', repo]
+
+    with open(series_file, 'r') as f:
+        baseline_checkout_done = False
+        for line in f:
+            line = line.strip()
+            if line.startswith('#'):
+                continue
+            # first non-comment line is the baseline
+            if baseline_checkout_done is False:
+                rc = subprocess.call(git_cmd + ['checkout', line])
+                if rc != 0:
+                    print('baseline checkout failed')
+                    exit(1)
+                baseline_checkout_done = True
+                continue
+            patch = os.path.join(patches_dir, line)
+            rc = subprocess.call(git_cmd + ['am', patch])
+            if rc != 0:
+                print('git am %s failed' % patch)
+                exit(1)
 
 def make_patches_series(series_file, commits):
     print('convert commits to patches series')
