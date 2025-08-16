@@ -71,8 +71,10 @@ def make_patches_series(series_file, repo, commits):
 
     baseline = subprocess.check_output(
             git_cmd + ['rev-parse', '%s^' % commits[0]]).decode().strip()
+    baseline_desc = subprocess.check_output(
+            git_cmd + ['describe', baseline]).decode().strip()
     with open(series_file, 'w') as f:
-        f.write('\n'.join([baseline] + patches_list))
+        f.write('\n'.join(['# %s' % baseline_desc, baseline] + patches_list))
 
 def main():
     parser = argparse.ArgumentParser()
