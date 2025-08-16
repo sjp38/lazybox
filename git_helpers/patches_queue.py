@@ -29,20 +29,21 @@ def assemble_tree(repo, series_file):
                 print('git am %s failed' % patch)
                 exit(1)
 
-def make_patches_series(series_file, commits):
+def make_patches_series(series_file, repo, commits):
     print('convert commits to patches series')
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('dst')
-    parser.add_argument('src')
+    parser.add_argument('--series')
+    parser.add_argument('--commits')
+    parser.add_argument('--repo')
     parser.description = 'Convert commits to/from patches series.'
     args = parser.parse_args()
 
-    if os.path.isfile(args.src):
-        assemble_tree(args.dst, args.src)
+    if args.commits is None:
+        assemble_tree(args.repo, args.series)
     else:
-        make_patches_series(args.dst, args.src)
+        make_patches_series(args.series, args.repo, args.commits)
 
 if __name__ == '__main__':
     main()
