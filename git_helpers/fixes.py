@@ -24,6 +24,30 @@ def print_fix_bug(fix, bug, remote_git_url, remote_queue_url):
     print_reference(bug, remote_git_url, remote_queue_url)
     print()
 
+def find_print_fixes(fixes, repo, bugs, remote_git_url, patches_queue_url):
+    potential_fixes = _git.read_changes(fixes, repo)
+    for potential_fix in potential_fixes:
+        for bug_reference in potential_fix.get_fixing_commit_refs():
+            hashid = bug_reference.split()[0]
+            if not _git.is_hashid(hashid):
+                continue
+            try:
+                buggy_change = _git.Change(commit=hashid, repo=repo)
+            except:
+                print('# Failed parsing %s from %s' %
+                        (bug_reference, potential_fix))
+                continue
+            for patch_or_commits_range in bugs:
+                if os.path.isfile(patch_or_commits_range):
+                    patch_file = patch_or_commits_range
+                    bug = buggy_change.find_matching_patch([patch_file])
+                else:
+                    commits = patch_or_commits_range
+                    bug = buggy_change.find_matching_commit(repo, commits)
+                if bug != None:
+                    print_fix_bug(potential_fix, bug, remote_git_url,
+                                  patches_queue_url)
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--repo', metavar='<dir>', default='./',
@@ -44,28 +68,8 @@ def main():
         parser.print_usage()
         exit(1)
 
-    potential_fixes = _git.read_changes(args.fixes, args.repo)
-    for potential_fix in potential_fixes:
-        for bug_reference in potential_fix.get_fixing_commit_refs():
-            hashid = bug_reference.split()[0]
-            if not _git.is_hashid(hashid):
-                continue
-            try:
-                buggy_change = _git.Change(commit=hashid, repo=args.repo)
-            except:
-                print('# Failed parsing %s from %s' %
-                        (bug_reference, potential_fix))
-                continue
-            for patch_or_commits_range in args.bugs:
-                if os.path.isfile(patch_or_commits_range):
-                    patch_file = patch_or_commits_range
-                    bug = buggy_change.find_matching_patch([patch_file])
-                else:
-                    commits = patch_or_commits_range
-                    bug = buggy_change.find_matching_commit(args.repo, commits)
-                if bug != None:
-                    print_fix_bug(potential_fix, bug,
-                            args.remote_git_url, args.patches_queue_url)
+    find_print_fixes(args.fixes, args.repo, args.bugs, args.remote_git_url,
+                     args.patches_queue_url)
 
 if __name__ == '__main__':
     main()
