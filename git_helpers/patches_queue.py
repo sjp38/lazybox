@@ -59,6 +59,11 @@ def make_patches_series(series_file, repo, commits):
         patch = subprocess.check_output(
                 git_cmd + ['format-patch', '%s^..%s' % (commit, commit)])
         patch = patch.decode().strip()
+        # cut out first line magic timestamp line to avoid unnecessary diff
+        with open(patch, 'r') as f:
+            patch_lines = f.read().split('\n')
+        with open(patch, 'w') as f:
+            f.write('\n'.join(patch_lines[1:]))
         final_patch = final_patch_path(patch, patches_dir)
         os.rename(patch, final_patch)
         patches_list.append(os.path.basename(final_patch))
