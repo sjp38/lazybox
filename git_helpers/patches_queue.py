@@ -29,8 +29,45 @@ def assemble_tree(repo, series_file):
                 print('git am %s failed' % patch)
                 exit(1)
 
+def final_patch_path(patch_name, patches_dir):
+    name_wo_prefix_number = '-'.join(patch_name.split('-')[1:])
+    name_wo_extension = name_wo_prefix_number[:-1 * len('.patch')]
+    suffix = 0
+    for existing_file in os.listdir(patches_dir):
+        existing_name = existing_file[:-1 * len('.patch')]
+        existing_name_fields = existing_name.split('-')
+        if existing_name_fields[-1].isdigit():
+            existing_name = '-'.join(existing_name_fields[:-1])
+        if existing_name == name_wo_extension:
+            suffix += 1
+
+    final_path = os.path.join(patches_dir, name_wo_extension)
+    if suffix > 0:
+        final_path += '-%d' % suffix
+    final_path += '.patch'
+    return final_path
+
 def make_patches_series(series_file, repo, commits):
-    print('convert commits to patches series')
+    git_cmd = ['git', '-C', repo]
+    patches_dir = os.path.dirname(series_file)
+
+    patches_list = []
+    commits = subprocess.check_output(
+            git_cmd + ['log', '--reverse', '--pretty=%H', commits])
+    commits = commits.decode().strip().split()
+    for commit in commits:
+        patch = subprocess.check_output(
+                git_cmd + ['format-patch', '%s^..%s' % (commit, commit)])
+        patch = patch.decode().strip()
+        final_patch = final_patch_path(patch, patches_dir)
+        os.rename(patch, final_patch)
+        patches_list.append(os.path.basename(final_patch))
+        print(final_patch)
+
+    baseline = subprocess.check_output(
+            git_cmd + ['rev-parse', '%s^' % commits[0]]).decode().strip()
+    with open(series_file, 'w') as f:
+        f.write('\n'.join([baseline] + patches_list))
 
 def main():
     parser = argparse.ArgumentParser()
