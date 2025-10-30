@@ -35,7 +35,11 @@ def set_grub_kernel(target_kernel):
             continue
         if tokens[0] == "linux":
             kernel_position = tokens[1]
-            kernel_name = kernel_position.lstrip('/boot/vmlinuz-')
+            kernel_name = None
+            for prefix in ['/boot/vmlinuz-', '/boot/vmlinux-']:
+                if kernel_position.startswith(prefix):
+                    kernel_name = kernel_position[len(prefix):]
+                    break
             if kernel_name == target_kernel:
                 found = True
                 break
