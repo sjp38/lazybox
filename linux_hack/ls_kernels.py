@@ -22,8 +22,11 @@ def grub_kernels():
             continue
         if tokens[0] == 'linux':
             kernel_position = tokens[1]
-            kernel_name = kernel_position.lstrip('/boot/vmlinuz-')
-            if not kernel_name in kernels:
+            kernel_name = None
+            for prefix in ['/boot/vmlinuz-', '/boot/vmlinux-']:
+                if kernel_position.startswith(prefix):
+                    kernel_name = kernel_position[len(prefix):]
+            if kernel_name is not None and not kernel_name in kernels:
                 kernels.append(kernel_name)
     return kernels
 
