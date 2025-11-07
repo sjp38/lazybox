@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import subprocess
 
 mm_master = 'akpm.korg.mm/master'
@@ -7,7 +8,7 @@ mm_stable = 'akpm.korg.mm/mm-stable'
 mm_unstable = 'akpm.korg.mm/mm-unstable'
 mm_new = 'akpm.korg.mm/mm-new'
 
-def list_patches_in(commits_base, commits_end):
+def list_patches_in(commits_base, commits_end, min_len_single_patch):
     cproc = subprocess.run(
             ['git', 'log', '--pretty=%H', '--reverse', '%s..%s' %
              (commits_base, commits_end)],
@@ -45,22 +46,26 @@ def list_patches_in(commits_base, commits_end):
         if cproc.returncode != 0:
             return 'git show fail (%s)' % cproc.stderr
         commit_content = cproc.stdout
-        if len(commit_content.split('\n')) > 300:
+        if len(commit_content.split('\n')) > min_len_single_patch:
             unwrapped = ' '.join(pars[0].split('\n'))
             print('    Patch "%s"' % unwrapped)
     print()
     return None
 
 def main():
-    err = list_patches_in(mm_master, mm_stable)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--min_len_single_patch', type=int, default=300)
+    args = parser.parse_args()
+
+    err = list_patches_in(mm_master, mm_stable, args.min_len_single_patch)
     if err is not None:
         print(err)
         exit(1)
-    err = list_patches_in(mm_stable, mm_unstable)
+    err = list_patches_in(mm_stable, mm_unstable, args.min_len_single_patch)
     if err is not None:
         print(err)
         exit(1)
-    err = list_patches_in(mm_unstable, mm_new)
+    err = list_patches_in(mm_unstable, mm_new, args.min_len_single_patch)
     if err is not None:
         print(err)
         exit(1)
