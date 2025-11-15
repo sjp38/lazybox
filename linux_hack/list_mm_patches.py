@@ -54,7 +54,7 @@ def list_patches_in(commits_base, commits_end, min_len_single_patch):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--min_len_single_patch', type=int, default=300)
+    parser.add_argument('--min_len_single_patch', type=int, default=0)
     args = parser.parse_args()
 
     err = list_patches_in(mm_master, mm_stable, args.min_len_single_patch)
