@@ -1,9 +1,0 @@
-# first experiment
-start echo "start"
-main ./test_run_exps/run_secs.py \
-        6
-back while true; \
-        do ./test_run_exps/run_secs.py 2; \
-        sleep 1; \
-     done
-end echo 'end!'
