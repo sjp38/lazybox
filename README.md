@@ -29,6 +29,11 @@ As of 2025-11-16, the original part of this project (`run_exps.py` and its
 frieds) is moved to `parallel_runs`.  All users should update their setups to
 use the tools under the new directory.
 
+As of 2025-11-16, files in `scripts/gen_report/` and `scripts/report/` are
+copied into `format_data/`.  All users should update their setups to use the
+copied files.  Files under `scripts/gen_report/` and `scripts/report/` may be
+removed soon.
+
 Version Compatibility
 =====================
 
