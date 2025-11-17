@@ -23,5 +23,5 @@ do
 		paths+=$d/$f" "
 	done
 
-	$LBX/scripts/report/statof.py $stat $paths > $STATDIR/$f
+	$LBX/format_data/statof.py $stat $paths > $STATDIR/$f
 done
