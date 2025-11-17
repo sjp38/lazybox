@@ -1,1 +1,1 @@
-Scripts for tuning of system and workloads.
+Scripts for tuning and operating of system and workloads.
