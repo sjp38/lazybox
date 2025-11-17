@@ -1,2 +1,3 @@
 Most files in this directory are deprecated.  Please use files of same name
-under profile/ or tune/ on the root of this repo instead.
+under profile/, tune/ or workloads/memcg_pressure/ on the root of this repo
+instead.
