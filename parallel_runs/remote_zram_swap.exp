@@ -4,7 +4,7 @@ set timeout -1
 # Make a remote target host to use a zram block device as a swap device
 #
 # Internally, setting swap area as a zram block device is done via
-# `scripts/zram_swap.sh` of lazybox.  For the reason, lazybox should be
+# `tune/zram_swap.sh` of lazybox.  For the reason, lazybox should be
 # installed on the remote target machine before execution of this program.
 #
 # Usage:
@@ -30,6 +30,6 @@ set zram_size [lindex $argv 5]
 source "remote.tcl"
 
 remote_sudocmd $username $target $ssh_port $password \
-		"cd $lbpath; ./scripts/zram_swap.sh $zram_size"
+		"cd $lbpath; ../tune/zram_swap.sh $zram_size"
 
 puts "\nremote_zram_swap.exp FINISHED"
