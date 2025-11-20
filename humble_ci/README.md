@@ -36,6 +36,6 @@ LTS kernels for every hour, and send notice email.
 
     $ ./hci.py --repo ./linux \
                --tree_to_track linus git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master \
-               --tree_to_track stable git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-5.4.y \
-               --tree_to_track stable git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-5.10.y \
+               --tree_to_track stable git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.6.y \
+               --tree_to_track stable git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.12.y \
                --cmds "./noti_update.sh $email_to_receive_noti" --delay 3600
