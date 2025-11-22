@@ -1,3 +1,0 @@
-Most files in this directory are deprecated.  Please use files of same name
-under profile/, tune/, workloads/memcg_pressure/, parallel_runs/ tune/mysql/
-or unsorted/ on the root of this repo instead.
