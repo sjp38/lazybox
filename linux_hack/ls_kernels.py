@@ -33,6 +33,11 @@ if __name__ == "__main__":
             choices=[GRUB, CUBOX, RASP2], metavar='bootloader',
             help='bootloader of the system')
     args = parser.parse_args()
+
+    if os.geteuid() != 0:
+        print('Run as root')
+        exit(1)
+
     bootloader = args.bootloader
 
     if bootloader == GRUB:
