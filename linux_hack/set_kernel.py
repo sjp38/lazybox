@@ -127,6 +127,10 @@ if __name__ == "__main__":
             help='backup the grub config file')
     args = parser.parse_args()
 
+    if os.geteuid() != 0:
+        print('Run as root')
+        exit(1)
+
     bootloader=args.bootloader
     kernel_name = args.kernel_name
     kernel_param = ' '.join(args.kernel_param)
