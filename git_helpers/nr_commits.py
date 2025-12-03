@@ -7,7 +7,7 @@ data in a heatmap-visualization-ready format (day, week, number of commits).
 Example usage:
 
     $ ./nr_commits.py <the git repo>... | \
-            ~/lazybox/gnuplot/plot.py stdout --type heatmap \
+            ~/lazybox/format_data/plot/plot.py stdout --type heatmap \
             --stdout_first_row_display "        Number of commits per day" \
             --stdout_first_col_display \
             "Mon " "Tue " "Wed " "Thu " "Fri " "Sat " "Sun "
