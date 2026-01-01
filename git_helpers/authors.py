@@ -153,7 +153,7 @@ def pr_authors(authors_sorted, authors, sortby, hide_rank, pr_for_plot):
         print(sortby)
     for idx, author in enumerate(authors_sorted):
         if pr_for_plot:
-            line = '%d %d' % (idx, authors[author])
+            line = '%d %d' % (idx + 1, authors[author])
         else:
             line = '%s: %d %s' % (author, authors[author], sortby)
             if not hide_rank:
