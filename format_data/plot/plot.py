@@ -39,6 +39,9 @@ def get_args():
             help='plot y axis in logscale')
     parser.add_argument('--xtics_rotate', metavar='<degree>', type=int,
             help='xtics rotate degree')
+    parser.add_argument('--gnuplot_arrow', nargs=4, type=int,
+                        metavar=('<from x>', '<from y>', '<to x>', '<to y>'),
+                        help='draw arrow')
     parser.add_argument('--gnuplot_cmds', action='store_true',
             help='print gnuplot commands')
 
@@ -121,6 +124,11 @@ def gen_gp_cmd(data_path, nr_recs, nr_cols, args):
         log += 'y'
     if log:
         cmds += ['set logscale %s;' % log]
+
+    if args.gnuplot_arrow is not None:
+        cmds += ['set arrow from %d,%d to %d,%d;' % (
+            args.gnuplot_arrow[0], args.gnuplot_arrow[1],
+            args.gnuplot_arrow[2], args.gnuplot_arrow[3])]
 
     if plot_type == 'scatter-yerr':
         cmd = 'plot "%s" using 1:2:3 linestyle 1 with yerrorbars notitle, ' % (
