@@ -114,6 +114,12 @@ def main():
         print('%s' % commit.date)
         print('%s ("%s")' % (commit.hash[:12], commit.subject))
         print('%s of %s' % (event.event_type, ', '.join(event.trees_of_event)))
+        if event.event_type == 'last_common_commit':
+            for commit_hash, trees in event.after_diverge_commit_to_trees.items():
+                commit = git_commit_of(commit_hash)
+                print('%s diverged to %s ("%s") (%s)' % (
+                    ', '.join(trees), commit.hash[:12], commit.subject,
+                    commit.date))
         print()
 
 if __name__ == '__main__':
