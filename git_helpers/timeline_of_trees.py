@@ -59,14 +59,10 @@ def main():
     for tree in trees:
         first_commit = subprocess.check_output(
                 'git log --pretty=%H | tail -1', shell=True).decode().strip()
-        if first_commit in [e[1] for e in events]:
-            continue
         commit = git_commit_of(first_commit)
-        commit_date, subject = commit.date, commit.subject
-        events.append(
-                [commit_date, first_commit,
-                 '%s ("%s")' % (first_commit[:12], subject), tree,
-                 'first commit'])
+        if commit in [e.commit for e in events]:
+            continue
+        events.append(Event(commit, 'first_commit', [tree]))
 
     for tree_a in trees:
         for tree_b in trees:
@@ -76,44 +72,33 @@ def main():
                     ['git', 'merge-base', tree_a, tree_b]).decode().strip()
             squashed = False
             for event in events:
-                date, full_hash, commit_desc, tree, event_desc = event
-                if diverge_commit != full_hash:
+                if event.commit.hash != diverge_commit:
                     continue
-                if not event_desc.startswith('last common commit'):
+                if event.event_type != 'last_common_commit':
                     continue
-                mentioned_trees = [tree]
-                mentioned_trees += event_desc[
-                        len('last common commit with '):].split()
-                if not tree_a in mentioned_trees:
-                    event[4] = event_desc + ' %s' % tree_a
                 squashed = True
+                if not tree_a in event.trees_of_event:
+                    event.trees_of_event.append(tree)
                 break
             if squashed:
                 continue
 
             commit = git_commit_of(diverge_commit)
-            commit_date, subject = commit.date, commit.subject
             events.append(
-                    [commit_date, diverge_commit,
-                     '%s ("%s")' % (diverge_commit[:12], subject), tree_a,
-                     'last common commit with %s' % tree_b])
+                    Event(commit, 'last_common_commit', [tree_a]))
 
     for tree in trees:
         last_commit = subprocess.check_output(
                 ['git', 'rev-parse', tree]).decode().strip()
         commit = git_commit_of(last_commit)
-        commit_date, subject = commit.date, commit.subject
-        events.append(
-                [commit_date, last_commit,
-                 '%s ("%s")' % (last_commit[:12], subject), tree,
-                 'last commit'])
+        events.append(Event(commit, 'last_commit', [tree]))
 
-    events.sort(key=lambda x:x[0])
+    events.sort(key=lambda x:x.commit.date)
     for event in events:
-        date, full_hash, commit_desc, tree, event_desc = event
-        print('%s' % date)
-        print('\t%s' % commit_desc)
-        print('\t%s %s' % (tree, event_desc))
+        commit = event.commit
+        print('%s' % commit.date)
+        print('\t%s ("%s")' % (commit.hash[:12], commit.subject))
+        print('\t%s of %s' % (event.event_type, ', '.join(event.trees_of_event)))
 
 if __name__ == '__main__':
     main()
