@@ -59,9 +59,20 @@ def main():
     for tree in trees:
         first_commit = subprocess.check_output(
                 'git log --pretty=%H | tail -1', shell=True).decode().strip()
-        commit = git_commit_of(first_commit)
-        if commit in [e.commit for e in events]:
+        squashed = False
+        for event in events:
+            if event.commit.hash != first_commit:
+                continue
+            if event.event_type != 'first_commit':
+                continue
+            squashed = True
+            if not tree in event.trees_of_event:
+                event.trees_of_event.append(tree)
+            break
+        if squashed:
             continue
+
+        commit = git_commit_of(first_commit)
         events.append(Event(commit, 'first_commit', [tree]))
 
     for tree_a in trees:
@@ -90,6 +101,19 @@ def main():
     for tree in trees:
         last_commit = subprocess.check_output(
                 ['git', 'rev-parse', tree]).decode().strip()
+        squashed = False
+        for event in events:
+            if event.commit.hash != last_commit:
+                continue
+            if event.event_type != 'last_commit':
+                continue
+            squashed = True
+            if not tree in events.trees_of_event:
+                event.trees_of_event.append(tree)
+            break
+        if squashed:
+            continue
+
         commit = git_commit_of(last_commit)
         events.append(Event(commit, 'last_commit', [tree]))
 
