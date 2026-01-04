@@ -47,6 +47,18 @@ def git_commit_of(hashid):
     subject = output[26:]
     return Commit(commit_date, hashid, subject)
 
+def add_event(events, commit_hash, event_type, tree):
+    for event in events:
+        if event.commit.hash != commit_hash:
+            continue
+        if event.event_type != event_type:
+            continue
+        if not tree in event.trees_of_event:
+            event.trees_of_event.append(tree)
+        return
+    commit = git_commit_of(commit_hash)
+    events.append(Event(commit, event_type, [tree]))
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('trees', nargs='+', metavar='<tree>',
@@ -59,21 +71,7 @@ def main():
     for tree in trees:
         first_commit = subprocess.check_output(
                 'git log --pretty=%H | tail -1', shell=True).decode().strip()
-        squashed = False
-        for event in events:
-            if event.commit.hash != first_commit:
-                continue
-            if event.event_type != 'first_commit':
-                continue
-            squashed = True
-            if not tree in event.trees_of_event:
-                event.trees_of_event.append(tree)
-            break
-        if squashed:
-            continue
-
-        commit = git_commit_of(first_commit)
-        events.append(Event(commit, 'first_commit', [tree]))
+        add_event(events, first_commit, 'first_commit', tree)
 
     for tree_a in trees:
         for tree_b in trees:
@@ -81,41 +79,13 @@ def main():
                 continue
             diverge_commit = subprocess.check_output(
                     ['git', 'merge-base', tree_a, tree_b]).decode().strip()
-            squashed = False
-            for event in events:
-                if event.commit.hash != diverge_commit:
-                    continue
-                if event.event_type != 'last_common_commit':
-                    continue
-                squashed = True
-                if not tree_a in event.trees_of_event:
-                    event.trees_of_event.append(tree)
-                break
-            if squashed:
-                continue
-
-            commit = git_commit_of(diverge_commit)
-            events.append(
-                    Event(commit, 'last_common_commit', [tree_a]))
+            add_event(events, diverge_commit, 'last_common_commit', tree_a)
+            add_event(events, diverge_commit, 'last_common_commit', tree_b)
 
     for tree in trees:
         last_commit = subprocess.check_output(
                 ['git', 'rev-parse', tree]).decode().strip()
-        squashed = False
-        for event in events:
-            if event.commit.hash != last_commit:
-                continue
-            if event.event_type != 'last_commit':
-                continue
-            squashed = True
-            if not tree in events.trees_of_event:
-                event.trees_of_event.append(tree)
-            break
-        if squashed:
-            continue
-
-        commit = git_commit_of(last_commit)
-        events.append(Event(commit, 'last_commit', [tree]))
+        add_event(events, last_commit, 'last_commit', tree)
 
     events.sort(key=lambda x:x.commit.date)
     for event in events:
