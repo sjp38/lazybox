@@ -50,6 +50,23 @@ def main():
                 continue
             diverge_commit = subprocess.check_output(
                     ['git', 'merge-base', tree_a, tree_b]).decode().strip()
+            squashed = False
+            for event in events:
+                date, full_hash, commit_desc, tree, event_desc = event
+                if diverge_commit != full_hash:
+                    continue
+                if not event_desc.startswith('last common commit'):
+                    continue
+                mentioned_trees = [tree]
+                mentioned_trees += event_desc[
+                        len('last common commit with '):].split()
+                if not tree_a in mentioned_trees:
+                    event[4] = event_desc + ' %s' % tree_a
+                squashed = True
+                break
+            if squashed:
+                continue
+
             commit_date, subject = git_commit_date_subject(diverge_commit)
             events.append(
                     [commit_date, diverge_commit,
