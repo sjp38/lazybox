@@ -37,7 +37,7 @@ class Event:
         self.event_type = event_type
         self.trees_of_event = trees_of_event
 
-def git_commit_date_subject(hashid):
+def git_commit_of(hashid):
     output = subprocess.check_output(
             ['git', 'log', '-1', hashid, '--date=iso-strict',
              '--pretty=%cd %s']).decode().strip()
@@ -45,7 +45,7 @@ def git_commit_date_subject(hashid):
     commit_date = datetime.datetime.strptime(
             commit_date_str, '%Y-%m-%dT%H:%M:%S%z')
     subject = output[26:]
-    return commit_date, subject
+    return Commit(commit_date, hashid, subject)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -61,7 +61,8 @@ def main():
                 'git log --pretty=%H | tail -1', shell=True).decode().strip()
         if first_commit in [e[1] for e in events]:
             continue
-        commit_date, subject = git_commit_date_subject(first_commit)
+        commit = git_commit_of(first_commit)
+        commit_date, subject = commit.date, commit.subject
         events.append(
                 [commit_date, first_commit,
                  '%s ("%s")' % (first_commit[:12], subject), tree,
@@ -90,7 +91,8 @@ def main():
             if squashed:
                 continue
 
-            commit_date, subject = git_commit_date_subject(diverge_commit)
+            commit = git_commit_of(diverge_commit)
+            commit_date, subject = commit.date, commit.subject
             events.append(
                     [commit_date, diverge_commit,
                      '%s ("%s")' % (diverge_commit[:12], subject), tree_a,
@@ -99,7 +101,8 @@ def main():
     for tree in trees:
         last_commit = subprocess.check_output(
                 ['git', 'rev-parse', tree]).decode().strip()
-        commit_date, subject = git_commit_date_subject(last_commit)
+        commit = git_commit_of(last_commit)
+        commit_date, subject = commit.date, commit.subject
         events.append(
                 [commit_date, last_commit,
                  '%s ("%s")' % (last_commit[:12], subject), tree,
