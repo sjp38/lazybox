@@ -121,8 +121,9 @@ def main():
     for event in events:
         commit = event.commit
         print('%s' % commit.date)
-        print('\t%s ("%s")' % (commit.hash[:12], commit.subject))
-        print('\t%s of %s' % (event.event_type, ', '.join(event.trees_of_event)))
+        print('%s ("%s")' % (commit.hash[:12], commit.subject))
+        print('%s of %s' % (event.event_type, ', '.join(event.trees_of_event)))
+        print()
 
 if __name__ == '__main__':
     main()
