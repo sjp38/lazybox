@@ -14,6 +14,29 @@ import argparse
 import datetime
 import subprocess
 
+class Commit:
+    date = None
+    hash = None
+    subject = None
+
+    def __init__(self, date, hash, subject):
+        self.date = date
+        self.hash = hash
+        self.subject = subject
+
+    def __eq__(self, other):
+        return self.hash == other.hash
+
+class Event:
+    commit = None
+    event_type = None   # first_commit, last_common_commit, last_commit
+    trees_of_event = None
+
+    def __init__(self, commit, event_type, trees_of_event):
+        self.commit = commit
+        self.event_type = event_type
+        self.trees_of_event = trees_of_event
+
 def git_commit_date_subject(hashid):
     output = subprocess.check_output(
             ['git', 'log', '-1', hashid, '--date=iso-strict',
