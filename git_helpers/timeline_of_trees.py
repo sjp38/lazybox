@@ -43,10 +43,10 @@ def git_commit_of(hashid):
     output = subprocess.check_output(
             ['git', 'log', '-1', hashid, '--date=iso-strict',
              '--pretty=%cd %s']).decode().strip()
-    commit_date_str = output[:25]
+    commit_date_str = output.split()[0]
     commit_date = datetime.datetime.strptime(
             commit_date_str, '%Y-%m-%dT%H:%M:%S%z')
-    subject = output[26:]
+    subject = output[len(commit_date_str) + 1:]
     return Commit(commit_date, hashid, subject)
 
 def add_after_diverge_commit(event, tree):
