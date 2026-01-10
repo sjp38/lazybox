@@ -57,6 +57,10 @@ def main():
     parser.add_argument('--min_len_single_patch', type=int, default=0)
     args = parser.parse_args()
 
+    mm_master_desc = subprocess.check_output(
+            ['git', 'describe', mm_master]).decode()
+    print('mm/master: %s' % mm_master_desc)
+
     err = list_patches_in(mm_master, mm_stable, args.min_len_single_patch)
     if err is not None:
         print(err)
