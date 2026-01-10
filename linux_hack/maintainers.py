@@ -38,7 +38,8 @@ def parse_maintainers(maintainers_file):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--repo', metavar='<dir>', help='linux repo')
+    parser.add_argument('--repo', metavar='<dir>', default='./',
+                        help='linux repo')
     args = parser.parse_args()
 
     maintainers_file = os.path.join(args.repo, 'MAINTAINERS')
