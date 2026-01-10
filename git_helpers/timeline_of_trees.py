@@ -8,6 +8,22 @@ Receives list of trees and show their evolution history.  E.g.,
 2025-02-01 From commit 234567890abc, branch-B has diverged from branch-A.
 2025-03-01 branch-B got the final commit 34567890abcd.
 2025-04-01 branch-A got the final commit 4567890abcde.
+
+Or,
+
+*      2025-01-05 13:30:33 +0800 1234567890ab ("common ancestor")
+|
+*      (333 commits)
+|
+*      2025-02-05 15:10:23 +0800 234567890abc ("last common commit")
+|\
+| *    2025-03-03 11:09:00 +0800 34567890abcd ("first commit after diverge")
+* |    2025-03-05 13:11:00 +0800 4567890abcde ("baz2")
+| *    (111 commits)
+* |    (150 commits)
+| *    2025-04-02 11:11:11 +0800 567890abcdef ("end of branch 2")
+*      2025-04-13 22:22:22 +0800 67890abcdef0 ("end of branch 1")
+
 '''
 
 import argparse
