@@ -20,7 +20,9 @@ def pr_wrapped(line, max_cols, first_line_prefix):
         if len(wrapped_line) + 1 + len(word) > max_cols:
             print(wrapped_line)
             wrapped_line = indent_cols * ' '
-        wrapped_line += ' ' + word
+        elif wrapped_line != '':
+            wrapped_line += ' '
+        wrapped_line += word
     print(wrapped_line)
 
 def file_matching(file_tokens, path):
@@ -54,8 +56,16 @@ def file_is_for_subsystem(file, subsys_maintainer_info):
 
 def pr_review_stat(commit, linux_dir):
     git_cmd = ['git', '-C', linux_dir]
-    subprocess.call(git_cmd +
-                    ['log', commit, '-1', '--pretty=commit %h ("%s")'])
+    commit_desc = subprocess.check_output(
+            git_cmd + ['log', commit, '-1',
+                       '--pretty=commit %h ("%s")']).decode().strip()
+
+    try:
+        max_cols = int(os.get_terminal_size().columns * 0.9)
+    except OSError as e:
+        # maybe redirecting the output.
+        max_cols = 80
+    pr_wrapped(commit_desc, max_cols, '')
     touching_files = subprocess.check_output(
             git_cmd + ['show', commit, '--pretty=', '--name-only']
             ).decode().strip().splitlines()
@@ -98,11 +108,6 @@ def pr_review_stat(commit, linux_dir):
                 if tagger in subsys_info['reviewer']:
                     roles.append('%s reviewer' % subsys_name)
 
-    try:
-        max_cols = int(os.get_terminal_size().columns * 0.9)
-    except OSError as e:
-        # maybe redirecting the output.
-        max_cols = 80
     for tag, taggers in tag_taggers.items():
         print('%s' % tag)
         for tagger in taggers:
