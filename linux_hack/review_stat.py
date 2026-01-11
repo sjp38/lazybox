@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-2.0
 
 '''
-Show status of reviews for a given change.
+Show status of reviews for given changes.
 '''
 
 import argparse
@@ -54,6 +54,8 @@ def file_is_for_subsystem(file, subsys_maintainer_info):
 
 def pr_review_stat(commit, linux_dir):
     git_cmd = ['git', '-C', linux_dir]
+    subprocess.call(git_cmd +
+                    ['log', commit, '-1', '--pretty=commit %h ("%s")'])
     touching_files = subprocess.check_output(
             git_cmd + ['show', commit, '--pretty=', '--name-only']
             ).decode().strip().splitlines()
@@ -111,13 +113,21 @@ def pr_review_stat(commit, linux_dir):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('commit', metavar='<commit>',
-                        help='commit of the change')
+    parser.add_argument('--commits', metavar='<commits>',
+                        help='commits of the changes')
     parser.add_argument('--linux_dir', metavar='<dir>', default='./',
                         help='path to linux repo')
     args = parser.parse_args()
 
-    pr_review_stat(args.commit, args.linux_dir)
+    if args.commits is None:
+        print('--commits is essential')
+        exit(1)
+
+    for commit in subprocess.check_output(
+            ['git', '-C', args.linux_dir, 'log', '--pretty=%H', args.commits]
+            ).decode().strip().splitlines():
+        pr_review_stat(commit, args.linux_dir)
+        print()
 
 if __name__ == '__main__':
     main()
