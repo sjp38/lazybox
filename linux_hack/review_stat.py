@@ -54,7 +54,7 @@ def file_is_for_subsystem(file, subsys_maintainer_info):
             return True
     return False
 
-def pr_review_stat(commit, linux_dir):
+def get_review_stat(commit, linux_dir):
     git_cmd = ['git', '-C', linux_dir]
     commit_desc = subprocess.check_output(
             git_cmd + ['log', commit, '-1',
@@ -99,10 +99,9 @@ def pr_review_stat(commit, linux_dir):
                 if tagger in subsys_info['reviewer']:
                     roles.append('%s reviewer' % subsys_name)
 
-    pr_review_stat_one(commit_desc, subsys_of_change, tag_taggers,
-                       tagger_roles)
+    return commit_desc, subsys_of_change, tag_taggers, tagger_roles
 
-def pr_review_stat_one(commit_desc, subsys_of_change, tag_taggers,
+def pr_review_stat(commit_desc, subsys_of_change, tag_taggers,
                        tagger_roles):
     try:
         max_cols = int(os.get_terminal_size().columns * 0.9)
@@ -141,7 +140,10 @@ def main():
     for commit in subprocess.check_output(
             ['git', '-C', args.linux_dir, 'log', '--pretty=%H', args.commits]
             ).decode().strip().splitlines():
-        pr_review_stat(commit, args.linux_dir)
+        commit_desc, subsys_of_change, tag_taggers, tagger_roles = \
+                get_review_stat(commit, args.linux_dir)
+        pr_review_stat(commit_desc, subsys_of_change, tag_taggers,
+                       tagger_roles)
         print()
 
 if __name__ == '__main__':
