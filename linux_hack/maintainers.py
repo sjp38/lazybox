@@ -44,6 +44,9 @@ def main():
     parser.add_argument(
             '--output_format', choices=['python', 'json'], default='python',
             help='format of the output')
+    parser.add_argument(
+            '--subsystem', metavar='<name>', nargs='+',
+            help='subsystems to print the info')
     args = parser.parse_args()
 
     maintainers_file = os.path.join(args.repo, 'MAINTAINERS')
@@ -52,6 +55,13 @@ def main():
         exit(1)
 
     subsystems = parse_maintainers(maintainers_file)
+
+    filtered = {}
+    if args.subsystem is not None:
+        for name, info in subsystems.items():
+            if name in args.subsystem:
+                filtered[name] = info
+        subsystems = filtered
 
     if args.output_format == 'python':
         print(subsystems)
