@@ -6,6 +6,7 @@ Show status of reviews for given changes.
 '''
 
 import argparse
+import json
 import os
 import subprocess
 
@@ -131,20 +132,34 @@ def main():
                         help='commits of the changes')
     parser.add_argument('--linux_dir', metavar='<dir>', default='./',
                         help='path to linux repo')
+    parser.add_argument(
+            '--output_format', choices=['text', 'json'], default='text',
+            help='output format')
     args = parser.parse_args()
 
     if args.commits is None:
         print('--commits is essential')
         exit(1)
 
+    json_data = []
     for commit in subprocess.check_output(
             ['git', '-C', args.linux_dir, 'log', '--pretty=%H', args.commits]
             ).decode().strip().splitlines():
         commit_desc, subsys_of_change, tag_taggers, tagger_roles = \
                 get_review_stat(commit, args.linux_dir)
-        pr_review_stat(commit_desc, subsys_of_change, tag_taggers,
-                       tagger_roles)
-        print()
+        if args.output_format == 'text':
+            pr_review_stat(commit_desc, subsys_of_change, tag_taggers,
+                           tagger_roles)
+            print()
+        else:
+            json_data.append({
+                'change': commit_desc,
+                'subsystem_of_change': list(subsys_of_change.keys()),
+                'tag_taggers': tag_taggers,
+                'tagger_roles': tagger_roles,
+                })
+    if args.output_format == 'json':
+        print(json.dumps(json_data, indent=4))
 
 if __name__ == '__main__':
     main()
