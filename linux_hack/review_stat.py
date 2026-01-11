@@ -52,21 +52,14 @@ def file_is_for_subsystem(file, subsys_maintainer_info):
             return True
     return False
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('commit', metavar='<commit>',
-                        help='commit of the change')
-    parser.add_argument('--linux_dir', metavar='<dir>', default='./',
-                        help='path to linux repo')
-    args = parser.parse_args()
-
-    git_cmd = ['git', '-C', args.linux_dir]
+def pr_review_stat(commit, linux_dir):
+    git_cmd = ['git', '-C', linux_dir]
     touching_files = subprocess.check_output(
-            git_cmd + ['show', args.commit, '--pretty=', '--name-only']
+            git_cmd + ['show', commit, '--pretty=', '--name-only']
             ).decode().strip().splitlines()
 
     subsys_maintainers = maintainers.parse_maintainers(
-            os.path.join(args.linux_dir, 'MAINTAINERS'))
+            os.path.join(linux_dir, 'MAINTAINERS'))
     subsys_of_change = {}
     for name, info in subsys_maintainers.items():
         for touching_file in touching_files:
@@ -77,7 +70,7 @@ def main():
         print('- %s' % name)
 
     log_output_sentences = subprocess.check_output(
-            git_cmd + ['log', '-1', args.commit, '--pretty=%an <%ae>%n%n%B']
+            git_cmd + ['log', '-1', commit, '--pretty=%an <%ae>%n%n%B']
             ).decode().strip().split('\n\n')
     author = log_output_sentences[0]
     tag_taggers = {}
@@ -115,6 +108,16 @@ def main():
             else:
                 pr_wrapped('%s (%s)' % (tagger, ', '.join(roles)), max_cols,
                            '- ')
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('commit', metavar='<commit>',
+                        help='commit of the change')
+    parser.add_argument('--linux_dir', metavar='<dir>', default='./',
+                        help='path to linux repo')
+    args = parser.parse_args()
+
+    pr_review_stat(args.commit, args.linux_dir)
 
 if __name__ == '__main__':
     main()
