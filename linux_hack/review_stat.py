@@ -3,6 +3,61 @@
 
 '''
 Show status of reviews for given changes.
+
+For flexible search of the data, '--output_format json' option can be used.
+For example:
+
+$ # save the data as a json file.
+$ ./review_stat.py --commits mm-stable..mm-new --output_format json | tee foo
+[...]
+    {
+        "change": "commit 27351535d7cd (\"mm/damon/paddr: initialize 'folio' variables to NULL for clarity\")",
+        "subsystem_of_change": [
+            "DAMON",
+            "MEMORY MANAGEMENT",
+            "THE REST"
+        ],
+        "tag_taggers": {
+            "Link:": [
+                "https://patch.msgid.link/20260104013255.16962-1-yangqixiao@inspur.com",
+                "https://lkml.kernel.org/r/20260108013041.80601-1-sj@kernel.org"
+            ],
+            "Signed-off-by:": [
+                "Aaron Yang <yangqixiao@inspur.com>",
+                "SeongJae Park <sj@kernel.org>",
+                "Andrew Morton <akpm@linux-foundation.org>"
+            ],
+            "Reviewed-by:": [
+                "SeongJae Park <sj@kernel.org>"
+            ]
+        },
+        "tagger_roles": {
+            "https://patch.msgid.link/20260104013255.16962-1-yangqixiao@inspur.com": [],
+            "https://lkml.kernel.org/r/20260108013041.80601-1-sj@kernel.org": [],
+            "Aaron Yang <yangqixiao@inspur.com>": [
+                "author"
+            ],
+            "SeongJae Park <sj@kernel.org>": [
+                "DAMON maintainer"
+            ],
+            "Andrew Morton <akpm@linux-foundation.org>": [
+                "MEMORY MANAGEMENT maintainer"
+            ]
+        }
+    },
+[...]
+$
+$ # load the data and find commits still waiting for reviews.
+$ python3
+>>> import json
+>>> with open('foo', 'r') as f:
+...		review_stats = json.load(f)
+>>> for stat in review_stats:
+...     if not 'Reviewed-by:' in stat['tag_taggers']:
+...         print(stat['change'])
+[...]
+commit a73e1de6cdd2 ("mm/damon: update damos kerneldoc for stat field")
+[...]
 '''
 
 import argparse
