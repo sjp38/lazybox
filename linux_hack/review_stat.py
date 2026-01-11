@@ -98,7 +98,11 @@ def pr_review_stat(commit, linux_dir):
                 if tagger in subsys_info['reviewer']:
                     roles.append('%s reviewer' % subsys_name)
 
-    max_cols = int(os.get_terminal_size().columns * 0.9)
+    try:
+        max_cols = int(os.get_terminal_size().columns * 0.9)
+    except OSError as e:
+        # maybe redirecting the output.
+        max_cols = 80
     for tag, taggers in tag_taggers.items():
         print('%s' % tag)
         for tagger in taggers:
