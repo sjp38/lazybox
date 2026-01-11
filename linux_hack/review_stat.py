@@ -54,7 +54,7 @@ def file_is_for_subsystem(file, subsys_maintainer_info):
             return True
     return False
 
-def pr_review_stat(commit, linux_dir, skip_reviewed):
+def pr_review_stat(commit, linux_dir):
     git_cmd = ['git', '-C', linux_dir]
     commit_desc = subprocess.check_output(
             git_cmd + ['log', commit, '-1',
@@ -87,9 +87,6 @@ def pr_review_stat(commit, linux_dir, skip_reviewed):
         if not tag in tag_taggers:
             tag_taggers[tag] = []
         tag_taggers[tag].append(tagger)
-
-    if skip_reviewed and 'Reviewed-by:' in tag_taggers:
-        return
 
     for tagger, roles in tagger_roles.items():
         if tagger == author:
@@ -135,8 +132,6 @@ def main():
                         help='commits of the changes')
     parser.add_argument('--linux_dir', metavar='<dir>', default='./',
                         help='path to linux repo')
-    parser.add_argument('--skip_reviewed', action='store_true',
-                        help='skip printing commits that reviewed')
     args = parser.parse_args()
 
     if args.commits is None:
@@ -146,7 +141,7 @@ def main():
     for commit in subprocess.check_output(
             ['git', '-C', args.linux_dir, 'log', '--pretty=%H', args.commits]
             ).decode().strip().splitlines():
-        pr_review_stat(commit, args.linux_dir, args.skip_reviewed)
+        pr_review_stat(commit, args.linux_dir)
         print()
 
 if __name__ == '__main__':
