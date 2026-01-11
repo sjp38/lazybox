@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import json
 import os
 
 def parse_maintainers(maintainers_file):
@@ -40,6 +41,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--repo', metavar='<dir>', default='./',
                         help='linux repo')
+    parser.add_argument(
+            '--output_format', choices=['python', 'json'], default='python',
+            help='format of the output')
     args = parser.parse_args()
 
     maintainers_file = os.path.join(args.repo, 'MAINTAINERS')
@@ -49,7 +53,10 @@ def main():
 
     subsystems = parse_maintainers(maintainers_file)
 
-    print(subsystems)
+    if args.output_format == 'python':
+        print(subsystems)
+    elif args.output_format == 'json':
+        print(json.dumps(subsystems, indent=4, sort_keys=True))
 
 if __name__ == '__main__':
     main()
