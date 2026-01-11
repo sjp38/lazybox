@@ -69,32 +69,39 @@ def main():
             git_cmd + ['log', '-1', args.commit, '--pretty=%an <%ae>%n%n%B']
             ).decode().strip().split('\n\n')
     author = log_output_sentences[0]
-    tagger_tags = {}
+    tag_taggers = {}
+    tagger_roles = {}
     for line in log_output_sentences[-1].splitlines():
         fields = line.split()
         tag = fields[0]
-        if tag in ['Cc:', 'Link:', 'Closes:']:
-            continue
         tagger = ' '.join(fields[1:])
+        if not tagger in tagger_roles:
+            tagger_roles[tagger] = []
+        if not tag in tag_taggers:
+            tag_taggers[tag] = []
+        tag_taggers[tag].append(tagger)
+
+    for tagger, roles in tagger_roles.items():
+        if tagger == author:
+            roles.append('author')
         for subsys_name, subsys_info in subsys_of_change.items():
-            explanation = []
             if 'maintainer' in subsys_info:
                 if tagger in subsys_info['maintainer']:
-                    explanation.append('%s maintainer' % subsys_name)
+                    roles.append('%s maintainer' % subsys_name)
             if 'reviewer' in subsys_info:
                 if tagger in subsys_info['reviewer']:
-                    explanation.append('%s reviewer' % subsys_name)
-            if explanation == []:
-                continue
-            tagger = '%s (%s)' % (tagger, ', '.join(explanation))
+                    roles.append('%s reviewer' % subsys_name)
 
-        if tagger in tagger_tags:
-            tagger_tags[tagger].append(tag)
-        else:
-            tagger_tags[tagger] = [tag]
-
-    for tagger, tags in tagger_tags.items():
-        print('%s gave %s' % (tagger, ', '.join(tags)))
+    for tag, taggers in tag_taggers.items():
+        print('%s' % tag)
+        for tagger in taggers:
+            roles = []
+            if tagger in tagger_roles:
+                roles = tagger_roles[tagger]
+            if roles == []:
+                print('- %s' % tagger)
+            else:
+                print('- %s (%s)' % (tagger, ', '.join(roles)))
 
 if __name__ == '__main__':
     main()
