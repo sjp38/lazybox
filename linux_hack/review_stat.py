@@ -54,18 +54,12 @@ def file_is_for_subsystem(file, subsys_maintainer_info):
             return True
     return False
 
-def pr_review_stat(commit, linux_dir):
+def pr_review_stat(commit, linux_dir, skip_reviewed):
     git_cmd = ['git', '-C', linux_dir]
     commit_desc = subprocess.check_output(
             git_cmd + ['log', commit, '-1',
                        '--pretty=commit %h ("%s")']).decode().strip()
 
-    try:
-        max_cols = int(os.get_terminal_size().columns * 0.9)
-    except OSError as e:
-        # maybe redirecting the output.
-        max_cols = 80
-    pr_wrapped(commit_desc, max_cols, '')
     touching_files = subprocess.check_output(
             git_cmd + ['show', commit, '--pretty=', '--name-only']
             ).decode().strip().splitlines()
@@ -77,9 +71,6 @@ def pr_review_stat(commit, linux_dir):
         for touching_file in touching_files:
             if file_is_for_subsystem(touching_file, info):
                 subsys_of_change[name] = info
-    print('subsystems of the change:')
-    for name in subsys_of_change.keys():
-        print('- %s' % name)
 
     log_output_sentences = subprocess.check_output(
             git_cmd + ['log', '-1', commit, '--pretty=%an <%ae>%n%n%B']
@@ -97,6 +88,9 @@ def pr_review_stat(commit, linux_dir):
             tag_taggers[tag] = []
         tag_taggers[tag].append(tagger)
 
+    if skip_reviewed and 'Reviewed-by:' in tag_taggers:
+        return
+
     for tagger, roles in tagger_roles.items():
         if tagger == author:
             roles.append('author')
@@ -107,6 +101,16 @@ def pr_review_stat(commit, linux_dir):
             if 'reviewer' in subsys_info:
                 if tagger in subsys_info['reviewer']:
                     roles.append('%s reviewer' % subsys_name)
+
+    try:
+        max_cols = int(os.get_terminal_size().columns * 0.9)
+    except OSError as e:
+        # maybe redirecting the output.
+        max_cols = 80
+    pr_wrapped(commit_desc, max_cols, '')
+    print('subsystems of the change:')
+    for name in subsys_of_change.keys():
+        print('- %s' % name)
 
     for tag, taggers in tag_taggers.items():
         print('%s' % tag)
@@ -126,6 +130,8 @@ def main():
                         help='commits of the changes')
     parser.add_argument('--linux_dir', metavar='<dir>', default='./',
                         help='path to linux repo')
+    parser.add_argument('--skip_reviewed', action='store_true',
+                        help='skip printing commits that reviewed')
     args = parser.parse_args()
 
     if args.commits is None:
@@ -135,7 +141,7 @@ def main():
     for commit in subprocess.check_output(
             ['git', '-C', args.linux_dir, 'log', '--pretty=%H', args.commits]
             ).decode().strip().splitlines():
-        pr_review_stat(commit, args.linux_dir)
+        pr_review_stat(commit, args.linux_dir, args.skip_reviewed)
         print()
 
 if __name__ == '__main__':
