@@ -12,6 +12,17 @@ import subprocess
 # imports of modules on same dir
 import maintainers
 
+def pr_wrapped(line, max_cols, first_line_prefix):
+    words = line.split()
+    indent_cols = len(first_line_prefix)
+    wrapped_line = first_line_prefix
+    for word in words:
+        if len(wrapped_line) + 1 + len(word) > max_cols:
+            print(wrapped_line)
+            wrapped_line = indent_cols * ' '
+        wrapped_line += ' ' + word
+    print(wrapped_line)
+
 def file_matching(file_tokens, path):
     path_tokens = path.split('/')
     if len(file_tokens) < len(path_tokens):
@@ -92,6 +103,7 @@ def main():
                 if tagger in subsys_info['reviewer']:
                     roles.append('%s reviewer' % subsys_name)
 
+    max_cols = int(os.get_terminal_size().columns * 0.9)
     for tag, taggers in tag_taggers.items():
         print('%s' % tag)
         for tagger in taggers:
@@ -99,9 +111,10 @@ def main():
             if tagger in tagger_roles:
                 roles = tagger_roles[tagger]
             if roles == []:
-                print('- %s' % tagger)
+                pr_wrapped('%s' % tagger, max_cols, '- ')
             else:
-                print('- %s (%s)' % (tagger, ', '.join(roles)))
+                pr_wrapped('%s (%s)' % (tagger, ', '.join(roles)), max_cols,
+                           '- ')
 
 if __name__ == '__main__':
     main()
