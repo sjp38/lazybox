@@ -81,6 +81,7 @@ def main():
     parser.add_argument('--series')
     parser.add_argument('--commits')
     parser.add_argument('--repo', default='./',)
+    parser.add_argument('--remote_update', action='store_true')
     parser.description = 'Convert commits to/from patches series.'
     args = parser.parse_args()
 
@@ -89,6 +90,10 @@ def main():
         exit(1)
 
     if args.commits is None:
+        if args.remote_update:
+            if subprocess.call(['git', '-C', args.repo, 'remote', 'update']):
+                print('git remote update fail')
+                exit(1)
         assemble_tree(args.repo, args.series)
     else:
         make_patches_series(args.series, args.repo, args.commits)
