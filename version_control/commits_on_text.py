@@ -6,7 +6,7 @@ Find commits on a given text and print various information of those.
 E.g.,
 
     $ curl https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/-/raw/master/issues/CVE-2023-4244.yml \
-         | ~/lazybox/git_helpers/commits_on_text.py stdin --repo ~/linux --contains
+         | ./commits_on_text.py stdin --repo ~/linux --contains
       % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                      Dload  Upload   Total   Spent    Left  Speed
     100  5185  100  5185    0     0  60617      0 --:--:-- --:--:-- --:--:-- 61000

@@ -7,7 +7,7 @@ The tools are organized into subdirectories based on their purpose, as below.
 
 - cve_stat: for making statistics about linux kernel cve.
 - format_data: for visualizing raw data in human-redable texts and images.
-- git_helpers: for various git and patches based SCM use cases including
+- version_control: for various git and patches based SCM use cases including
   statistics, history tracking and patches queue management.
 - humble_ci: for simple CI implementation.
 - linux_hack: for various linux kernel hacking tasks including kernel

@@ -32,7 +32,7 @@ import os
 import subprocess
 
 os.sys.path.insert(0, os.path.abspath(
-    os.path.join(os.path.dirname(__file__), '..', 'git_helpers')))
+    os.path.join(os.path.dirname(__file__), '..', 'version_control')))
 
 import _git
 
