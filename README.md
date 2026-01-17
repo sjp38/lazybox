@@ -21,3 +21,13 @@ The tools are organized into subdirectories based on their purpose, as below.
 - tune: for tuning and setting system operation knobs.
 - unsorted: as the name says.
 - workloads: for running test or stress workloads.
+
+Stability
+---------
+
+The tools could be renamed frequently.  We aim to not break known users though.
+Below are the known users.  If your project is using lazybox but your project
+is not listed below, please request changes.
+
+- [damon-hack](https://git.kernel.org/pub/scm/linux/kernel/git/sj/damon-hack.git/)
+- [damon-tests](https://github.com/damonitor/damon-tests)
