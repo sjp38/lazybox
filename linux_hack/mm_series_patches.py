@@ -61,7 +61,7 @@ def main():
                 continue
             if line.startswith('#'):
                 if len(fields) > 2:
-                    out_lines.append(' - %s' % line.strip())
+                    out_lines.append(line.strip())
                 continue
             is_patch = pr_patch_detail(fields[0], args.series, out_lines)
             if is_patch is False:
