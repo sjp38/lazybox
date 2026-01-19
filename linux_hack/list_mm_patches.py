@@ -44,7 +44,7 @@ def list_patches_in(commits_base, commits_end, min_len_single_patch,
         patch_series_par = pars[1]
         if patch_series_par.strip().startswith('Patch series '):
             unwrapped = ' '.join(patch_series_par.split('\n'))
-            print('    %s' % unwrapped)
+            print('%s' % unwrapped)
             # skip next commits of the series
             for line in commit_msg.split('\n'):
                 if line.startswith('This patch (of ') and line.endswith('):'):
@@ -58,7 +58,7 @@ def list_patches_in(commits_base, commits_end, min_len_single_patch,
         commit_content = cproc.stdout
         if len(commit_content.split('\n')) > min_len_single_patch:
             unwrapped = ' '.join(pars[0].split('\n'))
-            print('    Patch "%s"' % unwrapped)
+            print('Patch "%s"' % unwrapped)
         nr_branch_commits = pr_branch(commit, branches_to_show,
                                       nr_branch_commits)
     print()
