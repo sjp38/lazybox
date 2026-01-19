@@ -3,12 +3,24 @@
 import argparse
 import subprocess
 
+remote_name = 'akpm.korg.mm'
+
 mm_master = 'akpm.korg.mm/master'
 mm_stable = 'akpm.korg.mm/mm-stable'
 mm_unstable = 'akpm.korg.mm/mm-unstable'
 mm_new = 'akpm.korg.mm/mm-new'
 
-def list_patches_in(commits_base, commits_end, min_len_single_patch):
+def pr_branch(commit, branches_to_show, nr_branch_commits):
+    for branch_name, branch_commit in branches_to_show:
+        if commit == branch_commit:
+            print('%s (%d patches)' % (branch_name, nr_branch_commits))
+            print()
+            nr_branch_commits = 0
+    return nr_branch_commits
+
+
+def list_patches_in(commits_base, commits_end, min_len_single_patch,
+                    branches_to_show):
     cproc = subprocess.run(
             ['git', 'log', '--pretty=%H', '--reverse', '%s..%s' %
              (commits_base, commits_end)],
@@ -16,11 +28,16 @@ def list_patches_in(commits_base, commits_end, min_len_single_patch):
     if cproc.returncode != 0:
         return 'git log fail (%s)' % cproc.stderr
     commits = [x for x in cproc.stdout.strip().split('\n') if x != '']
-    print('%s: %d patches' % (commits_end.split('/')[-1], len(commits)))
+    print('%d patches in total' % len(commits))
+    print()
     to_skip = 0
+    nr_branch_commits = 0
     for commit in commits:
+        nr_branch_commits += 1
         if to_skip > 0:
             to_skip -= 1
+            nr_branch_commits = pr_branch(commit, branches_to_show,
+                                          nr_branch_commits)
             continue
         cproc = subprocess.run(
                 ['git', 'log', '-1', '--pretty=%B', commit],
@@ -49,6 +66,8 @@ def list_patches_in(commits_base, commits_end, min_len_single_patch):
         if len(commit_content.split('\n')) > min_len_single_patch:
             unwrapped = ' '.join(pars[0].split('\n'))
             print('    Patch "%s"' % unwrapped)
+        nr_branch_commits = pr_branch(commit, branches_to_show,
+                                      nr_branch_commits)
     print()
     return None
 
@@ -61,15 +80,16 @@ def main():
             ['git', 'describe', mm_master]).decode()
     print('mm/master: %s' % mm_master_desc)
 
-    err = list_patches_in(mm_master, mm_stable, args.min_len_single_patch)
-    if err is not None:
-        print(err)
-        exit(1)
-    err = list_patches_in(mm_stable, mm_unstable, args.min_len_single_patch)
-    if err is not None:
-        print(err)
-        exit(1)
-    err = list_patches_in(mm_unstable, mm_new, args.min_len_single_patch)
+    branch_name_commit_list = []
+    for branch_name in ['mm-stable', 'mm-unstable', 'mm-new',
+                        'mm-hotfixes-stable', 'mm-hotfixes-unstable']:
+        commit_id = subprocess.check_output(
+                ['git', 'rev-parse', '%s/%s' % (
+                    remote_name, branch_name)]).decode().strip()
+        branch_name_commit_list.append([branch_name, commit_id])
+
+    err = list_patches_in(mm_master, mm_new, args.min_len_single_patch,
+                          branch_name_commit_list)
     if err is not None:
         print(err)
         exit(1)
