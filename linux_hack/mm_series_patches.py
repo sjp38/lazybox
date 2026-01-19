@@ -26,7 +26,7 @@ def pr_patch_detail(patch_name, series_path, out_lines):
         if series_desc is not None and \
                 par.startswith('This patch (of ') and par.endswith('):'):
             sz_series = int(par.split()[3][:-2])
-            out_lines.append('%s (%d patches)' % (series_desc, sz_series))
+            out_lines.append('%s # %d patches' % (series_desc, sz_series))
     for line in pars[0].splitlines():
         if line.startswith('Cc: stable'):
             out_lines.append(line)
@@ -65,7 +65,7 @@ def main():
             if fields[0] == '#ENDBRANCH':
                 branch_name = fields[1]
                 branches[branch_name] = False
-                out_lines.append('%s (%d patches)' % (
+                out_lines.append('%s # %d patches' % (
                     line.strip(), nr_patches[branch_name]))
                 continue
             if line.startswith('#'):
@@ -86,7 +86,7 @@ def main():
     for line in out_lines:
         if line.startswith('#BRANCH'):
             branch_name = line.split()[1]
-            print('%s (%d patches)' % (line, nr_patches[branch_name]))
+            print('%s # %d patches' % (line, nr_patches[branch_name]))
             continue
         print(line)
 
