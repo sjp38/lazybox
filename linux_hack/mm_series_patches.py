@@ -8,7 +8,7 @@ Similar to list_mm_patches, but use quilt series file.
 import argparse
 import os
 
-def pr_patch_detail(patch_name, series_path):
+def pr_patch_detail(patch_name, series_path, out_lines):
     series_dir = os.path.dirname(series_path)
     txt_dir = os.path.join(series_dir, '..', 'txt')
     txt_file = os.path.join(
@@ -26,13 +26,13 @@ def pr_patch_detail(patch_name, series_path):
         if series_desc is not None and \
                 par.startswith('This patch (of ') and par.endswith('):'):
             sz_series = int(par.split()[3][:-2])
-            print('%s (%d patches)' % (series_desc, sz_series))
+            out_lines.append('%s (%d patches)' % (series_desc, sz_series))
     for line in pars[0].splitlines():
         fields = line.split()
         if len(fields) == 0:
             continue
         if fields[0] == 'Subject:':
-            print(' '.join(fields[1:]))
+            out_lines.append(' '.join(fields[1:]))
     return True
 
 def main():
@@ -42,6 +42,7 @@ def main():
 
     nr_patches = {'total': 0}
     branches = {}
+    out_lines = []
     with open(args.series, 'r') as f:
         for line in f:
             fields = line.split()
@@ -50,19 +51,19 @@ def main():
                 branches[branch_name] = True
                 if not branch_name in nr_patches:
                     nr_patches[branch_name] = 0
-                print(line.strip())
+                out_lines.append(line.strip())
                 continue
             if fields[0] == '#ENDBRANCH':
                 branch_name = fields[1]
                 branches[branch_name] = False
-                print('%s (%d patches)' % (
+                out_lines.append('%s (%d patches)' % (
                     line.strip(), nr_patches[branch_name]))
                 continue
             if line.startswith('#'):
                 if len(fields) > 2:
-                    print(' - %s' % line.strip())
+                    out_lines.append(' - %s' % line.strip())
                 continue
-            is_patch = pr_patch_detail(fields[0], args.series)
+            is_patch = pr_patch_detail(fields[0], args.series, out_lines)
             if is_patch is False:
                 continue
             for branch, now_in_it in branches.items():
@@ -71,9 +72,14 @@ def main():
                 nr_patches[branch] += 1
             nr_patches['total'] += 1
 
-    print()
     for branch, nr in nr_patches.items():
         print('%s: %d patches' % (branch, nr))
+    for line in out_lines:
+        if line.startswith('#BRANCH'):
+            branch_name = line.split()[1]
+            print('%s (%d patches)' % (line, nr_patches[branch_name]))
+            continue
+        print(line)
 
 if __name__ == '__main__':
     main()
