@@ -12,12 +12,15 @@ import os
 class PatchDetail:
     patch_series = None
     sz_series = None
+    idx_series = None
     subject = None
     author = None
     tags = None
 
-    def __init__(self, patch_series, sz_series, subject, author, tags):
+    def __init__(self, patch_series, idx_series, sz_series, subject, author,
+                 tags):
         self.patch_series = patch_series
+        self.idx_series = idx_series
         self.sz_series = sz_series
         self.subject = subject
         self.author = author
@@ -35,7 +38,7 @@ class PatchDetail:
                 lines.append('# %s %s' % (tag, tagged_one))
         return '\n'.join(lines)
 
-def get_patch_detail(patch_name, series_path):
+def get_patch_detail(patch_name, series_path, prev_patch):
     series_dir = os.path.dirname(series_path)
     txt_dir = os.path.join(series_dir, '..', 'txt')
     txt_file = os.path.join(
@@ -44,6 +47,7 @@ def get_patch_detail(patch_name, series_path):
         return None
 
     series_desc = None
+    idx_series = None
     sz_series = None
     subject = None
     author = None
@@ -56,9 +60,12 @@ def get_patch_detail(patch_name, series_path):
         par = par.strip()
         if par.startswith('Patch series '):
             series_desc = ' '.join(par.splitlines())
+            idx_series = 0
         if series_desc is not None and \
                 par.startswith('This patch (of ') and par.endswith('):'):
             sz_series = int(par.split()[3][:-2])
+    if series_desc is not None and sz_series is None:
+        sz_series = 1
     for line in pars[0].splitlines():
         fields = line.split()
         if len(fields) == 0:
@@ -77,7 +84,14 @@ def get_patch_detail(patch_name, series_path):
             if not tag in tags:
                 tags[tag] = []
             tags[tag].append(tagged)
-    return PatchDetail(series_desc, sz_series, subject, author, tags)
+    if series_desc is None and prev_patch is not None:
+        if prev_patch.patch_series is not None and \
+                prev_patch.sz_series is not None:
+            if prev_patch.idx_series < prev_patch.sz_series - 1:
+                series_desc = prev_patch.patch_series
+                idx_series = prev_patch.idx_series + 1
+    return PatchDetail(series_desc, idx_series, sz_series, subject, author,
+                       tags)
 
 def pr_json(output_lines, nr_patches):
     kvpairs = {}
@@ -93,6 +107,7 @@ def pr_json(output_lines, nr_patches):
             kvpairs['series'].append({
                 'patch': {
                     'series': patch.patch_series,
+                    'idx_series': patch.idx_series,
                     'sz_series': patch.sz_series,
                     'author': patch.author,
                     'tags': patch.tags}})
@@ -109,6 +124,7 @@ def main():
     branches = {}
     out_lines = []
     with open(args.series, 'r') as f:
+        prev_patch = None
         for line in f:
             fields = line.split()
             if fields[0] == '#BRANCH':
@@ -128,9 +144,10 @@ def main():
                 if len(fields) > 2:
                     out_lines.append(line.strip())
                 continue
-            patch_detail = get_patch_detail(fields[0], args.series)
+            patch_detail = get_patch_detail(fields[0], args.series, prev_patch)
             if patch_detail is None:
                 continue
+            prev_patch = patch_detail
             out_lines.append(patch_detail)
             for branch, now_in_it in branches.items():
                 if now_in_it is False:
