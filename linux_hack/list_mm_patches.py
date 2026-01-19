@@ -5,11 +5,6 @@ import subprocess
 
 remote_name = 'akpm.korg.mm'
 
-mm_master = 'akpm.korg.mm/master'
-mm_stable = 'akpm.korg.mm/mm-stable'
-mm_unstable = 'akpm.korg.mm/mm-unstable'
-mm_new = 'akpm.korg.mm/mm-new'
-
 def pr_branch(commit, branches_to_show, nr_branch_commits):
     for branch_name, branch_commit in branches_to_show:
         if commit == branch_commit:
@@ -76,6 +71,10 @@ def main():
     parser.add_argument('--min_len_single_patch', type=int, default=0)
     args = parser.parse_args()
 
+    mm_master = '%s/master' % remote_name
+    mm_new = '%s/mm-new' % remote_name
+
+    print(mm_master)
     mm_master_desc = subprocess.check_output(
             ['git', 'describe', mm_master]).decode()
     print('mm/master: %s' % mm_master_desc)
