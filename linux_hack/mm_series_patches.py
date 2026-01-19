@@ -109,6 +109,7 @@ def pr_json(output_lines, nr_patches):
                     'series': patch.patch_series,
                     'idx_series': patch.idx_series,
                     'sz_series': patch.sz_series,
+                    'subject': patch.subject,
                     'author': patch.author,
                     'tags': patch.tags}})
     print(json.dumps(kvpairs, sort_keys=True, indent=4))
