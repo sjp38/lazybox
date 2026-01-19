@@ -8,6 +8,64 @@ Similar to list_mm_patches, but use quilt series file.
 import argparse
 import os
 
+class PatchDetail:
+    patch_series = None
+    sz_series = None
+    subject = None
+    author = None
+    tags = None
+
+    def __init__(self, patch_series, sz_series, subject, author, tags):
+        self.patch_series = patch_series
+        self.sz_series = sz_series
+        self.subject = subject
+        self.author = author
+        self.tags = tags
+
+def get_patch_detail(patch_name, series_path):
+    series_dir = os.path.dirname(series_path)
+    txt_dir = os.path.join(series_dir, '..', 'txt')
+    txt_file = os.path.join(
+            txt_dir, '%s.txt' % patch_name[:-1 * len('.patch')])
+    if not os.path.isfile(txt_file):
+        return None
+
+    series_desc = None
+    sz_series = None
+    subject = None
+    author = None
+    tags = []
+
+    with open(txt_file, 'r') as f:
+        txt = f.read()
+    pars = txt.split('\n\n')
+    for par in pars:
+        par = par.strip()
+        if par.startswith('Patch series '):
+            series_desc = ' '.join(par.splitlines())
+        if series_desc is not None and \
+                par.startswith('This patch (of ') and par.endswith('):'):
+            sz_series = int(par.split()[3][:-2])
+    for line in pars[0].splitlines():
+        fields = line.split()
+        if len(fields) == 0:
+            continue
+        if fields[0] == 'Subject:':
+            subject = ' '.join(fields[1:]))
+        if fields[0] == 'From:':
+            author = ' '.join(line.split()[1:])
+    for line in pars[-1].splitlines():
+        fields = line.split()
+        if len(fields) < 2:
+            continue
+        if fields[0].endswith(':'):
+            tag = fields[0]
+            tagged = line[len(tag) + 1:]
+            if not tag in tags:
+                tags[tag] = []
+            tags[tag].append(tagged)
+    return PatchDetail(series_desc, sz_series, subject, author, tags)
+
 def pr_patch_detail(patch_name, series_path, out_lines):
     series_dir = os.path.dirname(series_path)
     txt_dir = os.path.join(series_dir, '..', 'txt')
