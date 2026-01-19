@@ -21,8 +21,6 @@ def list_patches_in(commits_base, commits_end, min_len_single_patch,
     if cproc.returncode != 0:
         return 'git log fail (%s)' % cproc.stderr
     commits = [x for x in cproc.stdout.strip().split('\n') if x != '']
-    print('%d patches in total' % len(commits))
-    print()
     to_skip = 0
     nr_branch_commits = 0
     for commit in commits:
@@ -63,7 +61,7 @@ def list_patches_in(commits_base, commits_end, min_len_single_patch,
             print('Patch "%s"' % unwrapped)
         nr_branch_commits = pr_branch(commit, branches_to_show,
                                       nr_branch_commits)
-    print()
+    print('%d patches in total' % len(commits))
     return None
 
 def main():
@@ -87,10 +85,10 @@ def main():
     mm_master = '%s/master' % remote_name
     mm_new = '%s/mm-new' % remote_name
 
-    print(mm_master)
     mm_master_desc = subprocess.check_output(
-            ['git', 'describe', mm_master]).decode()
+            ['git', 'describe', mm_master]).decode().strip()
     print('mm/master: %s' % mm_master_desc)
+    print()
 
     branch_name_commit_list = []
     for branch_name in ['mm-stable', 'mm-unstable', 'mm-new',
