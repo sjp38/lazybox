@@ -83,7 +83,8 @@ def main():
                 nr_patches[branch] += 1
             nr_patches['total'] += 1
 
-    for branch, nr in nr_patches.items():
+    for branch in sorted(nr_patches.keys()):
+        nr = nr_patches[branch]
         print('%s: %d patches' % (branch, nr))
     for line in out_lines:
         if line.startswith('#BRANCH'):
