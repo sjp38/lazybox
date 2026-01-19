@@ -51,9 +51,11 @@ def main():
                 if not branch_name in nr_patches:
                     nr_patches[branch_name] = 0
                 print(line.strip())
+                continue
             if fields[0] == '#ENDBRANCH':
                 branches[fields[1]] = False
                 print(line.strip())
+                continue
             if line.startswith('#'):
                 continue
             is_patch = pr_patch_detail(fields[0], args.series)
