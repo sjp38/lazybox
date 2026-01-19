@@ -18,7 +18,8 @@ def pr_patch_detail(patch_name, series_path):
     with open(txt_file, 'r') as f:
         txt = f.read()
     series_desc = None
-    for par in txt.split('\n\n'):
+    pars = txt.split('\n\n')
+    for par in pars:
         par = par.strip()
         if par.startswith('Patch series '):
             series_desc = ' '.join(par.splitlines())
@@ -26,9 +27,7 @@ def pr_patch_detail(patch_name, series_path):
                 par.startswith('This patch (of ') and par.endswith('):'):
             sz_series = int(par.split()[3][:-2])
             print('%s (%d patches)' % (series_desc, sz_series))
-            return
-
-    for line in txt.splitlines():
+    for line in pars[0].splitlines():
         fields = line.split()
         if len(fields) == 0:
             continue
