@@ -42,9 +42,10 @@ def main():
     with open(args.series, 'r') as f:
         for line in f:
             fields = line.split()
+            if fields[0] == '#BRANCH':
+                print(line.strip())
             if fields[0] == '#ENDBRANCH':
-                print(fields[1])
-                print()
+                print(line.strip())
             if line.startswith('#'):
                 continue
             pr_patch_detail(fields[0], args.series)
