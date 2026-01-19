@@ -53,8 +53,10 @@ def main():
                 print(line.strip())
                 continue
             if fields[0] == '#ENDBRANCH':
-                branches[fields[1]] = False
-                print(line.strip())
+                branch_name = fields[1]
+                branches[branch_name] = False
+                print('%s (%d patches)' % (
+                    line.strip(), nr_patches[branch_name]))
                 continue
             if line.startswith('#'):
                 if len(fields) > 2:
