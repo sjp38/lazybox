@@ -28,6 +28,9 @@ def pr_patch_detail(patch_name, series_path, out_lines):
             sz_series = int(par.split()[3][:-2])
             out_lines.append('%s (%d patches)' % (series_desc, sz_series))
     for line in pars[0].splitlines():
+        if line.startswith('Cc: stable'):
+            out_lines.append(line)
+            continue
         fields = line.split()
         if len(fields) == 0:
             continue
