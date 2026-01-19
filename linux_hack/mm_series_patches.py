@@ -6,6 +6,7 @@ Similar to list_mm_patches, but use quilt series file.
 '''
 
 import argparse
+import json
 import os
 
 class PatchDetail:
@@ -78,9 +79,30 @@ def get_patch_detail(patch_name, series_path):
             tags[tag].append(tagged)
     return PatchDetail(series_desc, sz_series, subject, author, tags)
 
+def pr_json(output_lines, nr_patches):
+    kvpairs = {}
+    kvpairs['nr_patches'] = {}
+    for branch, nr in nr_patches.items():
+        kvpairs['nr_patches'][branch] = nr
+    kvpairs['series'] = []
+    for line in output_lines:
+        if type(line) is str:
+            kvpairs['series'].append({'comment': line})
+        else:
+            patch = line
+            kvpairs['series'].append({
+                'patch': {
+                    'series': patch.patch_series,
+                    'sz_series': patch.sz_series,
+                    'author': patch.author,
+                    'tags': patch.tags}})
+    print(json.dumps(kvpairs, sort_keys=True, indent=4))
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('series', metavar='<file>', help='the series file')
+    parser.add_argument('--output_format', choices=['text', 'json'],
+                        default='text', help='output format')
     args = parser.parse_args()
 
     nr_patches = {'total': 0}
@@ -116,15 +138,18 @@ def main():
                 nr_patches[branch] += 1
             nr_patches['total'] += 1
 
-    for branch in sorted(nr_patches.keys()):
-        nr = nr_patches[branch]
-        print('%s: %d patches' % (branch, nr))
-    for line in out_lines:
-        if type(line) is not PatchDetail and line.startswith('#BRANCH'):
-            branch_name = line.split()[1]
-            print('%s # %d patches' % (line, nr_patches[branch_name]))
-            continue
-        print('%s' % line)
+    if args.output_format == 'text':
+        for branch in sorted(nr_patches.keys()):
+            nr = nr_patches[branch]
+            print('%s: %d patches' % (branch, nr))
+        for line in out_lines:
+            if type(line) is not PatchDetail and line.startswith('#BRANCH'):
+                branch_name = line.split()[1]
+                print('%s # %d patches' % (line, nr_patches[branch_name]))
+                continue
+            print('%s' % line)
+    elif args.output_format == 'json':
+        pr_json(out_lines, nr_patches)
 
 if __name__ == '__main__':
     main()
