@@ -57,6 +57,8 @@ def main():
                 print(line.strip())
                 continue
             if line.startswith('#'):
+                if len(fields) > 2:
+                    print(' - %s' % line.strip())
                 continue
             is_patch = pr_patch_detail(fields[0], args.series)
             if is_patch is False:
