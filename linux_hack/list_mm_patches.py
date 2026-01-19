@@ -3,8 +3,6 @@
 import argparse
 import subprocess
 
-remote_name = 'akpm.korg.mm'
-
 def pr_branch(commit, branches_to_show, nr_branch_commits):
     for branch_name, branch_commit in branches_to_show:
         if commit == branch_commit:
@@ -70,6 +68,19 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--min_len_single_patch', type=int, default=0)
     args = parser.parse_args()
+
+    git_remote_output_lines = subprocess.check_output(
+            ['git', 'remote', '-v']).decode().strip().splitlines()
+    remote_name = None
+    for line in git_remote_output_lines:
+        fields = line.split()
+        if fields[1] == \
+                'https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git':
+            remote_name = fields[0]
+            break
+    if remote_name is None:
+        print('git remote for mm tree is not found')
+        exit(1)
 
     mm_master = '%s/master' % remote_name
     mm_new = '%s/mm-new' % remote_name
