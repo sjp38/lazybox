@@ -33,6 +33,12 @@ def pr_patch_detail(patch_name, series_path, out_lines):
             continue
         if fields[0] == 'Subject:':
             out_lines.append(' '.join(fields[1:]))
+    for line in pars[-1].splitlines():
+        fields = line.split()
+        if len(fields) == 0:
+            continue
+        if fields[0] in ['Reviewed-by:', 'Acked-by:']:
+            out_lines.append('# %s' % line)
     return True
 
 def main():
