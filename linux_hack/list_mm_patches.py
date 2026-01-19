@@ -44,11 +44,11 @@ def list_patches_in(commits_base, commits_end, min_len_single_patch,
         patch_series_par = pars[1]
         if patch_series_par.strip().startswith('Patch series '):
             unwrapped = ' '.join(patch_series_par.split('\n'))
-            print('%s' % unwrapped)
             # skip next commits of the series
             for line in commit_msg.split('\n'):
                 if line.startswith('This patch (of ') and line.endswith('):'):
                     to_skip = int(line.split()[3][:-2]) - 1
+            print('%s (%d patches)' % (unwrapped, to_skip + 1))
             continue
         cproc = subprocess.run(
                 ['git', 'show', commit, '--pretty=%h'], capture_output=True,
