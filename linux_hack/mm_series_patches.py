@@ -22,6 +22,18 @@ class PatchDetail:
         self.author = author
         self.tags = tags
 
+    def __str__(self):
+        lines = []
+        if self.patch_series is not None:
+            lines.append(
+                    '%s # %s patches' % (self.patch_series, self.sz_series))
+        lines.append(self.subject)
+        lines.append('# From: %s' % self.author)
+        for tag, tagged_ones in self.tags.items():
+            for tagged_one in tagged_ones:
+                lines.append('# %s %s' % (tag, tagged_one))
+        return '\n'.join(lines)
+
 def get_patch_detail(patch_name, series_path):
     series_dir = os.path.dirname(series_path)
     txt_dir = os.path.join(series_dir, '..', 'txt')
@@ -34,7 +46,7 @@ def get_patch_detail(patch_name, series_path):
     sz_series = None
     subject = None
     author = None
-    tags = []
+    tags = {}
 
     with open(txt_file, 'r') as f:
         txt = f.read()
@@ -51,7 +63,7 @@ def get_patch_detail(patch_name, series_path):
         if len(fields) == 0:
             continue
         if fields[0] == 'Subject:':
-            subject = ' '.join(fields[1:]))
+            subject = ' '.join(fields[1:])
         if fields[0] == 'From:':
             author = ' '.join(line.split()[1:])
     for line in pars[-1].splitlines():
@@ -65,44 +77,6 @@ def get_patch_detail(patch_name, series_path):
                 tags[tag] = []
             tags[tag].append(tagged)
     return PatchDetail(series_desc, sz_series, subject, author, tags)
-
-def pr_patch_detail(patch_name, series_path, out_lines):
-    series_dir = os.path.dirname(series_path)
-    txt_dir = os.path.join(series_dir, '..', 'txt')
-    txt_file = os.path.join(
-            txt_dir, '%s.txt' % patch_name[:-1 * len('.patch')])
-    if not os.path.isfile(txt_file):
-        return False
-    with open(txt_file, 'r') as f:
-        txt = f.read()
-    series_desc = None
-    pars = txt.split('\n\n')
-    for par in pars:
-        par = par.strip()
-        if par.startswith('Patch series '):
-            series_desc = ' '.join(par.splitlines())
-        if series_desc is not None and \
-                par.startswith('This patch (of ') and par.endswith('):'):
-            sz_series = int(par.split()[3][:-2])
-            out_lines.append('%s # %d patches' % (series_desc, sz_series))
-    for line in pars[0].splitlines():
-        if line.startswith('Cc: stable'):
-            out_lines.append(line)
-            continue
-        fields = line.split()
-        if len(fields) == 0:
-            continue
-        if fields[0] == 'Subject:':
-            out_lines.append(' '.join(fields[1:]))
-        if fields[0] == 'From:':
-            out_lines.append('# %s' % line)
-    for line in pars[-1].splitlines():
-        fields = line.split()
-        if len(fields) == 0:
-            continue
-        if fields[0] in ['Reviewed-by:', 'Acked-by:']:
-            out_lines.append('# %s' % line)
-    return True
 
 def main():
     parser = argparse.ArgumentParser()
@@ -132,9 +106,10 @@ def main():
                 if len(fields) > 2:
                     out_lines.append(line.strip())
                 continue
-            is_patch = pr_patch_detail(fields[0], args.series, out_lines)
-            if is_patch is False:
+            patch_detail = get_patch_detail(fields[0], args.series)
+            if patch_detail is None:
                 continue
+            out_lines.append(patch_detail)
             for branch, now_in_it in branches.items():
                 if now_in_it is False:
                     continue
@@ -145,11 +120,11 @@ def main():
         nr = nr_patches[branch]
         print('%s: %d patches' % (branch, nr))
     for line in out_lines:
-        if line.startswith('#BRANCH'):
+        if type(line) is not PatchDetail and line.startswith('#BRANCH'):
             branch_name = line.split()[1]
             print('%s # %d patches' % (line, nr_patches[branch_name]))
             continue
-        print(line)
+        print('%s' % line)
 
 if __name__ == '__main__':
     main()
