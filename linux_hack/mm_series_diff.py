@@ -11,7 +11,7 @@ def patch_detail_of(subject, patch_details):
             return detail
     return None
 
-def pr_new_patch(detail, before_branches, last_detail):
+def pr_patch_list(detail, before_branches, last_detail):
     pr_patch_series = False
     if detail.patch_series is not None:
         if last_detail is None:
@@ -52,8 +52,18 @@ def pr_new_patches_in(branch, before_details, after_details):
         if branch in before_branches:
             continue
 
-        pr_new_patch(after, before_branches, last_pr)
+        pr_patch_list(after, before_branches, last_pr)
         last_pr = after
+
+def pr_dropped_patches(before_details, after_details):
+    last_pr = None
+    for detail in before_details:
+        if patch_detail_of(detail.subject, after_details) is not None:
+            continue
+        before_branches = [
+                b for b in detail.branches if detail.branches[b] is True]
+        pr_patch_list(detail, before_branches, last_pr)
+        last_pr = detail
 
 def main():
     parser = argparse.ArgumentParser()
@@ -96,6 +106,10 @@ def main():
         print()
         print('Patches added to %s' % branch)
         pr_new_patches_in(branch, before_patch_details, after_patch_details)
+
+    print()
+    print('Dropped patches')
+    pr_dropped_patches(before_patch_details, after_patch_details)
 
 if __name__ == '__main__':
     main()
