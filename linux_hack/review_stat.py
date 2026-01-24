@@ -163,6 +163,32 @@ def get_review_stat(commit, linux_dir):
 
     return commit_desc, subsys_of_change, tag_taggers, tagger_roles
 
+def tagged_by(tag_taggers, tag, taggers):
+    if not tag in tag_taggers:
+        return False
+    taggers_of_change = tag_taggers[tag]
+    for tagger in taggers:
+        if tagger in taggers_of_change:
+            return True
+    return False
+
+def skip_stat(subsys_of_change, tag_taggers, subsys_to_show, signers_to_skip,
+              reviewers_to_skip, ackers_to_skip):
+    if subsys_to_show is not None:
+        for subsys in subsys_to_show:
+            if not subsys in subsys_of_change:
+                return True
+    if signers_to_skip is not None and tagged_by(
+            tag_taggers, 'Signed-off-by:', signers_to_skip):
+        return True
+    if reviewers_to_skip is not None and tagged_by(
+            tag_taggers, 'Reviewed-by:', reviewers_to_skip):
+        return True
+    if ackers_to_skip is not None and tagged_by(
+            tag_taggers, 'Acked-by:', ackers_to_skip):
+        return True
+    return False
+
 def pr_review_stat(commit_desc, subsys_of_change, tag_taggers,
                        tagger_roles):
     try:
@@ -195,6 +221,12 @@ def main():
                         help='path to linux repo')
     parser.add_argument('--subsystem', metavar='<subsystem>', nargs='+',
                         help='subsystem of the change to show')
+    parser.add_argument('--not_signed_off_by', metavar='<tagger>', nargs='+',
+                        help='skip commits signed off by given taggers')
+    parser.add_argument('--not_reviewed_by', metavar='<tagger>', nargs='+',
+                        help='skip commits reviewed by given taggers')
+    parser.add_argument('--not_acked_by', metavar='<tagger>', nargs='+',
+                        help='skip commits acked by given taggers')
     parser.add_argument(
             '--output_format', choices=['text', 'json'], default='text',
             help='output format')
@@ -210,15 +242,10 @@ def main():
             ).decode().strip().splitlines():
         commit_desc, subsys_of_change, tag_taggers, tagger_roles = \
                 get_review_stat(commit, args.linux_dir)
-        if args.subsystem is not None:
-            skip = False
-            for subsys in args.subsystem:
-                if not subsys in subsys_of_change:
-                    skip = True
-                    break
-            if skip is True:
-                continue
-
+        if skip_stat(subsys_of_change, tag_taggers, args.subsystem,
+                     args.not_signed_off_by, args.not_reviewed_by,
+                     args.not_acked_by):
+            continue
         if args.output_format == 'text':
             pr_review_stat(commit_desc, subsys_of_change, tag_taggers,
                            tagger_roles)
