@@ -101,6 +101,7 @@ def get_patch_detail(patch_name, series_path, prev_patch, branches, comments):
             if prev_patch.idx_series < prev_patch.sz_series - 1:
                 series_desc = prev_patch.patch_series
                 idx_series = prev_patch.idx_series + 1
+                sz_series = prev_patch.sz_series
     return PatchDetail(series_desc, idx_series, sz_series, subject, author,
                        tags, branches, comments)
 
