@@ -193,6 +193,8 @@ def main():
                         help='commits of the changes')
     parser.add_argument('--linux_dir', metavar='<dir>', default='./',
                         help='path to linux repo')
+    parser.add_argument('--subsystem', metavar='<subsystem>', nargs='+',
+                        help='subsystem of the change to show')
     parser.add_argument(
             '--output_format', choices=['text', 'json'], default='text',
             help='output format')
@@ -208,6 +210,15 @@ def main():
             ).decode().strip().splitlines():
         commit_desc, subsys_of_change, tag_taggers, tagger_roles = \
                 get_review_stat(commit, args.linux_dir)
+        if args.subsystem is not None:
+            skip = False
+            for subsys in args.subsystem:
+                if not subsys in subsys_of_change:
+                    skip = True
+                    break
+            if skip is True:
+                continue
+
         if args.output_format == 'text':
             pr_review_stat(commit_desc, subsys_of_change, tag_taggers,
                            tagger_roles)
