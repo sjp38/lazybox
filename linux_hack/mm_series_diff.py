@@ -45,8 +45,8 @@ def main():
             after_nr = after_nr_patches[branch]
         else:
             after_nr = 0
-        print('%20s: %4d -> %4d (%4d)' % (branch, before_nr, after_nr, after_nr -
-                                     before_nr))
+        print('%20s: %4d -> %4d (%4d)' % (
+            branch, before_nr, after_nr, after_nr - before_nr))
 
 if __name__ == '__main__':
     main()
