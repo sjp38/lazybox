@@ -19,9 +19,10 @@ class PatchDetail:
     tags = None
     branches = None
     comments = None
+    patch_file = None
 
     def __init__(self, patch_series, idx_series, sz_series, subject, author,
-                 tags, branches, comments):
+                 tags, branches, comments, patch_file):
         self.patch_series = patch_series
         self.idx_series = idx_series
         self.sz_series = sz_series
@@ -30,6 +31,7 @@ class PatchDetail:
         self.tags = tags
         self.branches = branches
         self.comments = comments
+        self.patch_file = patch_file
 
     def __str__(self):
         lines = []
@@ -56,6 +58,13 @@ def get_patch_detail(patch_name, series_path, prev_patch, branches, comments):
             txt_dir, '%s.txt' % patch_name[:-1 * len('.patch')])
     if not os.path.isfile(txt_file):
         return None
+
+    patches_dir = os.path.join(series_dir, '..', 'patches')
+    patch_file = os.path.join(patches_dir, patch_name)
+    if not os.path.isfile(patch_file):
+        patch_file = None
+    else:
+        patch_file = os.path.realpath(patch_file)
 
     series_desc = None
     idx_series = None
@@ -103,7 +112,7 @@ def get_patch_detail(patch_name, series_path, prev_patch, branches, comments):
                 idx_series = prev_patch.idx_series + 1
                 sz_series = prev_patch.sz_series
     return PatchDetail(series_desc, idx_series, sz_series, subject, author,
-                       tags, branches, comments)
+                       tags, branches, comments, patch_file)
 
 def read_series(series_file):
     nr_patches = {'total': 0}
