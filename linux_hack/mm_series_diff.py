@@ -21,6 +21,10 @@ def pr_patch_list(detail, before_branches, last_detail):
     if pr_patch_series:
         print('- Patch series "%s" # %s patches' %
               (detail.patch_series, detail.sz_series))
+        for tag in detail.tags:
+            if tag == 'Link:':
+                for link in detail.tags[tag]:
+                    print('  %s' % link)
 
     comments = []
     if before_branches != []:
