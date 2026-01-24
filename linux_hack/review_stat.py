@@ -163,10 +163,19 @@ def get_review_stat(commit, linux_dir):
 
     return commit_desc, subsys_of_change, tag_taggers, tagger_roles
 
-def tagged_by(tag_taggers, tag, taggers):
+def tagged_by(tag_taggers, subsys_of_change, tag, taggers):
     if not tag in tag_taggers:
         return False
     taggers_of_change = tag_taggers[tag]
+    role_taggers = []
+    for tagger in taggers:
+        if tagger in ['maintainer', 'reviewer']:
+            role = tagger
+            for name, info in subsys_of_change.items():
+                if not role in info:
+                    continue
+                role_taggers += info[role]
+    taggers += role_taggers
     for tagger in taggers:
         if tagger in taggers_of_change:
             return True
@@ -179,13 +188,13 @@ def skip_stat(subsys_of_change, tag_taggers, subsys_to_show, signers_to_skip,
             if not subsys in subsys_of_change:
                 return True
     if signers_to_skip is not None and tagged_by(
-            tag_taggers, 'Signed-off-by:', signers_to_skip):
+            tag_taggers, subsys_of_change, 'Signed-off-by:', signers_to_skip):
         return True
     if reviewers_to_skip is not None and tagged_by(
-            tag_taggers, 'Reviewed-by:', reviewers_to_skip):
+            tag_taggers, subsys_of_change, 'Reviewed-by:', reviewers_to_skip):
         return True
     if ackers_to_skip is not None and tagged_by(
-            tag_taggers, 'Acked-by:', ackers_to_skip):
+            tag_taggers, subsys_of_change, 'Acked-by:', ackers_to_skip):
         return True
     return False
 
