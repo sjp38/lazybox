@@ -17,9 +17,10 @@ class PatchDetail:
     author = None
     tags = None
     branches = None
+    comments = None
 
     def __init__(self, patch_series, idx_series, sz_series, subject, author,
-                 tags, branches):
+                 tags, branches, comments):
         self.patch_series = patch_series
         self.idx_series = idx_series
         self.sz_series = sz_series
@@ -27,6 +28,7 @@ class PatchDetail:
         self.author = author
         self.tags = tags
         self.branches = branches
+        self.comments = comments
 
     def __str__(self):
         lines = []
@@ -40,7 +42,7 @@ class PatchDetail:
                 lines.append('# %s %s' % (tag, tagged_one))
         return '\n'.join(lines)
 
-def get_patch_detail(patch_name, series_path, prev_patch, branches):
+def get_patch_detail(patch_name, series_path, prev_patch, branches, comments):
     series_dir = os.path.dirname(series_path)
     txt_dir = os.path.join(series_dir, '..', 'txt')
     txt_file = os.path.join(
@@ -93,7 +95,7 @@ def get_patch_detail(patch_name, series_path, prev_patch, branches):
                 series_desc = prev_patch.patch_series
                 idx_series = prev_patch.idx_series + 1
     return PatchDetail(series_desc, idx_series, sz_series, subject, author,
-                       tags, branches)
+                       tags, branches, comments)
 
 def pr_json(output_lines, nr_patches):
     kvpairs = {}
@@ -120,6 +122,7 @@ def read_series(series_file):
     nr_patches = {'total': 0}
     branches = {}
     out_lines = []
+    patch_comments = []
     with open(series_file, 'r') as f:
         prev_patch = None
         for line in f:
@@ -140,11 +143,14 @@ def read_series(series_file):
             if line.startswith('#'):
                 if len(fields) > 2:
                     out_lines.append(line.strip())
+                    patch_comments.append(line.strip())
                 continue
             patch_detail = get_patch_detail(
-                    fields[0], series_file, prev_patch, branches)
+                    fields[0], series_file, prev_patch, branches,
+                    patch_comments)
             if patch_detail is None:
                 continue
+            patch_comments = []
             prev_patch = patch_detail
             out_lines.append(patch_detail)
             for branch, now_in_it in branches.items():
