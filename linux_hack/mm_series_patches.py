@@ -109,6 +109,8 @@ def read_series(series_file):
         prev_patch = None
         for line in f:
             fields = line.split()
+            if len(fields) == 0:
+                continue
             if fields[0] == '#BRANCH':
                 branch_name = fields[1]
                 branches[branch_name] = True
