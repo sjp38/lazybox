@@ -154,9 +154,17 @@ def main():
     parser.add_argument('series', metavar='<file>', help='the series file')
     parser.add_argument('--output_format', choices=['text', 'json'],
                         default='text', help='output format')
+    parser.add_argument('--comments', action='store_true',
+                        help='print comments only')
     args = parser.parse_args()
 
     nr_patches, out_lines = read_series(args.series)
+
+    if args.comments is True:
+        for line in out_lines:
+            if type(line) is str:
+                print('- %s' % line)
+        return
 
     if args.output_format == 'text':
         for branch in sorted(nr_patches.keys()):
