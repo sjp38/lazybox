@@ -42,6 +42,9 @@ class PatchDetail:
                 lines.append('# %s %s' % (tag, tagged_one))
         return '\n'.join(lines)
 
+    def to_kvpairs(self):
+        return self.__dict__
+
 def get_patch_detail(patch_name, series_path, prev_patch, branches, comments):
     series_dir = os.path.dirname(series_path)
     txt_dir = os.path.join(series_dir, '..', 'txt')
@@ -96,27 +99,6 @@ def get_patch_detail(patch_name, series_path, prev_patch, branches, comments):
                 idx_series = prev_patch.idx_series + 1
     return PatchDetail(series_desc, idx_series, sz_series, subject, author,
                        tags, branches, comments)
-
-def pr_json(output_lines, nr_patches):
-    kvpairs = {}
-    kvpairs['nr_patches'] = {}
-    for branch, nr in nr_patches.items():
-        kvpairs['nr_patches'][branch] = nr
-    kvpairs['series'] = []
-    for line in output_lines:
-        if type(line) is str:
-            kvpairs['series'].append({'comment': line})
-        else:
-            patch = line
-            kvpairs['series'].append({
-                'patch': {
-                    'series': patch.patch_series,
-                    'idx_series': patch.idx_series,
-                    'sz_series': patch.sz_series,
-                    'subject': patch.subject,
-                    'author': patch.author,
-                    'tags': patch.tags}})
-    print(json.dumps(kvpairs, sort_keys=True, indent=4))
 
 def read_series(series_file):
     nr_patches = {'total': 0}
@@ -180,7 +162,9 @@ def main():
                 continue
             print('%s' % line)
     elif args.output_format == 'json':
-        pr_json(out_lines, nr_patches)
+        patch_details = [e for e in out_lines if type(e) is PatchDetail]
+        print(json.dumps(
+            [p.to_kvpairs() for p in patch_details], sort_keys=True, indent=4))
 
 if __name__ == '__main__':
     main()
