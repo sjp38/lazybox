@@ -40,6 +40,12 @@ def pr_patch_list(detail, before_branches, last_detail):
         fields.append('# %s' % ', '.join(comments))
     print(' '.join(fields))
 
+    if detail.patch_series is None:
+        for tag in detail.tags:
+            if tag == 'Link:':
+                for link in detail.tags[tag]:
+                    print('  %s' % link)
+
 def pr_new_patches_in(branch, before_details, after_details):
     last_pr = None
     for after in after_details:
