@@ -181,11 +181,19 @@ def tagged_by(tag_taggers, subsys_of_change, tag, taggers):
             return True
     return False
 
-def skip_stat(subsys_of_change, tag_taggers, subsys_to_show, signers_to_skip,
-              reviewers_to_skip, ackers_to_skip):
+def skip_stat(subsys_of_change, tag_taggers, subsys_to_show,
+              primary_signers_to_skip, signers_to_skip, reviewers_to_skip,
+              ackers_to_skip):
     if subsys_to_show is not None:
         for subsys in subsys_to_show:
             if not subsys in subsys_of_change:
+                return True
+    if primary_signers_to_skip is not None:
+        if 'Signed-off-by:' in tag_taggers:
+            prime_tag_tagger = {'Signed-off-by:':
+                                [tag_taggers['Signed-off-by:'][0]]}
+            if tagged_by(prime_tag_tagger, subsys_of_change, 'Signed-off-by:',
+                         primary_signers_to_skip):
                 return True
     if signers_to_skip is not None and tagged_by(
             tag_taggers, subsys_of_change, 'Signed-off-by:', signers_to_skip):
@@ -230,6 +238,9 @@ def main():
                         help='path to linux repo')
     parser.add_argument('--subsystem', metavar='<subsystem>', nargs='+',
                         help='subsystem of the change to show')
+    parser.add_argument(
+            '--not_primary_signed_off_by', metavar='<tagger>', nargs='+',
+            help='skip commits signed off by given taggers')
     parser.add_argument('--not_signed_off_by', metavar='<tagger>', nargs='+',
                         help='skip commits signed off by given taggers')
     parser.add_argument('--not_reviewed_by', metavar='<tagger>', nargs='+',
@@ -237,7 +248,8 @@ def main():
     parser.add_argument('--not_acked_by', metavar='<tagger>', nargs='+',
                         help='skip commits acked by given taggers')
     parser.add_argument(
-            '--output_format', choices=['text', 'json'], default='text',
+            '--output_format', choices=['text', 'json', 'simpletext'],
+            default='text',
             help='output format')
     args = parser.parse_args()
 
@@ -252,20 +264,22 @@ def main():
         commit_desc, subsys_of_change, tag_taggers, tagger_roles = \
                 get_review_stat(commit, args.linux_dir)
         if skip_stat(subsys_of_change, tag_taggers, args.subsystem,
-                     args.not_signed_off_by, args.not_reviewed_by,
-                     args.not_acked_by):
+                     args.not_primary_signed_off_by, args.not_signed_off_by,
+                     args.not_reviewed_by, args.not_acked_by):
             continue
         if args.output_format == 'text':
             pr_review_stat(commit_desc, subsys_of_change, tag_taggers,
                            tagger_roles)
             print()
-        else:
+        elif args.output_format == 'json':
             json_data.append({
                 'change': commit_desc,
                 'subsystem_of_change': list(subsys_of_change.keys()),
                 'tag_taggers': tag_taggers,
                 'tagger_roles': tagger_roles,
                 })
+        elif args.output_format == 'simpletext':
+            print(commit_desc)
     if args.output_format == 'json':
         print(json.dumps(json_data, indent=4))
 
