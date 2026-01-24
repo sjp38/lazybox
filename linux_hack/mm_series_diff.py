@@ -5,6 +5,12 @@ import argparse
 
 import mm_series_patches
 
+def patch_detail_of(subject, patch_details):
+    for detail in patch_details:
+        if detail.subject == subject:
+            return detail
+    return None
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('before', metavar='<file>',
@@ -37,6 +43,13 @@ def main():
             after_nr = 0
         print('%20s: %4d -> %4d (%4d)' % (branch, before_nr, after_nr, after_nr -
                                      before_nr))
+
+    for before in before_patch_details:
+        after = patch_detail_of(before.subject, after_patch_details)
+        if after is None:
+            print('patch %s dropped' % before.subject)
+
+
     return
 
 if __name__ == '__main__':

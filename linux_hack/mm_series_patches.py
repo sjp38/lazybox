@@ -45,6 +45,9 @@ class PatchDetail:
     def to_kvpairs(self):
         return self.__dict__
 
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
 def get_patch_detail(patch_name, series_path, prev_patch, branches, comments):
     series_dir = os.path.dirname(series_path)
     txt_dir = os.path.join(series_dir, '..', 'txt')
