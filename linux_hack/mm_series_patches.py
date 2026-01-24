@@ -16,15 +16,17 @@ class PatchDetail:
     subject = None
     author = None
     tags = None
+    branches = None
 
     def __init__(self, patch_series, idx_series, sz_series, subject, author,
-                 tags):
+                 tags, branches):
         self.patch_series = patch_series
         self.idx_series = idx_series
         self.sz_series = sz_series
         self.subject = subject
         self.author = author
         self.tags = tags
+        self.branches = branches
 
     def __str__(self):
         lines = []
@@ -38,7 +40,7 @@ class PatchDetail:
                 lines.append('# %s %s' % (tag, tagged_one))
         return '\n'.join(lines)
 
-def get_patch_detail(patch_name, series_path, prev_patch):
+def get_patch_detail(patch_name, series_path, prev_patch, branches):
     series_dir = os.path.dirname(series_path)
     txt_dir = os.path.join(series_dir, '..', 'txt')
     txt_file = os.path.join(
@@ -91,7 +93,7 @@ def get_patch_detail(patch_name, series_path, prev_patch):
                 series_desc = prev_patch.patch_series
                 idx_series = prev_patch.idx_series + 1
     return PatchDetail(series_desc, idx_series, sz_series, subject, author,
-                       tags)
+                       tags, branches)
 
 def pr_json(output_lines, nr_patches):
     kvpairs = {}
@@ -145,7 +147,8 @@ def main():
                 if len(fields) > 2:
                     out_lines.append(line.strip())
                 continue
-            patch_detail = get_patch_detail(fields[0], args.series, prev_patch)
+            patch_detail = get_patch_detail(
+                    fields[0], args.series, prev_patch, branches)
             if patch_detail is None:
                 continue
             prev_patch = patch_detail
