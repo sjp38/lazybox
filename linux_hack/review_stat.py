@@ -169,6 +169,8 @@ def tagged_by(tag_taggers, subsys_of_change, tag, taggers):
     taggers_of_change = tag_taggers[tag]
     role_taggers = []
     for tagger in taggers:
+        if tagger == 'anyone':
+            return True
         if tagger in ['maintainer', 'reviewer']:
             role = tagger
             for name, info in subsys_of_change.items():
