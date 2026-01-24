@@ -249,6 +249,8 @@ def main():
                         help='skip commits reviewed by given taggers')
     parser.add_argument('--not_acked_by', metavar='<tagger>', nargs='+',
                         help='skip commits acked by given taggers')
+    parser.add_argument('--drop_tag', nargs='+',
+                        help='do not print specified tags')
     parser.add_argument(
             '--output_format', choices=['text', 'json', 'simpletext'],
             default='text',
@@ -269,6 +271,9 @@ def main():
                      args.not_primary_signed_off_by, args.not_signed_off_by,
                      args.not_reviewed_by, args.not_acked_by):
             continue
+        if args.drop_tag is not None:
+            for tag in args.drop_tag:
+                del tag_taggers[tag]
         if args.output_format == 'text':
             pr_review_stat(commit_desc, subsys_of_change, tag_taggers,
                            tagger_roles)
