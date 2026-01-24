@@ -1,5 +1,13 @@
 #!/bin/bash
 
+if [ $# -eq 1 ]
+then
+	mm_series_repo="$1"
+	git -C "$mm_series_repo" remote update
+	git -C "$mm_series_repo" log --pretty="%h %ad %s"
+	exit
+fi
+
 if [ $# -ne 3 ]
 then
 	echo "Usage: $0 <25-new repo> <before commit> <after commit>"
