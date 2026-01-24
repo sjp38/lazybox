@@ -48,5 +48,19 @@ def main():
         print('%20s: %4d -> %4d (%4d)' % (
             branch, before_nr, after_nr, after_nr - before_nr))
 
+    print()
+    print('Patches newly added')
+    for after in after_patch_details:
+        if patch_detail_of(after.subject, before_patch_details) is not None:
+            continue
+        print('- %s' % after.subject)
+
+    print()
+    print('Patches dropped')
+    for before in before_patch_details:
+        if patch_detail_of(before.subject, after_patch_details) is not None:
+            continue
+        print('- %s' % before.subject)
+
 if __name__ == '__main__':
     main()
