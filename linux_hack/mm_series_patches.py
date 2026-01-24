@@ -116,17 +116,11 @@ def pr_json(output_lines, nr_patches):
                     'tags': patch.tags}})
     print(json.dumps(kvpairs, sort_keys=True, indent=4))
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('series', metavar='<file>', help='the series file')
-    parser.add_argument('--output_format', choices=['text', 'json'],
-                        default='text', help='output format')
-    args = parser.parse_args()
-
+def read_series(series_file):
     nr_patches = {'total': 0}
     branches = {}
     out_lines = []
-    with open(args.series, 'r') as f:
+    with open(series_file, 'r') as f:
         prev_patch = None
         for line in f:
             fields = line.split()
@@ -148,7 +142,7 @@ def main():
                     out_lines.append(line.strip())
                 continue
             patch_detail = get_patch_detail(
-                    fields[0], args.series, prev_patch, branches)
+                    fields[0], series_file, prev_patch, branches)
             if patch_detail is None:
                 continue
             prev_patch = patch_detail
@@ -158,6 +152,16 @@ def main():
                     continue
                 nr_patches[branch] += 1
             nr_patches['total'] += 1
+    return nr_patches, out_lines
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('series', metavar='<file>', help='the series file')
+    parser.add_argument('--output_format', choices=['text', 'json'],
+                        default='text', help='output format')
+    args = parser.parse_args()
+
+    nr_patches, out_lines = read_series(args.series)
 
     if args.output_format == 'text':
         for branch in sorted(nr_patches.keys()):
