@@ -27,12 +27,16 @@ def main():
     after_patch_details = [e for e in out_lines
                             if type(e) is mm_series_patches.PatchDetail]
 
-    branches = set(
-            list(before_nr_patches.keys()) + list(after_nr_patches.keys()))
+    branches = []
+    with open(args.after, 'r') as f:
+        for line in f:
+            fields = line.split()
+            if len(fields) == 2 and fields[0] == '#ENDBRANCH':
+                branches.append(fields[1])
 
     print('Number of patches per branch')
     print()
-    for branch in sorted(branches):
+    for branch in branches:
         if branch in before_nr_patches:
             before_nr = before_nr_patches[branch]
         else:
@@ -43,14 +47,6 @@ def main():
             after_nr = 0
         print('%20s: %4d -> %4d (%4d)' % (branch, before_nr, after_nr, after_nr -
                                      before_nr))
-
-    for before in before_patch_details:
-        after = patch_detail_of(before.subject, after_patch_details)
-        if after is None:
-            print('patch %s dropped' % before.subject)
-
-
-    return
 
 if __name__ == '__main__':
     main()
