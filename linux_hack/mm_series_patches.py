@@ -6,6 +6,7 @@ Similar to list_mm_patches, but use quilt series file.
 '''
 
 import argparse
+import copy
 import json
 import os
 
@@ -133,8 +134,8 @@ def read_series(series_file):
                     patch_comments.append(line.strip())
                 continue
             patch_detail = get_patch_detail(
-                    fields[0], series_file, prev_patch, branches,
-                    patch_comments)
+                    fields[0], series_file, prev_patch,
+                    copy.deepcopy(branches), patch_comments)
             if patch_detail is None:
                 continue
             patch_comments = []
