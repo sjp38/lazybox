@@ -110,11 +110,8 @@ def file_is_for_subsystem(file, subsys_maintainer_info):
             return True
     return False
 
-def get_review_stat(commit, linux_dir):
+def get_subsys_of_change(commit, linux_dir):
     git_cmd = ['git', '-C', linux_dir]
-    commit_desc = subprocess.check_output(
-            git_cmd + ['log', commit, '-1',
-                       '--pretty=commit %h ("%s")']).decode().strip()
 
     touching_files = subprocess.check_output(
             git_cmd + ['show', commit, '--pretty=', '--name-only']
@@ -127,6 +124,15 @@ def get_review_stat(commit, linux_dir):
         for touching_file in touching_files:
             if file_is_for_subsystem(touching_file, info):
                 subsys_of_change[name] = info
+    return subsys_of_change
+
+def get_review_stat(commit, linux_dir):
+    git_cmd = ['git', '-C', linux_dir]
+    commit_desc = subprocess.check_output(
+            git_cmd + ['log', commit, '-1',
+                       '--pretty=commit %h ("%s")']).decode().strip()
+
+    subsys_of_change = get_subsys_of_change(commit, linux_dir)
 
     log_output_sentences = subprocess.check_output(
             git_cmd + ['log', '-1', commit, '--pretty=%an <%ae>%n%n%B']
