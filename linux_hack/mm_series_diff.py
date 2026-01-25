@@ -112,6 +112,16 @@ def main():
         print('%20s: %4d -> %4d (%4d)' % (
             branch, before_nr, after_nr, after_nr - before_nr))
 
+    # TODO
+    # Show number of reviews and acks in patches per branch.
+    # Show breakdown of number of patches of different review stat.
+    # - no review, no ack
+    # - no review, no ack, but authored by reviewers
+    # - no review, no ack, but authored by maintainers
+    # - one or more review/ack
+    # - one or more review/ack from reviewers
+    # - one or more review/ack from maintainers
+
     for branch in branches:
         print()
         print('Patches added to %s' % branch)
