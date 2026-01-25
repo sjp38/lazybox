@@ -110,6 +110,28 @@ def file_is_for_subsystem(file, subsys_maintainer_info):
             return True
     return False
 
+def touching_files_of(patch):
+    files = []
+    with open(patch, 'r') as f:
+        in_diff = False
+        prev_line = None
+        for idx, line in enumerate(f):
+            if line == '---\n':
+                in_diff = True
+            if not in_diff:
+                continue
+            if not line.startswith('+++ '):
+                prev_line = line
+                continue
+            if prev_line is None:
+                prev_line = line
+                continue
+            if not prev_line.startswith('--- '):
+                prev_line = line
+                continue
+            files.append(line.strip()[len('+++ a/'):])
+    return files
+
 def get_subsys_of_change(commit, linux_dir):
     git_cmd = ['git', '-C', linux_dir]
 
