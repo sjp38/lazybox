@@ -132,9 +132,18 @@ def touching_files_of(patch):
             files.append(line.strip()[len('+++ a/'):])
     return files
 
+maintainers_info = None
+
+def get_maintainers_info(linux_dir):
+    global maintainers_info
+
+    if maintainers_info is None:
+        maintainers_info = maintainers.parse_maintainers(
+                os.path.join(linux_dir, 'MAINTAINERS'))
+    return maintainers_info
+
 def get_subsys_of_files(files, linux_dir):
-    subsys_maintainers = maintainers.parse_maintainers(
-            os.path.join(linux_dir, 'MAINTAINERS'))
+    subsys_maintainers = get_maintainers_info(linux_dir)
     subsys_of_change = {}
     for name, info in subsys_maintainers.items():
         for file in files:
