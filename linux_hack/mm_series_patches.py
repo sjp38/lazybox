@@ -10,6 +10,8 @@ import copy
 import json
 import os
 
+import review_stat
+
 class PatchDetail:
     patch_series = None
     sz_series = None
@@ -114,7 +116,34 @@ def get_patch_detail(patch_name, series_path, prev_patch, branches, comments):
     return PatchDetail(series_desc, idx_series, sz_series, subject, author,
                        tags, branches, comments, patch_file)
 
-def read_series(series_file):
+class Filter:
+    allow = None
+    category = None
+    args = None
+
+    def __init__(self, allow, category, args):
+        self.allow = allow
+        self.category = category
+        self.args = args
+
+    def match(self, patch_detail, linux_dir):
+        if self.category == 'subsystem':
+            files = review_stat.touching_files_of(patch_detail.patch_file)
+            subsys_list = review_stat.get_subsys_of_files(files, linux_dir)
+            for subsys in self.args:
+                if subsys in subsys_list:
+                    return True
+        return False
+
+def should_filter_out(patch_detail, filters, linux_dir):
+    if len(filters) == 0:
+        return False
+    for filter in filters:
+        if filter.match(patch_detail, linux_dir):
+            return not filter.allow
+    return filters[-1].allow is True
+
+def read_series(series_file, filters=[], linux_dir=None):
     nr_patches = {'total': 0}
     branches = {}
     out_lines = []
@@ -149,6 +178,9 @@ def read_series(series_file):
             if patch_detail is None:
                 continue
             patch_comments = []
+            if should_filter_out(patch_detail, filters, linux_dir):
+                continue
+
             prev_patch = patch_detail
             out_lines.append(patch_detail)
             for branch, now_in_it in branches.items():
@@ -165,9 +197,28 @@ def main():
                         default='text', help='output format')
     parser.add_argument('--comments', action='store_true',
                         help='print comments only')
+    parser.add_argument('--filter', nargs='+', action='append',
+                        help='<allow|reject> <category> [option]...')
+    parser.add_argument('--linux_dir', metavar='<dir>',
+                        help='linux source dir')
     args = parser.parse_args()
 
-    nr_patches, out_lines = read_series(args.series)
+    filters = []
+    if args.filter is not None:
+        for filter_fields in args.filter:
+            if len(filter_fields) < 2:
+                print('<2 fields: %s' % filter_fields)
+                exit(1)
+            allow_reject = filter_fields[0]
+            if not allow_reject in ['allow', 'reject']:
+                print('wrong allow_reject: %s' % filter_fields)
+                exit(1)
+            category = filter_fields[1]
+            filter_args = filter_fields[2:]
+            filters.append(Filter(
+                allow_reject == 'allow', category, filter_args))
+
+    nr_patches, out_lines = read_series(args.series, filters, args.linux_dir)
 
     if args.comments is True:
         for line in out_lines:
