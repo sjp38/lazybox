@@ -132,6 +132,16 @@ def touching_files_of(patch):
             files.append(line.strip()[len('+++ a/'):])
     return files
 
+def get_subsys_of_files(files, linux_dir):
+    subsys_maintainers = maintainers.parse_maintainers(
+            os.path.join(linux_dir, 'MAINTAINERS'))
+    subsys_of_change = {}
+    for name, info in subsys_maintainers.items():
+        for file in files:
+            if file_is_for_subsystem(file, info):
+                subsys_of_change[name] = info
+    return subsys_of_change
+
 def get_subsys_of_change(commit, linux_dir):
     git_cmd = ['git', '-C', linux_dir]
 
@@ -139,14 +149,7 @@ def get_subsys_of_change(commit, linux_dir):
             git_cmd + ['show', commit, '--pretty=', '--name-only']
             ).decode().strip().splitlines()
 
-    subsys_maintainers = maintainers.parse_maintainers(
-            os.path.join(linux_dir, 'MAINTAINERS'))
-    subsys_of_change = {}
-    for name, info in subsys_maintainers.items():
-        for touching_file in touching_files:
-            if file_is_for_subsystem(touching_file, info):
-                subsys_of_change[name] = info
-    return subsys_of_change
+    return get_subsys_of_files(touching_files, linux_dir)
 
 def get_review_stat(commit, linux_dir):
     git_cmd = ['git', '-C', linux_dir]
