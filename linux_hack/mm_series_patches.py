@@ -75,7 +75,7 @@ def get_patch_detail(patch_name, series_path, prev_patch, branches, comments):
     author = None
     tags = {}
 
-    with open(txt_file, 'r') as f:
+    with open(txt_file, 'r', errors='replace') as f:
         txt = f.read()
     pars = txt.split('\n\n')
     for par in pars:
