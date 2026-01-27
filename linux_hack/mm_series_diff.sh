@@ -4,7 +4,7 @@ if [ $# -eq 1 ]
 then
 	mm_series_repo="$1"
 	git -C "$mm_series_repo" remote update
-	git -C "$mm_series_repo" log --pretty="%h %ad %s"
+	git -C "$mm_series_repo" log --pretty="%h %ad %s" origin/master
 	exit
 fi
 
