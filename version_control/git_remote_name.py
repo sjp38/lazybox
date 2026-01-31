@@ -4,6 +4,18 @@
 import argparse
 import subprocess
 
+def get_remote_name_for(repo, url):
+    output_lines = subprocess.check_output(
+            ['git', '-C', repo, 'remote', '-v']
+            ).decode().strip().splitlines()
+    for line in output_lines:
+        fields = line.split()
+        if len(fields) != 3:
+            continue
+        if fields[1] == url:
+            return fields[0]
+    return None
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--url', metavar='<url>', help='remote url')
@@ -15,16 +27,7 @@ def main():
         print('--url is not set')
         exit(1)
 
-    output_lines = subprocess.check_output(
-            ['git', '-C', args.repo, 'remote', '-v']
-            ).decode().strip().splitlines()
-    for line in output_lines:
-        fields = line.split()
-        if len(fields) != 3:
-            continue
-        if fields[1] == args.url:
-            print(fields[0])
-            return
+    print(get_remote_name_for(args.repo, args.url))
 
 if __name__ == '__main__':
     main()
