@@ -35,17 +35,21 @@ class PatchDetail:
         self.comments = comments
         self.patch_file = patch_file
 
-    def __str__(self):
+    def to_str(self, skip_tags):
         lines = []
         if self.patch_series is not None:
             lines.append(
                     '%s # %s patches' % (self.patch_series, self.sz_series))
         lines.append(self.subject)
         lines.append('# From: %s' % self.author)
-        for tag, tagged_ones in self.tags.items():
-            for tagged_one in tagged_ones:
-                lines.append('# %s %s' % (tag, tagged_one))
+        if skip_tags is False:
+            for tag, tagged_ones in self.tags.items():
+                for tagged_one in tagged_ones:
+                    lines.append('# %s %s' % (tag, tagged_one))
         return '\n'.join(lines)
+
+    def __str__(self):
+        return self.to_str(False)
 
     def to_kvpairs(self):
         return self.__dict__
@@ -200,9 +204,9 @@ def main():
     parser.add_argument('--filter', nargs='+', action='append',
                         help='<allow|reject> <category> [option]...')
     parser.add_argument('--print', nargs='+',
-                        choices=['patch', 'nr_patches', 'comments',
-                                 'branch_comments', 'all'], default=['all'],
-                        help='what to print')
+                        choices=['patch', 'patch_tags', 'nr_patches',
+                                 'comments', 'branch_comments', 'all'],
+                        default=['all'], help='what to print')
     parser.add_argument('--linux_dir', metavar='<dir>',
                         help='linux source dir')
     args = parser.parse_args()
@@ -245,9 +249,10 @@ def main():
             if type(line) is str:
                 if 'comments' in args.print or 'all' in args.print:
                     print('%s' % line)
-                    continue
-            if 'patches' in args.print or 'all' in args.print:
-                print('%s' % line)
+                continue
+            if 'patch' in args.print or 'all' in args.print:
+                print_tags = 'patch_tags' in args.print or 'all' in args.print
+                print('%s' % line.to_str(skip_tags=not print_tags))
 
     elif args.output_format == 'json':
         patch_details = [e for e in out_lines if type(e) is PatchDetail]
