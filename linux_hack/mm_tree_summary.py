@@ -30,6 +30,15 @@ def commits_in(linux_dir, commits_range):
             git_cmd + ['log', '--pretty=%H', '--no-merges', commits_range]
             ).decode().split()
 
+commit_subsys_info_map = {}
+
+def get_subsys_info_map(commit, linux_dir):
+    if commit in commit_subsys_info_map:
+        return commit_subsys_info_map[commit]
+    subsys_info_map = review_stat.get_subsys_of_change(commit, linux_dir)
+    commit_subsys_info_map[commit] = subsys_info_map
+    return subsys_info_map
+
 def pr_commits_per_mm_branches(linux_dir, subsystems):
     mm_remote = git_remote_name.get_remote_name_for(
             linux_dir,
@@ -51,8 +60,7 @@ def pr_commits_per_mm_branches(linux_dir, subsystems):
             if commit in categorized_commits:
                 continue
             if subsystems is not None:
-                subsys_info_map = review_stat.get_subsys_of_change(
-                        commit, linux_dir)
+                subsys_info_map = get_subsys_info_map(commit, linux_dir)
                 filter_in = False
                 for subsys in subsystems:
                     if subsys in subsys_info_map:
