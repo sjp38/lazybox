@@ -55,7 +55,15 @@ def commits_in(linux_dir, commits_range):
         hash = lines[0]
 
         pars = commit_output.split('\n\n')
-        tags = pars[-2].strip().splitlines()
+        tag_lines = pars[-2].strip().splitlines()
+        tags = {}
+        for line in tag_lines:
+            fields = line.split()
+            tag = fields[0]
+            if not tag in tags:
+                tags[tag] = []
+            tags[tag].append(line[len(tag) + 1:])
+
         touching_files = pars[-1].strip().splitlines()
         subsys_info_map = get_subsys_info_map(hash, touching_files, linux_dir)
         commits.append(Commit(hash, tags, subsys_info_map))
@@ -87,6 +95,9 @@ def pr_commits_per_mm_branches(linux_dir, subsystems):
 
     for branch in branches:
         print('%s: %d commits' % (branch, len(branch_commits[branch])))
+        nr_reviewed = len([c for c in branch_commits[branch] if
+                           'Reviewed-by:' in c.tags or 'Acked-by:' in c.tags])
+        print('  - %d reviewed' % nr_reviewed)
     print('Total: %d commits' % len(categorized_commits))
 
     if subsystems is None:
