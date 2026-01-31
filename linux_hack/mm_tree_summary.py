@@ -59,15 +59,6 @@ def pr_commits_per_mm_branches(linux_dir, subsystems):
         for commit in commits:
             if commit in categorized_commits:
                 continue
-            if subsystems is not None:
-                subsys_info_map = get_subsys_info_map(commit, linux_dir)
-                filter_in = False
-                for subsys in subsystems:
-                    if subsys in subsys_info_map:
-                        filter_in = True
-                        break
-                if filter_in is False:
-                    continue
             filtered_commits.append(commit)
             categorized_commits[commit] = True
         branch_commits[branch] = filtered_commits
@@ -75,6 +66,20 @@ def pr_commits_per_mm_branches(linux_dir, subsystems):
     for branch in branches:
         print('%s: %d commits' % (branch, len(branch_commits[branch])))
     print('Total: %d commits' % len(categorized_commits))
+
+    if subsystems is None:
+        return
+
+    for subsys in subsystems:
+        print()
+        print('# %s' % subsys)
+        for branch in branches:
+            nr = 0
+            for commit in branch_commits[branch]:
+                subsys_info_map = get_subsys_info_map(commit, linux_dir)
+                if subsys in subsys_info_map:
+                    nr += 1
+            print('%s: %d commits' % (branch, nr))
 
 def main():
     parser = argparse.ArgumentParser()
