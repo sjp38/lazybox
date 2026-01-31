@@ -199,6 +199,10 @@ def main():
                         help='print comments only')
     parser.add_argument('--filter', nargs='+', action='append',
                         help='<allow|reject> <category> [option]...')
+    parser.add_argument('--print', nargs='+',
+                        choices=['patch', 'nr_patches', 'comments',
+                                 'branch_comments', 'all'], default=['all'],
+                        help='what to print')
     parser.add_argument('--linux_dir', metavar='<dir>',
                         help='linux source dir')
     args = parser.parse_args()
@@ -227,15 +231,24 @@ def main():
         return
 
     if args.output_format == 'text':
-        for branch in sorted(nr_patches.keys()):
-            nr = nr_patches[branch]
-            print('%s: %d patches' % (branch, nr))
+        if 'nr_patches' in args.print or 'all' in args.print:
+            for branch in sorted(nr_patches.keys()):
+                nr = nr_patches[branch]
+                print('%s: %d patches' % (branch, nr))
         for line in out_lines:
             if type(line) is not PatchDetail and line.startswith('#BRANCH'):
-                branch_name = line.split()[1]
-                print('%s # %d patches' % (line, nr_patches[branch_name]))
+                if 'branch_comments' in args.print or 'all' in args.print:
+                    branch_name = line.split()[1]
+                    print('%s # %d patches' % (line, nr_patches[branch_name]))
                 continue
-            print('%s' % line)
+
+            if type(line) is str:
+                if 'comments' in args.print or 'all' in args.print:
+                    print('%s' % line)
+                    continue
+            if 'patches' in args.print or 'all' in args.print:
+                print('%s' % line)
+
     elif args.output_format == 'json':
         patch_details = [e for e in out_lines if type(e) is PatchDetail]
         print(json.dumps(
