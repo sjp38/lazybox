@@ -107,11 +107,15 @@ def pr_commits_per_mm_branches(linux_dir, subsystems):
         print()
         print('# %s' % subsys)
         for branch in branches:
-            nr = 0
+            filtered_commits = []
             for commit in branch_commits[branch]:
                 if subsys in commit.subsys_info_map:
-                    nr += 1
-            print('%s: %d commits' % (branch, nr))
+                    filtered_commits.append(commit)
+            print('%s: %d commits' % (branch, len(filtered_commits)))
+            nr_reviewed = len(
+                    [c for c in filtered_commits
+                     if 'Reviewed-by:' in c.tags or 'Acked-by:' in c.tags])
+            print('  - %d reviewed' % nr_reviewed)
 
 def main():
     parser = argparse.ArgumentParser()
