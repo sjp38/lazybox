@@ -24,20 +24,42 @@ os.sys.path.insert(0, os.path.abspath(
 import git_remote_name
 import review_stat
 
-def commits_in(linux_dir, commits_range):
-    git_cmd = ['git', '-C', linux_dir]
-    return subprocess.check_output(
-            git_cmd + ['log', '--pretty=%H', '--no-merges', commits_range]
-            ).decode().split()
+class Commit:
+    hash = None
+    tags = None
+    subsys_info_map = None
+
+    def __init__(self, hash, tags, subsys_info_map):
+        self.hash = hash
+        self.tags = tags
+        self.subsys_info_map = subsys_info_map
 
 commit_subsys_info_map = {}
 
-def get_subsys_info_map(commit, linux_dir):
+def get_subsys_info_map(commit, touching_files, linux_dir):
     if commit in commit_subsys_info_map:
         return commit_subsys_info_map[commit]
-    subsys_info_map = review_stat.get_subsys_of_change(commit, linux_dir)
+    subsys_info_map = review_stat.get_subsys_of_files(
+            touching_files, linux_dir)
     commit_subsys_info_map[commit] = subsys_info_map
     return subsys_info_map
+
+def commits_in(linux_dir, commits_range):
+    git_cmd = ['git', '-C', linux_dir]
+    output = subprocess.check_output(
+            git_cmd + ['log', '--pretty=%n---%n%H%n%B', '--name-only',
+                       '--no-merges', commits_range]).decode().strip()
+    commits = []
+    for commit_output in output.split('\n---\n'):
+        lines = commit_output.split('\n')
+        hash = lines[0]
+
+        pars = commit_output.split('\n\n')
+        tags = pars[-2].strip().splitlines()
+        touching_files = pars[-1].strip().splitlines()
+        subsys_info_map = get_subsys_info_map(hash, touching_files, linux_dir)
+        commits.append(Commit(hash, tags, subsys_info_map))
+    return commits
 
 def pr_commits_per_mm_branches(linux_dir, subsystems):
     mm_remote = git_remote_name.get_remote_name_for(
@@ -57,10 +79,10 @@ def pr_commits_per_mm_branches(linux_dir, subsystems):
                 linux_dir, '%s/master..%s/%s' % (mm_remote, mm_remote, branch))
         filtered_commits = []
         for commit in commits:
-            if commit in categorized_commits:
+            if commit.hash in categorized_commits:
                 continue
             filtered_commits.append(commit)
-            categorized_commits[commit] = True
+            categorized_commits[commit.hash] = True
         branch_commits[branch] = filtered_commits
 
     for branch in branches:
@@ -76,8 +98,7 @@ def pr_commits_per_mm_branches(linux_dir, subsystems):
         for branch in branches:
             nr = 0
             for commit in branch_commits[branch]:
-                subsys_info_map = get_subsys_info_map(commit, linux_dir)
-                if subsys in subsys_info_map:
+                if subsys in commit.subsys_info_map:
                     nr += 1
             print('%s: %d commits' % (branch, nr))
 
