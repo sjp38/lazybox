@@ -22,6 +22,7 @@ os.sys.path.insert(0, os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..', 'version_control')))
 
 import git_remote_name
+import review_stat
 
 def commits_in(linux_dir, commits_range):
     git_cmd = ['git', '-C', linux_dir]
@@ -29,7 +30,7 @@ def commits_in(linux_dir, commits_range):
             git_cmd + ['log', '--pretty=%H', '--no-merges', commits_range]
             ).decode().split()
 
-def pr_commits_per_mm_branches(linux_dir):
+def pr_commits_per_mm_branches(linux_dir, subsystems):
     mm_remote = git_remote_name.get_remote_name_for(
             linux_dir,
             'https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git')
@@ -49,6 +50,16 @@ def pr_commits_per_mm_branches(linux_dir):
         for commit in commits:
             if commit in categorized_commits:
                 continue
+            if subsystems is not None:
+                subsys_info_map = review_stat.get_subsys_of_change(
+                        commit, linux_dir)
+                filter_in = False
+                for subsys in subsystems:
+                    if subsys in subsys_info_map:
+                        filter_in = True
+                        break
+                if filter_in is False:
+                    continue
             filtered_commits.append(commit)
             categorized_commits[commit] = True
         branch_commits[branch] = filtered_commits
@@ -61,9 +72,11 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--linux_dir', metavar='<dir>', default='./',
                         help='path to linux local repo')
+    parser.add_argument('--subsystem', metavar='<subsystem name>', nargs='+',
+                        help='subsystem to show the summary for')
     args = parser.parse_args()
 
-    pr_commits_per_mm_branches(args.linux_dir)
+    pr_commits_per_mm_branches(args.linux_dir, args.subsystem)
 
 if __name__ == '__main__':
     main()
