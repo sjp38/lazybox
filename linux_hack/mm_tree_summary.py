@@ -98,7 +98,7 @@ def commits_in(linux_dir, commits_range):
         commits.append(Commit(hash, author, tags, subsys_info_map))
     return commits
 
-def pr_commits_per_mm_branches(linux_dir, export_json_file, subsystems):
+def get_mm_branch_commits(linux_dir, branches):
     mm_remote = git_remote_name.get_remote_name_for(
             linux_dir,
             'https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git')
@@ -121,6 +121,16 @@ def pr_commits_per_mm_branches(linux_dir, export_json_file, subsystems):
             filtered_commits.append(commit)
             categorized_commits[commit.hash] = True
         branch_commits[branch] = filtered_commits
+    return branch_commits
+
+def pr_commits_per_mm_branches(linux_dir, export_json_file, subsystems):
+    # it is unclear what branch is base of what branch.  Just give commit to
+    # unique branch, with the priorities.  Hotfixes are always important, and
+    # mm is more important than nonmm.
+    branches = ['mm-hotfixes-stable', 'mm-hotfixes-unstable',
+                'mm-stable', 'mm-unstable', 'mm-new',
+                'mm-nonmm-stable', 'mm-nonmm-unstable']
+    branch_commits = get_mm_branch_commits(linux_dir, branches)
 
     if export_json_file is not None:
         to_dump = {}
@@ -135,7 +145,7 @@ def pr_commits_per_mm_branches(linux_dir, export_json_file, subsystems):
                                        if c.reviewed()]))
         print('  - %d worrisome' % len([c for c in branch_commits[branch]
                                        if c.worrisome()]))
-    print('Total: %d commits' % len(categorized_commits))
+    print('Total: %d commits' % sum([len(c) for c in branch_commits.values()]))
 
     if subsystems is None:
         return
