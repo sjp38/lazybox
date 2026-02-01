@@ -44,9 +44,9 @@ class Commit:
             return False
         if not 'Signed-off-by:' in self.tags:
             return True
-        primary_signer = self.tags['Signed-off-by:'][0]
+
         for subsys_name, info in self.subsys_info_map.items():
-            if primary_signer in info['maintainer']:
+            if self.author in info['maintainer']:
                 return False
         return True
 
