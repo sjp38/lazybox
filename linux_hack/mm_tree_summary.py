@@ -69,6 +69,8 @@ def commits_in(linux_dir, commits_range):
     commits = []
     for commit_output in output.split('\n---\n'):
         lines = commit_output.split('\n')
+        if lines[0] == '---':
+            lines = lines[1:]
         hash = lines[0]
         author = lines[1]
 
