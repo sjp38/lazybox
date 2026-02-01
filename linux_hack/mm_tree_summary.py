@@ -26,11 +26,13 @@ import review_stat
 
 class Commit:
     hash = None
+    author = None
     tags = None
     subsys_info_map = None
 
-    def __init__(self, hash, tags, subsys_info_map):
+    def __init__(self, hash, author, tags, subsys_info_map):
         self.hash = hash
+        self.author = author
         self.tags = tags
         self.subsys_info_map = subsys_info_map
 
@@ -61,12 +63,14 @@ def get_subsys_info_map(commit, touching_files, linux_dir):
 def commits_in(linux_dir, commits_range):
     git_cmd = ['git', '-C', linux_dir]
     output = subprocess.check_output(
-            git_cmd + ['log', '--pretty=%n---%n%H%n%B', '--name-only',
-                       '--no-merges', commits_range]).decode().strip()
+            git_cmd + ['log', '--pretty=%n---%n%H%n%an <%ae>%n%B',
+                       '--name-only', '--no-merges',
+                       commits_range]).decode().strip()
     commits = []
     for commit_output in output.split('\n---\n'):
         lines = commit_output.split('\n')
         hash = lines[0]
+        author = lines[1]
 
         pars = commit_output.split('\n\n')
         tag_lines = pars[-2].strip().splitlines()
@@ -80,7 +84,7 @@ def commits_in(linux_dir, commits_range):
 
         touching_files = pars[-1].strip().splitlines()
         subsys_info_map = get_subsys_info_map(hash, touching_files, linux_dir)
-        commits.append(Commit(hash, tags, subsys_info_map))
+        commits.append(Commit(hash, author, tags, subsys_info_map))
     return commits
 
 def pr_commits_per_mm_branches(linux_dir, subsystems):
