@@ -59,6 +59,21 @@ class Commit:
                 'subsys_info_map': self.subsys_info_map,
                 }
 
+    @classmethod
+    def from_kvpairs(cls, kvpairs):
+        return Commit(
+                kvpairs['hash'], kvpairs['author'], kvpairs['tags'],
+                kvpairs['subsys_info_map'])
+
+def import_json_branch_commits(json_file):
+    with open(json_file, 'r') as f:
+        kvpairs = json.load(f)
+    branch_commits = {}
+    for branch in kvpairs:
+        branch_commits[branch] = [Commit.from_kvpairs(kvp)
+                                  for kvp in kvpairs[branch]]
+    return branch_commits
+
 commit_subsys_info_map = {}
 
 def get_subsys_info_map(commit, touching_files, linux_dir):
@@ -123,14 +138,19 @@ def get_mm_branch_commits(linux_dir, branches):
         branch_commits[branch] = filtered_commits
     return branch_commits
 
-def pr_commits_per_mm_branches(linux_dir, export_json_file, subsystems):
+def pr_commits_per_mm_branches(
+        linux_dir, export_json_file, import_json_file, subsystems):
     # it is unclear what branch is base of what branch.  Just give commit to
     # unique branch, with the priorities.  Hotfixes are always important, and
     # mm is more important than nonmm.
     branches = ['mm-hotfixes-stable', 'mm-hotfixes-unstable',
                 'mm-stable', 'mm-unstable', 'mm-new',
                 'mm-nonmm-stable', 'mm-nonmm-unstable']
-    branch_commits = get_mm_branch_commits(linux_dir, branches)
+
+    if import_json_file is not None:
+        branch_commits = import_json_branch_commits(import_json_file)
+    else:
+        branch_commits = get_mm_branch_commits(linux_dir, branches)
 
     if export_json_file is not None:
         to_dump = {}
@@ -171,12 +191,14 @@ def main():
     parser.add_argument(
             '--export_info', metavar='<file>',
             help='export commits information in json for quick reuse')
+    parser.add_argument('--import_info', metavar='<file>',
+                        help='--export_info generated file to reuse')
     parser.add_argument('--subsystem', metavar='<subsystem name>', nargs='+',
                         help='subsystem to show the summary for')
     args = parser.parse_args()
 
     pr_commits_per_mm_branches(
-            args.linux_dir, args.export_info, args.subsystem)
+            args.linux_dir, args.export_info, args.import_info, args.subsystem)
 
 if __name__ == '__main__':
     main()
