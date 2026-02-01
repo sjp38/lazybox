@@ -37,6 +37,17 @@ class Commit:
     def reviewed(self):
         return 'Reviewed-by:' in self.tags or 'Acked-by:' in self.tags
 
+    def worrisome(self):
+        if self.reviewed():
+            return False
+        if not 'Signed-off-by:' in self.tags:
+            return True
+        primary_signer = self.tags['Signed-off-by:'][0]
+        for subsys_name, info in self.subsys_info_map.items():
+            if primary_signer in info['maintainer']:
+                return False
+        return True
+
 commit_subsys_info_map = {}
 
 def get_subsys_info_map(commit, touching_files, linux_dir):
@@ -100,6 +111,8 @@ def pr_commits_per_mm_branches(linux_dir, subsystems):
         print('%s: %d commits' % (branch, len(branch_commits[branch])))
         print('  - %d reviewed' % len([c for c in branch_commits[branch]
                                        if c.reviewed()]))
+        print('  - %d worrisome' % len([c for c in branch_commits[branch]
+                                       if c.worrisome()]))
     print('Total: %d commits' % len(categorized_commits))
 
     if subsystems is None:
@@ -116,6 +129,8 @@ def pr_commits_per_mm_branches(linux_dir, subsystems):
             print('%s: %d commits' % (branch, len(filtered_commits)))
             print('  - %d reviewed' % len([c for c in filtered_commits
                                            if c.reviewed()]))
+            print('  - %d worrisome' % len([c for c in filtered_commits
+                                           if c.worrisome()]))
 
 def main():
     parser = argparse.ArgumentParser()
