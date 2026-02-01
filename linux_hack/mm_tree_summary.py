@@ -68,11 +68,14 @@ class Commit:
 def import_json_branch_commits(json_file):
     with open(json_file, 'r') as f:
         kvpairs = json.load(f)
+    baseline = kvpairs['baseline']
+    branch_commits_kvpairs = kvpairs['branch_commits']
     branch_commits = {}
-    for branch in kvpairs:
-        branch_commits[branch] = [Commit.from_kvpairs(kvp)
-                                  for kvp in kvpairs[branch]]
-    return branch_commits
+    for branch in branch_commits_kvpairs:
+        branch_commits[branch] = [
+                Commit.from_kvpairs(kvp)
+                for kvp in branch_commits_kvpairs[branch]]
+    return branch_commits, baseline
 
 commit_subsys_info_map = {}
 
@@ -136,7 +139,10 @@ def get_mm_branch_commits(linux_dir, branches):
             filtered_commits.append(commit)
             categorized_commits[commit.hash] = True
         branch_commits[branch] = filtered_commits
-    return branch_commits
+    baseline = subprocess.check_output(
+            ['git', '-C', linux_dir, 'describe', '%s/master' %
+             mm_remote, '--match', 'v*']).decode().strip()
+    return branch_commits, baseline
 
 def pr_commits_per_mm_branches(
         linux_dir, export_json_file, import_json_file, subsystems):
@@ -148,17 +154,20 @@ def pr_commits_per_mm_branches(
                 'mm-nonmm-stable', 'mm-nonmm-unstable']
 
     if import_json_file is not None:
-        branch_commits = import_json_branch_commits(import_json_file)
+        branch_commits, baseline = import_json_branch_commits(import_json_file)
     else:
-        branch_commits = get_mm_branch_commits(linux_dir, branches)
+        branch_commits, baseline = get_mm_branch_commits(linux_dir, branches)
 
     if export_json_file is not None:
-        to_dump = {}
+        to_dump = {'baseline': baseline}
+        branch_commits_to_dump = {}
         for branch, commits in branch_commits.items():
-            to_dump[branch] = [c.to_kvpairs() for c in commits]
+            branch_commits_to_dump[branch] = [c.to_kvpairs() for c in commits]
+        to_dump['branch_commits'] = branch_commits_to_dump
         with open(export_json_file, 'w') as f:
             json.dump(to_dump, f, indent=4)
 
+    print('baseline: %s' % baseline)
     for branch in branches:
         print('%s: %d commits' % (branch, len(branch_commits[branch])))
         print('  - %d reviewed' % len([c for c in branch_commits[branch]
