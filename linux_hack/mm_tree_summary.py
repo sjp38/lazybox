@@ -15,6 +15,7 @@ TODO:
 '''
 
 import argparse
+import json
 import os
 import subprocess
 
@@ -49,6 +50,14 @@ class Commit:
             if self.author in info['maintainer']:
                 return False
         return True
+
+    def to_kvpairs(self):
+        return {
+                'hash': self.hash,
+                'author': self.author,
+                'tags': self.tags,
+                'subsys_info_map': self.subsys_info_map,
+                }
 
 commit_subsys_info_map = {}
 
@@ -89,7 +98,7 @@ def commits_in(linux_dir, commits_range):
         commits.append(Commit(hash, author, tags, subsys_info_map))
     return commits
 
-def pr_commits_per_mm_branches(linux_dir, subsystems):
+def pr_commits_per_mm_branches(linux_dir, export_json_file, subsystems):
     mm_remote = git_remote_name.get_remote_name_for(
             linux_dir,
             'https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git')
@@ -112,6 +121,13 @@ def pr_commits_per_mm_branches(linux_dir, subsystems):
             filtered_commits.append(commit)
             categorized_commits[commit.hash] = True
         branch_commits[branch] = filtered_commits
+
+    if export_json_file is not None:
+        to_dump = {}
+        for branch, commits in branch_commits.items():
+            to_dump[branch] = [c.to_kvpairs() for c in commits]
+        with open(export_json_file, 'w') as f:
+            json.dump(to_dump, f, indent=4)
 
     for branch in branches:
         print('%s: %d commits' % (branch, len(branch_commits[branch])))
@@ -142,11 +158,15 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--linux_dir', metavar='<dir>', default='./',
                         help='path to linux local repo')
+    parser.add_argument(
+            '--export_info', metavar='<file>',
+            help='export commits information in json for quick reuse')
     parser.add_argument('--subsystem', metavar='<subsystem name>', nargs='+',
                         help='subsystem to show the summary for')
     args = parser.parse_args()
 
-    pr_commits_per_mm_branches(args.linux_dir, args.subsystem)
+    pr_commits_per_mm_branches(
+            args.linux_dir, args.export_info, args.subsystem)
 
 if __name__ == '__main__':
     main()
