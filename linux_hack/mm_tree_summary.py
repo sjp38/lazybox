@@ -34,6 +34,9 @@ class Commit:
         self.tags = tags
         self.subsys_info_map = subsys_info_map
 
+    def reviewed(self):
+        return 'Reviewed-by:' in self.tags or 'Acked-by:' in self.tags
+
 commit_subsys_info_map = {}
 
 def get_subsys_info_map(commit, touching_files, linux_dir):
@@ -95,9 +98,8 @@ def pr_commits_per_mm_branches(linux_dir, subsystems):
 
     for branch in branches:
         print('%s: %d commits' % (branch, len(branch_commits[branch])))
-        nr_reviewed = len([c for c in branch_commits[branch] if
-                           'Reviewed-by:' in c.tags or 'Acked-by:' in c.tags])
-        print('  - %d reviewed' % nr_reviewed)
+        print('  - %d reviewed' % len([c for c in branch_commits[branch]
+                                       if c.reviewed()]))
     print('Total: %d commits' % len(categorized_commits))
 
     if subsystems is None:
@@ -112,10 +114,8 @@ def pr_commits_per_mm_branches(linux_dir, subsystems):
                 if subsys in commit.subsys_info_map:
                     filtered_commits.append(commit)
             print('%s: %d commits' % (branch, len(filtered_commits)))
-            nr_reviewed = len(
-                    [c for c in filtered_commits
-                     if 'Reviewed-by:' in c.tags or 'Acked-by:' in c.tags])
-            print('  - %d reviewed' % nr_reviewed)
+            print('  - %d reviewed' % len([c for c in filtered_commits
+                                           if c.reviewed()]))
 
 def main():
     parser = argparse.ArgumentParser()
