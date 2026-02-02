@@ -4,6 +4,7 @@
 '''
 Show a summary of mm tree status.
 - Number of commits per branch for given sub-subsystems.
+- List of commits per branch for given sub-subsystems.
 
 TODO:
 - Number of commits per branch for given sub-subsystems per review status
@@ -11,7 +12,6 @@ TODO:
     - No review
     - No review but authored by maintainer
     - No review but authored by reviewer
-- List of commits per branch for given sub-subsystems.
 '''
 
 import argparse
