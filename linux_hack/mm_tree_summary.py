@@ -148,30 +148,7 @@ def get_mm_branch_commits(linux_dir, branches):
              mm_remote, '--match', 'v*']).decode().strip()
     return branch_commits, baseline
 
-def pr_commits_per_mm_branches(
-        linux_dir, export_json_file, import_json_file, subsystems,
-        commits_to_print):
-    # it is unclear what branch is base of what branch.  Just give commit to
-    # unique branch, with the priorities.  Hotfixes are always important, and
-    # mm is more important than nonmm.
-    branches = ['mm-hotfixes-stable', 'mm-hotfixes-unstable',
-                'mm-stable', 'mm-unstable', 'mm-new',
-                'mm-nonmm-stable', 'mm-nonmm-unstable']
-
-    if import_json_file is not None:
-        branch_commits, baseline = import_json_branch_commits(import_json_file)
-    else:
-        branch_commits, baseline = get_mm_branch_commits(linux_dir, branches)
-
-    if export_json_file is not None:
-        to_dump = {'baseline': baseline}
-        branch_commits_to_dump = {}
-        for branch, commits in branch_commits.items():
-            branch_commits_to_dump[branch] = [c.to_kvpairs() for c in commits]
-        to_dump['branch_commits'] = branch_commits_to_dump
-        with open(export_json_file, 'w') as f:
-            json.dump(to_dump, f, indent=4)
-
+def pr_stat(baseline, branches, branch_commits, subsystems, commits_to_print):
     print('baseline: %s' % baseline)
     if 'all' in subsystems:
         for branch in branches:
@@ -224,6 +201,32 @@ def pr_commits_per_mm_branches(
             if 'worrisome' in commits_to_print:
                 for c in worrisome:
                     print('    - %s ("%s")' % (c.hash, c.subject))
+
+def pr_commits_per_mm_branches(
+        linux_dir, export_json_file, import_json_file, subsystems,
+        commits_to_print):
+    # it is unclear what branch is base of what branch.  Just give commit to
+    # unique branch, with the priorities.  Hotfixes are always important, and
+    # mm is more important than nonmm.
+    branches = ['mm-hotfixes-stable', 'mm-hotfixes-unstable',
+                'mm-stable', 'mm-unstable', 'mm-new',
+                'mm-nonmm-stable', 'mm-nonmm-unstable']
+
+    if import_json_file is not None:
+        branch_commits, baseline = import_json_branch_commits(import_json_file)
+    else:
+        branch_commits, baseline = get_mm_branch_commits(linux_dir, branches)
+
+    if export_json_file is not None:
+        to_dump = {'baseline': baseline}
+        branch_commits_to_dump = {}
+        for branch, commits in branch_commits.items():
+            branch_commits_to_dump[branch] = [c.to_kvpairs() for c in commits]
+        to_dump['branch_commits'] = branch_commits_to_dump
+        with open(export_json_file, 'w') as f:
+            json.dump(to_dump, f, indent=4)
+
+    pr_stat(baseline, branches, branch_commits, subsystems, commits_to_print)
 
 def main():
     parser = argparse.ArgumentParser()
