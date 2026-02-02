@@ -28,12 +28,14 @@ import review_stat
 class Commit:
     hash = None
     author = None
+    subject = None
     tags = None
     subsys_info_map = None
 
-    def __init__(self, hash, author, tags, subsys_info_map):
+    def __init__(self, hash, author, subject, tags, subsys_info_map):
         self.hash = hash
         self.author = author
+        self.subject = subject
         self.tags = tags
         self.subsys_info_map = subsys_info_map
 
@@ -55,6 +57,7 @@ class Commit:
         return {
                 'hash': self.hash,
                 'author': self.author,
+                'subject': self.subject,
                 'tags': self.tags,
                 'subsys_info_map': self.subsys_info_map,
                 }
@@ -62,8 +65,8 @@ class Commit:
     @classmethod
     def from_kvpairs(cls, kvpairs):
         return Commit(
-                kvpairs['hash'], kvpairs['author'], kvpairs['tags'],
-                kvpairs['subsys_info_map'])
+                kvpairs['hash'], kvpairs['author'], kvpairs['subject'],
+                kvpairs['tags'], kvpairs['subsys_info_map'])
 
 def import_json_branch_commits(json_file):
     with open(json_file, 'r') as f:
@@ -100,6 +103,7 @@ def commits_in(linux_dir, commits_range):
             lines = lines[1:]
         hash = lines[0]
         author = lines[1]
+        subject = lines[2]
 
         pars = commit_output.split('\n\n')
         tag_lines = pars[-2].strip().splitlines()
@@ -113,7 +117,7 @@ def commits_in(linux_dir, commits_range):
 
         touching_files = pars[-1].strip().splitlines()
         subsys_info_map = get_subsys_info_map(hash, touching_files, linux_dir)
-        commits.append(Commit(hash, author, tags, subsys_info_map))
+        commits.append(Commit(hash, author, subject, tags, subsys_info_map))
     return commits
 
 def get_mm_branch_commits(linux_dir, branches):
