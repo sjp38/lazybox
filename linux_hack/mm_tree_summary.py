@@ -150,38 +150,13 @@ def get_mm_branch_commits(linux_dir, branches):
 
 def pr_stat(baseline, branches, branch_commits, subsystems, commits_to_print):
     print('baseline: %s' % baseline)
-    if 'all' in subsystems:
-        for branch in branches:
-            print('%s: %d commits' % (branch, len(branch_commits[branch])))
-            if 'all' in commits_to_print:
-                for c in branch_commits[branch]:
-                    print('  - %s ("%s")' % (c.hash[:12], c.subject))
-                    if c.reviewed():
-                        print('    - reviewed')
-                    if c.worrisome():
-                        print('    - worrisome')
-            reviewed = [c for c in branch_commits[branch] if c.reviewed()]
-            print('  - %d reviewed' % len(reviewed))
-            if 'reviewed' in commits_to_print:
-                for c in reviewed:
-                    print('    - %s ("%s")' % (c.hash[:12], c.subject))
-            worrisome = [c for c in branch_commits[branch] if c.worrisome()]
-            print('  - %d worrisome' % len(worrisome))
-            if 'worrisome' in commits_to_print:
-                for c in worrisome:
-                    print('    - %s ("%s")' % (c.hash[:12], c.subject))
-        print('Total: %d commits' %
-              sum([len(c) for c in branch_commits.values()]))
-
     for subsys in subsystems:
-        if subsys == 'all':
-            continue
         print()
         print('# %s' % subsys)
         for branch in branches:
             filtered_commits = []
             for commit in branch_commits[branch]:
-                if subsys in commit.subsys_info_map:
+                if subsys == 'all' or subsys in commit.subsys_info_map:
                     filtered_commits.append(commit)
             print('%s: %d commits' % (branch, len(filtered_commits)))
             if 'all' in commits_to_print:
