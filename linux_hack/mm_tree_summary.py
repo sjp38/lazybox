@@ -180,7 +180,7 @@ def pr_commits_per_mm_branches(
             worrisome = [c for c in branch_commits[branch] if c.worrisome()]
             print('  - %d worrisome' % len(worrisome))
             for c in worrisome:
-                print('    - %s' % c.hash)
+                print('    - %s ("%s")' % (c.hash[:12], c.subject))
         print('Total: %d commits' %
               sum([len(c) for c in branch_commits.values()]))
 
@@ -200,7 +200,7 @@ def pr_commits_per_mm_branches(
             worrisome = [c for c in filtered_commits if c.worrisome()]
             print('  - %d worrisome' % len(worrisome))
             for c in worrisome:
-                print('    - %s' % c.hash)
+                print('    - %s ("%s")' % (c.hash, c.subject))
 
 def main():
     parser = argparse.ArgumentParser()
