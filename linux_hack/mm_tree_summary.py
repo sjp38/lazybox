@@ -9,9 +9,12 @@ Show a summary of mm tree status.
 TODO:
 - Number of commits per branch for given sub-subsystems per review status
   - review stat
-    - No review
-    - No review but authored by maintainer
-    - No review but authored by reviewer
+    - No review and not authored by a maintainer or a reviewer
+    - Reviewed by someone
+    - No review but authored by a reviewer
+    - Reviewed by a reviewer
+    - No reviewe but authored by a maintainer
+    - Reviewed by a maintainer
 '''
 
 import argparse
@@ -38,6 +41,75 @@ class Commit:
         self.subject = subject
         self.tags = tags
         self.subsys_info_map = subsys_info_map
+
+    def role_of(self, person):
+        for subsys_name, info in self.subsys_info_map.items():
+            if 'maintainer' in info:
+                maintainers = info['maintainer']
+            else:
+                maintainers = []
+            if person in maintainers:
+                return 'maintainer'
+
+            if 'reviewer' in info:
+                reviewers = info['reviewer']
+            else:
+                reviewers = []
+            if person in reviewers:
+                return 'reviewer'
+        return None
+
+    def review_score(self):
+        '''
+        0 - Not authored by a maintaienr or reviewer, no review
+        1 - Not authored by a maintaienr or reviewer, reviewed by someone
+        2 - Not authored by a maintaienr or reviewer, reviewed by reviewer
+        3 - Not authored by a maintaienr or reviewer, reviewed by maintainer
+        4 - Authored by reviewer, no review
+        5 - Authored by reviewer, reviewed by someone
+        6 - Authored by reviewer, reviewed by reviewer
+        7 - Authored by reviewer, reviewed by maintainer
+        8 - Authored by maintainer, no review
+        9 - Authored by maintainer, reviewed by someone
+        10 - Authored by maintainer, reviewed by reviewer
+        11 - Authored by maintainer, reviewed by maintainer
+        '''
+        author_role = self.role_of(self.author)
+        reviewer_roles = {}
+        if 'Reviewed-by:' in self.tags:
+            for reviewer in self.tags['Reviewed-by:']:
+                reviewer_roles[self.role_of(reviewer)] = True
+        if 'Acked-by:' in self.tags:
+            for reviewer in self.tags['Acked-by:']:
+                reviewer_roles[self.role_of(reviewer)] = True
+
+        if author_role == 'maintainer':
+            if 'maintainer' in reviewer_roles:
+                return 11
+            if 'reviewer' in reviewer_roles:
+                return 10
+            if None in reviewer_roles:
+                return 9
+            if len(reviewer_roles) == 0:
+                return 8
+        if author_role == 'reviewer':
+            if 'maintainer' in reviewer_roles:
+                return 7
+            if 'reviewer' in reviewer_roles:
+                return 6
+            if None in reviewer_roles:
+                return 5
+            if len(reviewer_roles) == 0:
+                return 4
+        if author_role is None:
+            if 'maintainer' in reviewer_roles:
+                return 3
+            if 'reviewer' in reviewer_roles:
+                return 2
+            if None in reviewer_roles:
+                return 1
+            if len(reviewer_roles) == 0:
+                return 0
 
     def reviewed(self):
         return 'Reviewed-by:' in self.tags or 'Acked-by:' in self.tags
