@@ -217,7 +217,7 @@ def main():
                         help='subsystem to show the summary for')
     parser.add_argument(
             '--commits_to_print', nargs='+', default=['worrisome'],
-            choices=['worrisome', 'reviewed', 'all'],
+            choices=['worrisome', 'reviewed', 'all', 'none'],
             help='commits to print')
     args = parser.parse_args()
 
