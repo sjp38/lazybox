@@ -168,18 +168,21 @@ def pr_commits_per_mm_branches(
             json.dump(to_dump, f, indent=4)
 
     print('baseline: %s' % baseline)
-    for branch in branches:
-        print('%s: %d commits' % (branch, len(branch_commits[branch])))
-        print('  - %d reviewed' % len([c for c in branch_commits[branch]
-                                       if c.reviewed()]))
-        print('  - %d worrisome' % len([c for c in branch_commits[branch]
-                                       if c.worrisome()]))
-    print('Total: %d commits' % sum([len(c) for c in branch_commits.values()]))
-
-    if subsystems is None:
-        return
+    if 'all' in subsystems:
+        for branch in branches:
+            print('%s: %d commits' % (branch, len(branch_commits[branch])))
+            print('  - %d reviewed' % len([c for c in branch_commits[branch]
+                                           if c.reviewed()]))
+            worrisome = [c for c in branch_commits[branch] if c.worrisome()]
+            print('  - %d worrisome' % len(worrisome))
+            for c in worrisome:
+                print('    - %s' % c.hash)
+        print('Total: %d commits' %
+              sum([len(c) for c in branch_commits.values()]))
 
     for subsys in subsystems:
+        if subsys == 'all':
+            continue
         print()
         print('# %s' % subsys)
         for branch in branches:
@@ -190,8 +193,10 @@ def pr_commits_per_mm_branches(
             print('%s: %d commits' % (branch, len(filtered_commits)))
             print('  - %d reviewed' % len([c for c in filtered_commits
                                            if c.reviewed()]))
-            print('  - %d worrisome' % len([c for c in filtered_commits
-                                           if c.worrisome()]))
+            worrisome = [c for c in filtered_commits if c.worrisome()]
+            print('  - %d worrisome' % len(worrisome))
+            for c in worrisome:
+                print('    - %s' % c.hash)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -203,6 +208,7 @@ def main():
     parser.add_argument('--import_info', metavar='<file>',
                         help='--export_info generated file to reuse')
     parser.add_argument('--subsystem', metavar='<subsystem name>', nargs='+',
+                        default=['all'],
                         help='subsystem to show the summary for')
     args = parser.parse_args()
 
