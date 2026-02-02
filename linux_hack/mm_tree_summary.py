@@ -149,7 +149,8 @@ def get_mm_branch_commits(linux_dir, branches):
     return branch_commits, baseline
 
 def pr_commits_per_mm_branches(
-        linux_dir, export_json_file, import_json_file, subsystems):
+        linux_dir, export_json_file, import_json_file, subsystems,
+        commits_to_print):
     # it is unclear what branch is base of what branch.  Just give commit to
     # unique branch, with the priorities.  Hotfixes are always important, and
     # mm is more important than nonmm.
@@ -175,12 +176,23 @@ def pr_commits_per_mm_branches(
     if 'all' in subsystems:
         for branch in branches:
             print('%s: %d commits' % (branch, len(branch_commits[branch])))
-            print('  - %d reviewed' % len([c for c in branch_commits[branch]
-                                           if c.reviewed()]))
+            if 'all' in commits_to_print:
+                for c in branch_commits[branch]:
+                    print('  - %s ("%s")' % (c.hash[:12], c.subject))
+                    if c.reviewed():
+                        print('    - reviewed')
+                    if c.worrisome():
+                        print('    - worrisome')
+            reviewed = [c for c in branch_commits[branch] if c.reviewed()]
+            print('  - %d reviewed' % len(reviewed))
+            if 'reviewed' in commits_to_print:
+                for c in reviewed:
+                    print('    - %s ("%s")' % (c.hash[:12], c.subject))
             worrisome = [c for c in branch_commits[branch] if c.worrisome()]
             print('  - %d worrisome' % len(worrisome))
-            for c in worrisome:
-                print('    - %s ("%s")' % (c.hash[:12], c.subject))
+            if 'worrisome' in commits_to_print:
+                for c in worrisome:
+                    print('    - %s ("%s")' % (c.hash[:12], c.subject))
         print('Total: %d commits' %
               sum([len(c) for c in branch_commits.values()]))
 
@@ -195,12 +207,23 @@ def pr_commits_per_mm_branches(
                 if subsys in commit.subsys_info_map:
                     filtered_commits.append(commit)
             print('%s: %d commits' % (branch, len(filtered_commits)))
-            print('  - %d reviewed' % len([c for c in filtered_commits
-                                           if c.reviewed()]))
+            if 'all' in commits_to_print:
+                for c in filtered_commits:
+                    print('  - %s ("%s")' % (c.hash[:12], c.subject))
+                    if c.reviewed():
+                        print('    - reviewed')
+                    if c.worrisome():
+                        print('    - worrisome')
+            reviewed = [c for c in filtered_commits if c.reviewed()]
+            print('  - %d reviewed' % len(reviewed))
+            if 'reviewed' in filtered_commits:
+                for c in reviewed:
+                    print('    - %s ("%s")' % (c.hash[:12], c.subject))
             worrisome = [c for c in filtered_commits if c.worrisome()]
             print('  - %d worrisome' % len(worrisome))
-            for c in worrisome:
-                print('    - %s ("%s")' % (c.hash, c.subject))
+            if 'worrisome' in commits_to_print:
+                for c in worrisome:
+                    print('    - %s ("%s")' % (c.hash, c.subject))
 
 def main():
     parser = argparse.ArgumentParser()
@@ -214,10 +237,15 @@ def main():
     parser.add_argument('--subsystem', metavar='<subsystem name>', nargs='+',
                         default=['all'],
                         help='subsystem to show the summary for')
+    parser.add_argument(
+            '--commits_to_print', nargs='+', default=['worrisome'],
+            choices=['worrisome', 'reviewed', 'all'],
+            help='commits to print')
     args = parser.parse_args()
 
     pr_commits_per_mm_branches(
-            args.linux_dir, args.export_info, args.import_info, args.subsystem)
+            args.linux_dir, args.export_info, args.import_info, args.subsystem,
+            args.commits_to_print)
 
 if __name__ == '__main__':
     main()
