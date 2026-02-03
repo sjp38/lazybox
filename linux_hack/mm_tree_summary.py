@@ -285,6 +285,7 @@ def main():
                         default=['all'],
                         help='subsystem to show the summary for')
     parser.add_argument('--review_score_to_print_commits', nargs='+', type=int,
+                        metavar='<score>',
                         help='list commits of this review score')
     args = parser.parse_args()
 
