@@ -65,14 +65,14 @@ class Commit:
         1 - Not authored by a maintaienr or reviewer, reviewed by someone
         2 - Not authored by a maintaienr or reviewer, reviewed by reviewer
         3 - Not authored by a maintaienr or reviewer, reviewed by maintainer
-        4 - Authored by reviewer, no review
-        5 - Authored by reviewer, reviewed by someone
-        6 - Authored by reviewer, reviewed by reviewer
-        7 - Authored by reviewer, reviewed by maintainer
-        8 - Authored by maintainer, no review
-        9 - Authored by maintainer, reviewed by someone
-        10 - Authored by maintainer, reviewed by reviewer
-        11 - Authored by maintainer, reviewed by maintainer
+        10 - Authored by reviewer, no review
+        11 - Authored by reviewer, reviewed by someone
+        12 - Authored by reviewer, reviewed by reviewer
+        13 - Authored by reviewer, reviewed by maintainer
+        20 - Authored by maintainer, no review
+        21 - Authored by maintainer, reviewed by someone
+        22 - Authored by maintainer, reviewed by reviewer
+        23 - Authored by maintainer, reviewed by maintainer
         '''
         author_role = self.role_of(self.author)
         reviewer_roles = {}
@@ -85,22 +85,22 @@ class Commit:
 
         if author_role == 'maintainer':
             if 'maintainer' in reviewer_roles:
-                return 11
+                return 23
             if 'reviewer' in reviewer_roles:
-                return 10
+                return 22
             if None in reviewer_roles:
-                return 9
+                return 21
             if len(reviewer_roles) == 0:
-                return 8
+                return 20
         if author_role == 'reviewer':
             if 'maintainer' in reviewer_roles:
-                return 7
+                return 13
             if 'reviewer' in reviewer_roles:
-                return 6
+                return 12
             if None in reviewer_roles:
-                return 5
+                return 11
             if len(reviewer_roles) == 0:
-                return 4
+                return 10
         if author_role is None:
             if 'maintainer' in reviewer_roles:
                 return 3
