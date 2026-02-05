@@ -34,13 +34,20 @@ class Commit:
     subject = None
     tags = None
     subsys_info_map = None
+    patch_series = None
+    patch_series_sz = None
+    patch_series_idx = None
 
-    def __init__(self, hash, author, subject, tags, subsys_info_map):
+    def __init__(self, hash, author, subject, tags, subsys_info_map,
+                 patch_series, patch_series_sz, patch_series_idx):
         self.hash = hash
         self.author = author
         self.subject = subject
         self.tags = tags
         self.subsys_info_map = subsys_info_map
+        self.patch_series = patch_series
+        self.patch_series_sz = patch_series_sz
+        self.patch_series_idx = patch_series_idx
 
     def role_of(self, person):
         for subsys_name, info in self.subsys_info_map.items():
@@ -132,13 +139,20 @@ class Commit:
                 'subject': self.subject,
                 'tags': self.tags,
                 'subsys_info_map': self.subsys_info_map,
+                'patch_series': self.patch_series,
+                'patch_series_sz': self.patch_series_sz,
+                'patch_series_idx': self.patch_series_idx,
                 }
 
     @classmethod
     def from_kvpairs(cls, kvpairs):
+        patch_series = kvpairs.get('patch_series', None)
+        patch_series_sz = kvpairs.get('patch_series_sz', None)
+        patch_series_idx = kvpairs.get('patch_series_idx', None)
         return Commit(
                 kvpairs['hash'], kvpairs['author'], kvpairs['subject'],
-                kvpairs['tags'], kvpairs['subsys_info_map'])
+                kvpairs['tags'], kvpairs['subsys_info_map'],
+                patch_series, patch_series_sz, patch_series_idx)
 
 def import_json_branch_commits(json_file):
     with open(json_file, 'r') as f:
@@ -166,7 +180,7 @@ def commits_in(linux_dir, commits_range):
     git_cmd = ['git', '-C', linux_dir]
     output = subprocess.check_output(
             git_cmd + ['log', '--pretty=%n---%n%H%n%an <%ae>%n%B',
-                       '--name-only', '--no-merges',
+                       '--name-only', '--no-merges', '--reverse',
                        commits_range]).decode().strip()
     commits = []
     for commit_output in output.split('\n---\n'):
@@ -189,7 +203,33 @@ def commits_in(linux_dir, commits_range):
 
         touching_files = pars[-1].strip().splitlines()
         subsys_info_map = get_subsys_info_map(hash, touching_files, linux_dir)
-        commits.append(Commit(hash, author, subject, tags, subsys_info_map))
+        patch_series = None
+        patch_series_sz = None
+        patch_series_idx = None
+        if pars[1].startswith('Patch series '):
+            patch_series = pars[1][len('Patch series '):].replace('\n', ' ')
+            for par in pars[2:]:
+                if par.startswith('\nThis patch (of '):
+                    if par.endswith('):'):
+                        patch_series_sz = int(par[len('\nThis patch (of '):-2])
+                    elif par.endswith(')'):
+                        patch_series_sz = int(par[len('\nThis patch (of '):-1])
+                    patch_series_idx = 0
+                    break
+        else:
+            if len(commits) > 1:
+                prev_commit = commits[-1]
+                if prev_commit.patch_series is not None:
+                    prev_patch_series = prev_commit.patch_series
+                    prev_patch_series_sz = prev_commit.patch_series_sz
+                    prev_patch_series_idx = prev_commit.patch_series_idx
+                    if prev_patch_series_sz is not None and \
+                            prev_patch_series_idx < prev_patch_series_sz - 1:
+                        patch_series = prev_patch_series
+                        patch_series_sz = prev_patch_series_sz
+                        patch_series_idx = prev_patch_series_idx + 1
+        commits.append(Commit(hash, author, subject, tags, subsys_info_map,
+                              patch_series, patch_series_sz, patch_series_idx))
     return commits
 
 def get_mm_branch_commits(linux_dir, branches):
