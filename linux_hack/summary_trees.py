@@ -48,6 +48,8 @@ def set_get_args(skip_branches_args):
                         help='<allow|reject> [not] <category> [option]...')
     parser.add_argument('--save_patches', metavar='<dir>',
                         help='save commits as patches under given dir')
+    parser.add_argument('--diff_from', metavar='<file>',
+                        help='show diff of commits info')
     return parser.parse_args()
 
 def args_to_filters(args):
@@ -370,8 +372,13 @@ def should_filter_out(commit, filters):
     return filters[-1].allow is True
 
 def pr_stat(baseline, branches, branch_commits, subsystems, filters,
-            full_commits_list, review_scores, review_score_to_print_commits):
-    print('baseline: %s' % baseline)
+            full_commits_list, review_scores, review_score_to_print_commits,
+            diff_from):
+    old_branch_commits, old_baseline = diff_from
+    if diff_from is None:
+        print('baseline: %s' % baseline)
+    else:
+        print('baseline: %s -> %s' % (old_baseline, baseline))
     for subsys in subsystems:
         if subsys != 'all':
             print()
@@ -447,6 +454,10 @@ def summary_trees(args):
     else:
         branch_commits, baseline = get_branch_commits(
                 linux_dir, args.git_remote_name, args.baseline, branches)
+    if args.diff_from is not None:
+        diff_from = import_json_branch_commits( args.diff_from)
+    else:
+        diff_from = [None, None]
 
     if export_json_file is not None:
         to_dump = {'baseline': baseline}
@@ -471,7 +482,8 @@ def summary_trees(args):
                     commits_range=None, commits_list=[c.hash for c in commits])
 
     pr_stat(baseline, branches, branch_commits, subsystems, filters,
-            full_commits_list, review_scores, review_score_to_print_commits)
+            full_commits_list, review_scores, review_score_to_print_commits,
+            diff_from)
 
 
 def main():
