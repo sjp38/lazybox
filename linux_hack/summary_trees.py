@@ -365,8 +365,9 @@ def pr_stat(baseline, branches, branch_commits, subsystems, filters,
             full_commits_list, review_scores, review_score_to_print_commits):
     print('baseline: %s' % baseline)
     for subsys in subsystems:
-        print()
-        print('# %s' % subsys)
+        if subsys != 'all':
+            print()
+            print('# %s' % subsys)
         for branch in branches:
             filtered_commits = []
             review_score_commits = {}
