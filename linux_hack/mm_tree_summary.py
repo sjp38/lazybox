@@ -260,7 +260,7 @@ def get_mm_branch_commits(linux_dir, branches):
              mm_remote, '--match', 'v*']).decode().strip()
     return branch_commits, baseline
 
-def pr_stat(baseline, branches, branch_commits, subsystems,
+def pr_stat(baseline, branches, branch_commits, subsystems, review_scores,
             review_score_to_print_commits):
     print('baseline: %s' % baseline)
     for subsys in subsystems:
@@ -289,6 +289,8 @@ def pr_stat(baseline, branches, branch_commits, subsystems,
                   (branch, len(filtered_commits), nr_patch_series,
                    nr_series_patches, nr_non_series_patches))
             for score in sorted(review_score_commits.keys()):
+                if not score in review_scores:
+                    continue
                 print('  - review score %d: %d commits' %
                       (score, len(review_score_commits[score])))
                 if review_score_to_print_commits is not None and \
@@ -298,7 +300,7 @@ def pr_stat(baseline, branches, branch_commits, subsystems,
 
 def pr_commits_per_mm_branches(
         linux_dir, export_json_file, import_json_file, subsystems,
-        review_score_to_print_commits):
+        review_scores, review_score_to_print_commits):
     # it is unclear what branch is base of what branch.  Just give commit to
     # unique branch, with the priorities.  Hotfixes are always important, and
     # mm is more important than nonmm.
@@ -320,7 +322,7 @@ def pr_commits_per_mm_branches(
         with open(export_json_file, 'w') as f:
             json.dump(to_dump, f, indent=4)
 
-    pr_stat(baseline, branches, branch_commits, subsystems,
+    pr_stat(baseline, branches, branch_commits, subsystems, review_scores,
             review_score_to_print_commits)
 
 def main():
@@ -335,6 +337,10 @@ def main():
     parser.add_argument('--subsystem', metavar='<subsystem name>', nargs='+',
                         default=['all'],
                         help='subsystem to show the summary for')
+    parser.add_argument('--review_score', nargs='+', type=int,
+                        metavar='<score>', default=[0, 1, 2, 3, 10, 11, 12, 13,
+                                                    20, 21, 22, 23],
+                        help='review scores to show stat for')
     parser.add_argument('--review_score_to_print_commits', nargs='+', type=int,
                         metavar='<score>',
                         help='list commits of this review score')
@@ -342,7 +348,7 @@ def main():
 
     pr_commits_per_mm_branches(
             args.linux_dir, args.export_info, args.import_info, args.subsystem,
-            args.review_score_to_print_commits)
+            args.review_score, args.review_score_to_print_commits)
 
 if __name__ == '__main__':
     main()
