@@ -84,10 +84,10 @@ review_score_status_map = {
         }
 
 review_score_author_reviewer_map = {
-       0: 'no role , nobody',
-       1: 'no role , no role ',
-       2: 'no role , reviewer',
-       3: 'no role , maintainer',
+       0: 'no role, nobody',
+       1: 'no role, no role ',
+       2: 'no role, reviewer',
+       3: 'no role, maintainer',
        10: 'reviewer, nobody',
        11: 'reviewer, no role ',
        12: 'reviewer, reviewer',
