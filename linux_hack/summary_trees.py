@@ -2,19 +2,7 @@
 # SPDX-License-Identifier: GPL-2.0
 
 '''
-Show a summary of mm tree status.
-- Number of commits per branch for given sub-subsystems.
-- List of commits per branch for given sub-subsystems.
-
-TODO:
-- Number of commits per branch for given sub-subsystems per review status
-  - review stat
-    - No review and not authored by a maintainer or a reviewer
-    - Reviewed by someone
-    - No review but authored by a reviewer
-    - Reviewed by a reviewer
-    - No reviewe but authored by a maintainer
-    - Reviewed by a maintainer
+Show and export status of commits in given linux trees.
 '''
 
 import argparse
@@ -25,7 +13,6 @@ import subprocess
 os.sys.path.insert(0, os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..', 'version_control')))
 
-import git_remote_name
 import patches_queue
 import review_stat
 
@@ -33,6 +20,12 @@ def set_get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--linux_dir', metavar='<dir>', default='./',
                         help='path to linux local repo')
+    parser.add_argument('--git_remote_name', metavar='<git remote name>',
+                        help='name of git remote for the trees')
+    parser.add_argument('--baseline', metavar='<commit>',
+                        help='the baseline commit of the --branch')
+    parser.add_argument('--branch', metavar='<branch>', nargs='+',
+                        help='name of branches to get status')
     parser.add_argument(
             '--export_info', metavar='<file>',
             help='export commits information in json for quick reuse')
@@ -290,22 +283,14 @@ def commits_in(linux_dir, commits_range):
                               patch_series, patch_series_sz, patch_series_idx))
     return commits
 
-def get_mm_branch_commits(linux_dir, branches):
-    mm_remote = git_remote_name.get_remote_name_for(
-            linux_dir,
-            'https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git')
-
+def get_branch_commits(linux_dir, remote, baseline, branches):
     # it is unclear what branch is base of what branch.  Just give commit to
-    # unique branch, with the priorities.  Hotfixes are always important, and
-    # mm is more important than nonmm.
-    branches = ['mm-hotfixes-stable', 'mm-hotfixes-unstable',
-                'mm-stable', 'mm-unstable', 'mm-new',
-                'mm-nonmm-stable', 'mm-nonmm-unstable']
+    # unique branch, with the priorities based on user's listing.
     branch_commits = {}
     categorized_commits = {}
     for idx, branch in enumerate(branches):
         commits = commits_in(
-                linux_dir, '%s/master..%s/%s' % (mm_remote, mm_remote, branch))
+                linux_dir, '%s..%s/%s' % (baseline, remote, branch))
         filtered_commits = []
         for commit in commits:
             if commit.hash in categorized_commits:
@@ -314,8 +299,8 @@ def get_mm_branch_commits(linux_dir, branches):
             categorized_commits[commit.hash] = True
         branch_commits[branch] = filtered_commits
     baseline = subprocess.check_output(
-            ['git', '-C', linux_dir, 'describe', '%s/master' %
-             mm_remote, '--match', 'v*']).decode().strip()
+            ['git', '-C', linux_dir, 'describe', baseline,
+             '--match', 'v*']).decode().strip()
     return branch_commits, baseline
 
 class Filter:
@@ -444,14 +429,13 @@ def main():
     # it is unclear what branch is base of what branch.  Just give commit to
     # unique branch, with the priorities.  Hotfixes are always important, and
     # mm is more important than nonmm.
-    branches = ['mm-hotfixes-stable', 'mm-hotfixes-unstable',
-                'mm-stable', 'mm-unstable', 'mm-new',
-                'mm-nonmm-stable', 'mm-nonmm-unstable']
+    branches = args.branch
 
     if import_json_file is not None:
         branch_commits, baseline = import_json_branch_commits(import_json_file)
     else:
-        branch_commits, baseline = get_mm_branch_commits(linux_dir, branches)
+        branch_commits, baseline = get_branch_commits(
+                linux_dir, args.git_remote_name, args.baseline, branches)
 
     if export_json_file is not None:
         to_dump = {'baseline': baseline}
