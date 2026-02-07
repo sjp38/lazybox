@@ -90,6 +90,21 @@ review_score_status_map = {
         23: 'Authored by a maintainer, reviewed by a maintainer',
         }
 
+review_score_author_reviewer_map = {
+       0: 'no role , nobody',
+       1: 'no role , no role ',
+       2: 'no role , reviewer',
+       3: 'no role , maintainer',
+       10: 'reviewer, nobody',
+       11: 'reviewer, no role ',
+       12: 'reviewer, reviewer',
+       13: 'reviewer, maintainer',
+       20: 'maintainer, nobody',
+       21: 'maintainer, no role ',
+       22: 'maintainer, reviewer',
+       23: 'maintainer, maintainer',
+        }
+
 class Commit:
     hash = None
     author = None
@@ -407,11 +422,12 @@ def pr_stat(baseline, branches, branch_commits, subsystems, filters,
             print('%s: %d total, %d (%d) series, %d non-series commits' %
                   (branch, len(filtered_commits), nr_patch_series,
                    nr_series_patches, nr_non_series_patches))
+            print('- author/reviewer role stat')
             for score in sorted(review_score_commits.keys()):
                 if not score in review_scores:
                     continue
                 print('  - %s: %d commits' %
-                      (review_score_status_map[score],
+                      (review_score_author_reviewer_map[score],
                        len(review_score_commits[score])))
                 if review_score_to_print_commits is not None and \
                         score in review_score_to_print_commits:
