@@ -269,6 +269,9 @@ def pr_stat(baseline, branches, branch_commits, subsystems,
         for branch in branches:
             filtered_commits = []
             review_score_commits = {}
+            nr_patch_series = 0
+            nr_series_patches = 0
+            nr_non_series_patches = 0
             for commit in branch_commits[branch]:
                 if subsys == 'all' or subsys in commit.subsys_info_map:
                     filtered_commits.append(commit)
@@ -276,7 +279,15 @@ def pr_stat(baseline, branches, branch_commits, subsystems,
                     if not review_score in review_score_commits:
                         review_score_commits[review_score] = []
                     review_score_commits[review_score].append(commit)
-            print('%s: %d commits' % (branch, len(filtered_commits)))
+                    if commit.patch_series is not None:
+                        nr_series_patches += 1
+                        if commit.patch_series_idx in [None, 0]:
+                            nr_patch_series += 1
+                    else:
+                        nr_non_series_patches += 1
+            print('%s: %d total, %d (%d) series, %d non-series commits' %
+                  (branch, len(filtered_commits), nr_patch_series,
+                   nr_series_patches, nr_non_series_patches))
             for score in sorted(review_score_commits.keys()):
                 print('  - review score %d: %d commits' %
                       (score, len(review_score_commits[score])))
