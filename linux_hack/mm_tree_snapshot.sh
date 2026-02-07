@@ -1,6 +1,8 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-2.0
 
+set -e
+
 if [ $# -ne 2 ]
 then
 	echo "Usage: $0 <linux_dir> <snapshot_store_dir>"
@@ -43,7 +45,10 @@ fi
 
 if [ "$is_git" = "true" ]
 then
-	git -C "$snapshot_dir" rm -r "$patches_dir" "$summary_dir"
+	if ! git -C "$snapshot_dir" rm -r "$patches_dir" "$summary_dir"
+	then
+		echo "initial run?"
+	fi
 fi
 
 mm_tree_summary_py="$bindir/mm_tree_summary.py"
@@ -118,7 +123,7 @@ done
 if [ "$is_git" = "true" ]
 then
 	git -C "$snapshot_dir" add "$patches_dir" "$summary_dir"
-	git commit -as -m "update
+	git -C "$snapshot_dir" commit -as -m "update
 
 This commit was made via $(basename $0).
 "
