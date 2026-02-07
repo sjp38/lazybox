@@ -434,7 +434,17 @@ def pr_review_stat(review_score_commits, old_review_score_commits, do_diff):
                    len(review_score_commits.get(score, [])),
                    len(old_review_score_commits.get(score, []))))
 
-def pr_full_commits_list(commits):
+def find_matcing_commit_branch(commit, other_branch_commits):
+    for branch, other_commits in other_branch_commits.items():
+        for other_commit in other_commits:
+            if commit.subject != other_commit.subject:
+                continue
+            if commit.author != other_commit.author:
+                continue
+            return branch
+    return 'nowhere'
+
+def pr_full_commits_list(commits, old_branch_commits):
     for c in commits:
         if c.patch_series is not None:
             if c.patch_series_idx == 0:
@@ -445,9 +455,15 @@ def pr_full_commits_list(commits):
                    c.patch_series_sz))
             print('      - %s' %
                   review_score_status_map[c.review_score()])
+            if old_branch_commits is not None:
+                old_branch = find_matcing_commit_branch(c, old_branch_commits)
+                print('      - was in %s' % old_branch)
         else:
             print('  - %s %s' % (c.hash[:12], c.subject))
             print('    - review score: %d' % c.review_score())
+            if old_branch_commits is not None:
+                old_branch = find_matcing_commit_branch(c, old_branch_commits)
+                print('    - was in %s' % old_branch)
 
 def pr_branch_stat(branch_name, commits, subsystem, filters,
                    full_commits_list, old_branch_commits):
@@ -473,7 +489,7 @@ def pr_branch_stat(branch_name, commits, subsystem, filters,
                             old_filtered_commits, old_series_counts)
     pr_review_stat(review_score_commits, old_review_score_commits, do_diff)
     if full_commits_list:
-        pr_full_commits_list(filtered_commits)
+        pr_full_commits_list(filtered_commits, old_branch_commits)
 
 def pr_stat(baseline, branches, branch_commits, subsystems, filters,
             full_commits_list, diff_from):
