@@ -500,6 +500,7 @@ def pr_changed_commits(branch_name, commits, old_commits, branch_commits,
                        old_branch_commits):
     new_commits = []
     changed_commits = []
+    dropped_commits = []
     for commit in commits:
         old_commit, old_branch = find_matcing_commit_branch(
                 commit, old_branch_commits)
@@ -509,14 +510,26 @@ def pr_changed_commits(branch_name, commits, old_commits, branch_commits,
         changes = commit_changes(old_commit, old_branch, commit, branch_name)
         if len(changes) > 0:
             changed_commits.append([commit, changes])
-    print('- new commits')
-    for c in new_commits:
-        print('  - %s %s' % (c.hash[:12], c.subject))
-    print('- changed commits')
-    for c, changes in changed_commits:
-        print('  - %s %s' % (c.hash[:12], c.subject))
-        for change in changes:
-            print('    - %s' % change)
+    for commit in old_commits:
+        new_commit, new_branch = find_matcing_commit_branch(
+                commit, branch_commits)
+        if new_commit is None:
+            dropped_commits.append(commit)
+
+    if len(new_commits) > 0:
+        print('- new commits')
+        for c in new_commits:
+            print('  - %s %s' % (c.hash[:12], c.subject))
+    if len(changed_commits) > 0:
+        print('- changed commits')
+        for c, changes in changed_commits:
+            print('  - %s %s' % (c.hash[:12], c.subject))
+            for change in changes:
+                print('    - %s' % change)
+    if len(dropped_commits) > 0:
+        print('- dropped commits')
+        for c in dropped_commits:
+            print('  - %s %s' % (c.hash[:12], c.subject))
 
 def pr_branch_stat(branch_name, commits, subsystem, filters,
                    full_commits_list, old_branch_commits, list_changed_commits,
