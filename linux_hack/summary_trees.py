@@ -469,17 +469,54 @@ def pr_full_commits_list(commits, old_branch_commits):
                         c, old_branch_commits)
                 print('    - was in %s' % old_branch)
 
+def commit_changes(old_commit, old_branch, new_commit, new_branch):
+    changes = []
+    if old_branch != new_branch:
+        changes.append('branch: %s -> %s' % (old_branch, new_branch))
+
+    added_tags = []
+    dropped_tags = []
+    for tag, new_taggers in new_commit.tags.items():
+        old_taggers = old_commit.tags.get(tag, [])
+        added_taggers_set = set(new_taggers) - set(old_taggers)
+        dropped_taggers_set = set(old_taggers) - set(new_taggers)
+
+        added_tags += ['%s %s' % (tag, tagger) for tagger in added_taggers_set]
+        dropped_tags += ['%s %s' % (tag, tagger)
+                         for tagger in dropped_taggers_set]
+
+    for tag, old_taggers in old_commit.tags.items():
+        if tag in new_commit.tags:
+            continue
+        dropped_tags += ['%s %s' % (tag, tagger) for tagger in old_taggers]
+
+    for added_tag in added_tags:
+        changes.append('added "%s"' % added_tag)
+    for dropped_tag in dropped_tags:
+        changes.append('dropped "%s"' % dropped_tag)
+    return changes
+
 def pr_changed_commits(branch_name, commits, old_commits, branch_commits,
                        old_branch_commits):
     new_commits = []
+    changed_commits = []
     for commit in commits:
         old_commit, old_branch = find_matcing_commit_branch(
                 commit, old_branch_commits)
         if old_commit is None:
             new_commits.append(commit)
+            continue
+        changes = commit_changes(old_commit, old_branch, commit, branch_name)
+        if len(changes) > 0:
+            changed_commits.append([commit, changes])
     print('- new commits')
     for c in new_commits:
         print('  - %s %s' % (c.hash[:12], c.subject))
+    print('- changed commits')
+    for c, changes in changed_commits:
+        print('  - %s %s' % (c.hash[:12], c.subject))
+        for change in changes:
+            print('    - %s' % change)
 
 def pr_branch_stat(branch_name, commits, subsystem, filters,
                    full_commits_list, old_branch_commits, list_changed_commits,
