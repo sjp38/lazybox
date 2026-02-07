@@ -260,8 +260,35 @@ def get_mm_branch_commits(linux_dir, branches):
              mm_remote, '--match', 'v*']).decode().strip()
     return branch_commits, baseline
 
-def pr_stat(baseline, branches, branch_commits, subsystems, full_commits_list,
-            review_scores, review_score_to_print_commits):
+class Filter:
+    allow = None
+    category = None
+    args = None
+
+    def __init__(self, allow, category, args):
+        self.allow = allow
+        self.category = category
+        self.args = args
+
+    def match(self, commit):
+        if self.category == 'subsystem':
+            for subsys in self.args:
+                if subsys == 'all':
+                    return True
+                if subsys in commit.subsys_info_map:
+                    return True
+        return False
+
+def should_filter_out(commit, filters):
+    if len(filters) == 0:
+        return False
+    for filter in filters:
+        if filter.match(commit):
+            return not filter.allow
+    return filters[-1].allow is True
+
+def pr_stat(baseline, branches, branch_commits, subsystems, filters,
+            full_commits_list, review_scores, review_score_to_print_commits):
     print('baseline: %s' % baseline)
     for subsys in subsystems:
         print()
@@ -274,6 +301,8 @@ def pr_stat(baseline, branches, branch_commits, subsystems, full_commits_list,
             nr_non_series_patches = 0
             for commit in branch_commits[branch]:
                 if subsys == 'all' or subsys in commit.subsys_info_map:
+                    if should_filter_out(commit, filters):
+                        continue
                     filtered_commits.append(commit)
                     review_score = commit.review_score()
                     if not review_score in review_score_commits:
@@ -312,7 +341,7 @@ def pr_stat(baseline, branches, branch_commits, subsystems, full_commits_list,
                         print('    - review score: %d' % c.review_score())
 
 def pr_commits_per_mm_branches(
-        linux_dir, export_json_file, import_json_file, subsystems,
+        linux_dir, export_json_file, import_json_file, subsystems, filters,
         full_commits_list, review_scores, review_score_to_print_commits):
     # it is unclear what branch is base of what branch.  Just give commit to
     # unique branch, with the priorities.  Hotfixes are always important, and
@@ -335,8 +364,8 @@ def pr_commits_per_mm_branches(
         with open(export_json_file, 'w') as f:
             json.dump(to_dump, f, indent=4)
 
-    pr_stat(baseline, branches, branch_commits, subsystems, full_commits_list,
-            review_scores, review_score_to_print_commits)
+    pr_stat(baseline, branches, branch_commits, subsystems, filters,
+            full_commits_list, review_scores, review_score_to_print_commits)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -359,11 +388,35 @@ def main():
                         help='list commits of this review score')
     parser.add_argument('--full_commits_list', action='store_true',
                         help='Show full list of commits')
+    parser.add_argument('--filter', nargs='+', action='append',
+                        help='<allow|reject> <category> [option]...')
+
+    # keywords: nobody, norole, reviewer, maintainer
+    parser.add_argument('--reviewed_by', nargs='+', metavar='<person or role>',
+                        help='filter commits by reviewers')
+    parser.add_argument(
+            '--not_reviewed_by', nargs='+', metavar='<person or role>',
+            help='filter commits by reviewers')
     args = parser.parse_args()
+
+    filters = []
+    if args.filter is not None:
+        for filter_fields in args.filter:
+            if len(filter_fields) < 2:
+                print('<2 fields: %s' % filter_fields)
+                exit(1)
+            allow_reject = filter_fields[0]
+            if not allow_reject in ['allow', 'reject']:
+                print('wrong allow_reject: %s' % filter_fields)
+                exit(1)
+            category = filter_fields[1]
+            filter_args = filter_fields[2:]
+            filters.append(Filter(
+                allow_reject == 'allow', category, filter_args))
 
     pr_commits_per_mm_branches(
             args.linux_dir, args.export_info, args.import_info, args.subsystem,
-            args.full_commits_list, args.review_score,
+            filters, args.full_commits_list, args.review_score,
             args.review_score_to_print_commits)
 
 if __name__ == '__main__':
