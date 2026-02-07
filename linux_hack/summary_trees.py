@@ -419,32 +419,12 @@ def pr_branch_commit_counts(branch_name, commits, series_counts,
               (old_series_counts[0], old_series_counts[1], series_counts[0],
                series_counts[1]))
 
-def pr_branch_stat(branch_name, commits, subsystem, filters,
-                   full_commits_list, old_branch_commits):
-    filtered_commits = filter_commits(commits, subsystem, filters)
-    review_score_commits = get_review_score_commits(filtered_commits)
-    series_counts = get_series_counts(filtered_commits)
-
-    if old_branch_commits:
-        old_commits = old_branch_commits[branch_name]
-        old_filtered_commits = filter_commits(old_commits, subsystem, filters)
-        old_review_score_commits = get_review_score_commits(
-                old_filtered_commits)
-        old_series_counts = get_series_counts(old_filtered_commits)
-    else:
-        old_commits = None
-        old_filtered_commits = None
-        old_review_score_commits = {}
-        old_series_counts = []
-
-    pr_branch_commit_counts(branch_name, filtered_commits, series_counts,
-                            old_filtered_commits, old_series_counts)
-
+def pr_review_stat(review_score_commits, old_review_score_commits, do_diff):
     print('- author/reviewer role stat')
     scores = set(list(review_score_commits.keys()) +
                  list(old_review_score_commits.keys()))
     for score in sorted(scores):
-        if old_commits is None:
+        if not do_diff:
             print('  - %s: %d commits' %
                   (review_score_author_reviewer_map[score],
                    len(review_score_commits[score])))
@@ -453,6 +433,31 @@ def pr_branch_stat(branch_name, commits, subsystem, filters,
                   (review_score_author_reviewer_map[score],
                    len(review_score_commits.get(score, [])),
                    len(old_review_score_commits.get(score, []))))
+
+def pr_branch_stat(branch_name, commits, subsystem, filters,
+                   full_commits_list, old_branch_commits):
+    filtered_commits = filter_commits(commits, subsystem, filters)
+    review_score_commits = get_review_score_commits(filtered_commits)
+    series_counts = get_series_counts(filtered_commits)
+
+    if old_branch_commits is not None:
+        do_diff = True
+        old_commits = old_branch_commits[branch_name]
+        old_filtered_commits = filter_commits(old_commits, subsystem, filters)
+        old_review_score_commits = get_review_score_commits(
+                old_filtered_commits)
+        old_series_counts = get_series_counts(old_filtered_commits)
+    else:
+        do_diff = False
+        old_commits = None
+        old_filtered_commits = None
+        old_review_score_commits = {}
+        old_series_counts = []
+
+    pr_branch_commit_counts(branch_name, filtered_commits, series_counts,
+                            old_filtered_commits, old_series_counts)
+    pr_review_stat(review_score_commits, old_review_score_commits, do_diff)
+
     if full_commits_list:
         for c in filtered_commits:
             if c.patch_series is not None:
