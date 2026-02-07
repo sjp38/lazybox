@@ -16,16 +16,17 @@ os.sys.path.insert(0, os.path.abspath(
 import patches_queue
 import review_stat
 
-def set_get_args():
+def set_get_args(skip_branches_args):
     parser = argparse.ArgumentParser()
     parser.add_argument('--linux_dir', metavar='<dir>', default='./',
                         help='path to linux local repo')
-    parser.add_argument('--git_remote_name', metavar='<git remote name>',
-                        help='name of git remote for the trees')
-    parser.add_argument('--baseline', metavar='<commit>',
-                        help='the baseline commit of the --branch')
-    parser.add_argument('--branch', metavar='<branch>', nargs='+',
-                        help='name of branches to get status')
+    if skip_branches_args is False:
+        parser.add_argument('--git_remote_name', metavar='<git remote name>',
+                            help='name of git remote for the trees')
+        parser.add_argument('--baseline', metavar='<commit>',
+                            help='the baseline commit of the --branch')
+        parser.add_argument('--branch', metavar='<branch>', nargs='+',
+                            help='name of branches to get status')
     parser.add_argument(
             '--export_info', metavar='<file>',
             help='export commits information in json for quick reuse')
@@ -414,7 +415,7 @@ def pr_stat(baseline, branches, branch_commits, subsystems, filters,
                         print('    - review score: %d' % c.review_score())
 
 def main():
-    args = set_get_args()
+    args = set_get_args(skip_branches_args=False)
     filters = args_to_filters(args.filter)
 
     linux_dir = args.linux_dir
