@@ -3,18 +3,6 @@
 
 '''
 Show a summary of mm tree status.
-- Number of commits per branch for given sub-subsystems.
-- List of commits per branch for given sub-subsystems.
-
-TODO:
-- Number of commits per branch for given sub-subsystems per review status
-  - review stat
-    - No review and not authored by a maintainer or a reviewer
-    - Reviewed by someone
-    - No review but authored by a reviewer
-    - Reviewed by a reviewer
-    - No reviewe but authored by a maintainer
-    - Reviewed by a maintainer
 '''
 
 import os
