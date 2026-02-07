@@ -260,8 +260,8 @@ def get_mm_branch_commits(linux_dir, branches):
              mm_remote, '--match', 'v*']).decode().strip()
     return branch_commits, baseline
 
-def pr_stat(baseline, branches, branch_commits, subsystems, review_scores,
-            review_score_to_print_commits):
+def pr_stat(baseline, branches, branch_commits, subsystems, full_commits_list,
+            review_scores, review_score_to_print_commits):
     print('baseline: %s' % baseline)
     for subsys in subsystems:
         print()
@@ -297,10 +297,23 @@ def pr_stat(baseline, branches, branch_commits, subsystems, review_scores,
                         score in review_score_to_print_commits:
                     for c in review_score_commits[score]:
                         print('    - %s ("%s")' % (c.hash[:12], c.subject))
+            if full_commits_list:
+                for c in filtered_commits:
+                    if c.patch_series is not None:
+                        if c.patch_series_idx == 0:
+                            print('  - sereis %s (%d commits)' %
+                                  (c.patch_series, c.patch_series_sz))
+                        print('    - %s (%s/%s)' %
+                              (c.subject, c.patch_series_idx,
+                               c.patch_series_sz))
+                        print('      - review score: %d' % c.review_score())
+                    else:
+                        print('  - %s' % c.subject)
+                        print('    - review score: %d' % c.review_score())
 
 def pr_commits_per_mm_branches(
         linux_dir, export_json_file, import_json_file, subsystems,
-        review_scores, review_score_to_print_commits):
+        full_commits_list, review_scores, review_score_to_print_commits):
     # it is unclear what branch is base of what branch.  Just give commit to
     # unique branch, with the priorities.  Hotfixes are always important, and
     # mm is more important than nonmm.
@@ -322,8 +335,8 @@ def pr_commits_per_mm_branches(
         with open(export_json_file, 'w') as f:
             json.dump(to_dump, f, indent=4)
 
-    pr_stat(baseline, branches, branch_commits, subsystems, review_scores,
-            review_score_to_print_commits)
+    pr_stat(baseline, branches, branch_commits, subsystems, full_commits_list,
+            review_scores, review_score_to_print_commits)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -344,11 +357,14 @@ def main():
     parser.add_argument('--review_score_to_print_commits', nargs='+', type=int,
                         metavar='<score>',
                         help='list commits of this review score')
+    parser.add_argument('--full_commits_list', action='store_true',
+                        help='Show full list of commits')
     args = parser.parse_args()
 
     pr_commits_per_mm_branches(
             args.linux_dir, args.export_info, args.import_info, args.subsystem,
-            args.review_score, args.review_score_to_print_commits)
+            args.full_commits_list, args.review_score,
+            args.review_score_to_print_commits)
 
 if __name__ == '__main__':
     main()
