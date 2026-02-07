@@ -47,14 +47,17 @@ def final_patch_path(patch_name, patches_dir):
     final_path += '.patch'
     return final_path
 
-def make_patches_series(series_file, repo, commits):
+def make_patches_series(series_file, repo, commits_range, commits_list=[]):
     git_cmd = ['git', '-C', repo]
     patches_dir = os.path.dirname(series_file)
 
     patches_list = []
-    commits = subprocess.check_output(
-            git_cmd + ['log', '--reverse', '--pretty=%H', commits])
-    commits = commits.decode().strip().split()
+    commits = []
+    if commits_range is not None:
+        commits = subprocess.check_output(
+                git_cmd + ['log', '--reverse', '--pretty=%H', commits_range])
+        commits = commits.decode().strip().split()
+    commits += commits_list
     for commit in commits:
         patch = subprocess.check_output(
                 git_cmd + ['format-patch', '%s^..%s' % (commit, commit)])
@@ -96,7 +99,9 @@ def main():
                 exit(1)
         assemble_tree(args.repo, args.series)
     else:
-        make_patches_series(args.series, args.repo, args.commits)
+        make_patches_series(
+                args.series, args.repo, commits_range=args.commits,
+                commits_list=[])
 
 if __name__ == '__main__':
     main()
