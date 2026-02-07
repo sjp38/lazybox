@@ -434,6 +434,21 @@ def pr_review_stat(review_score_commits, old_review_score_commits, do_diff):
                    len(review_score_commits.get(score, [])),
                    len(old_review_score_commits.get(score, []))))
 
+def pr_full_commits_list(commits):
+    for c in commits:
+        if c.patch_series is not None:
+            if c.patch_series_idx == 0:
+                print('  - sereis %s (%d commits)' %
+                      (c.patch_series, c.patch_series_sz))
+            print('    - %s %s (%s/%s)' %
+                  (c.hash[:12], c.subject, c.patch_series_idx,
+                   c.patch_series_sz))
+            print('      - %s' %
+                  review_score_status_map[c.review_score()])
+        else:
+            print('  - %s %s' % (c.hash[:12], c.subject))
+            print('    - review score: %d' % c.review_score())
+
 def pr_branch_stat(branch_name, commits, subsystem, filters,
                    full_commits_list, old_branch_commits):
     filtered_commits = filter_commits(commits, subsystem, filters)
@@ -457,21 +472,8 @@ def pr_branch_stat(branch_name, commits, subsystem, filters,
     pr_branch_commit_counts(branch_name, filtered_commits, series_counts,
                             old_filtered_commits, old_series_counts)
     pr_review_stat(review_score_commits, old_review_score_commits, do_diff)
-
     if full_commits_list:
-        for c in filtered_commits:
-            if c.patch_series is not None:
-                if c.patch_series_idx == 0:
-                    print('  - sereis %s (%d commits)' %
-                          (c.patch_series, c.patch_series_sz))
-                print('    - %s %s (%s/%s)' %
-                      (c.hash[:12], c.subject, c.patch_series_idx,
-                       c.patch_series_sz))
-                print('      - %s' %
-                      review_score_status_map[c.review_score()])
-            else:
-                print('  - %s %s' % (c.hash[:12], c.subject))
-                print('    - review score: %d' % c.review_score())
+        pr_full_commits_list(filtered_commits)
 
 def pr_stat(baseline, branches, branch_commits, subsystems, filters,
             full_commits_list, diff_from):
