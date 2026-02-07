@@ -270,12 +270,29 @@ class Filter:
         self.category = category
         self.args = args
 
+    def role_match(self, role, to_check, commit):
+        role_people = []
+        for subsys_name, info in commit.subsys_info_map.items():
+            if role == 'reviewer':
+                role_people += info.get('reviewer', [])
+            elif role == 'maintainer':
+                role_people += info.get('maintainer', [])
+        if role == 'norole':
+            return not to_check in role_people
+        return to_check in role_people
+
     def match(self, commit):
         if self.category == 'subsystem':
             for subsys in self.args:
                 if subsys == 'all':
                     return True
                 if subsys in commit.subsys_info_map:
+                    return True
+        elif self.category == 'author':
+            for author in self.args:
+                if author == commit.author:
+                    return True
+                if self.role_match(author, commit.author, commit):
                     return True
         return False
 
