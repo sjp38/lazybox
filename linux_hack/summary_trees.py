@@ -41,10 +41,10 @@ def set_get_args(skip_branches_args):
                         help='<allow|reject> [not] <category> [option]...')
     parser.add_argument('--save_patches', metavar='<dir>',
                         help='save commits as patches under given dir')
-    parser.add_argument('--diff_from', metavar='<file>',
-                        help='show diff of commits info')
+    parser.add_argument('--diff_old', metavar='<file>',
+                        help='old info to show diff from it')
     parser.add_argument('--list_changed_commits', action='store_true',
-                        help='Show list of changed commits form --diff_from')
+                        help='Show list of changed commits form --diff_old')
     return parser.parse_args()
 
 def args_to_filters(args):
@@ -562,9 +562,9 @@ def pr_branch_stat(branch_name, commits, subsystem, filters,
                            branch_commits, old_branch_commits)
 
 def pr_stat(baseline, branches, branch_commits, subsystems, filters,
-            full_commits_list, diff_from, list_changed_commits):
-    old_branch_commits, old_baseline = diff_from
-    if diff_from is None:
+            full_commits_list, diff_old, list_changed_commits):
+    old_branch_commits, old_baseline = diff_old
+    if diff_old is None:
         print('baseline: %s' % baseline)
     else:
         print('baseline: %s -> %s' % (old_baseline, baseline))
@@ -597,12 +597,12 @@ def summary_trees(args):
     else:
         branch_commits, baseline = get_branch_commits(
                 linux_dir, args.git_remote_name, args.baseline, branches)
-    if args.diff_from is not None:
-        diff_from = import_json_branch_commits( args.diff_from)
+    if args.diff_old is not None:
+        diff_old = import_json_branch_commits( args.diff_old)
     else:
-        diff_from = [None, None]
-    if args.list_changed_commits is True and args.diff_from is None:
-        print('--diff_from is not passed')
+        diff_old = [None, None]
+    if args.list_changed_commits is True and args.diff_old is None:
+        print('--diff_old is not passed')
         exit(1)
 
     if export_json_file is not None:
@@ -628,7 +628,7 @@ def summary_trees(args):
                     commits_range=None, commits_list=[c.hash for c in commits])
 
     pr_stat(baseline, branches, branch_commits, subsystems, filters,
-            full_commits_list, diff_from, args.list_changed_commits)
+            full_commits_list, diff_old, args.list_changed_commits)
 
 def main():
     args = set_get_args(skip_branches_args=False)
