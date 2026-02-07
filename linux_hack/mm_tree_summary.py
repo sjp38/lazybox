@@ -360,12 +360,12 @@ def pr_stat(baseline, branches, branch_commits, subsystems, filters,
                         if c.patch_series_idx == 0:
                             print('  - sereis %s (%d commits)' %
                                   (c.patch_series, c.patch_series_sz))
-                        print('    - %s (%s/%s)' %
-                              (c.subject, c.patch_series_idx,
+                        print('    - %s %s (%s/%s)' %
+                              (c.hash[:12], c.subject, c.patch_series_idx,
                                c.patch_series_sz))
                         print('      - review score: %d' % c.review_score())
                     else:
-                        print('  - %s' % c.subject)
+                        print('  - %s %s' % (c.hash[:12], c.subject))
                         print('    - review score: %d' % c.review_score())
 
 def pr_commits_per_mm_branches(
