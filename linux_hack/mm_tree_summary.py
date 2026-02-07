@@ -26,6 +26,7 @@ os.sys.path.insert(0, os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..', 'version_control')))
 
 import git_remote_name
+import patches_queue
 import review_stat
 
 def set_get_args():
@@ -51,6 +52,8 @@ def set_get_args():
                         help='Show full list of commits')
     parser.add_argument('--filter', nargs='+', action='append',
                         help='<allow|reject> [not] <category> [option]...')
+    parser.add_argument('--save_patches', metavar='<dir>',
+                        help='save commits as patches under given dir')
 
     # keywords: nobody, norole, reviewer, maintainer
     parser.add_argument('--reviewed_by', nargs='+', metavar='<person or role>',
@@ -458,6 +461,15 @@ def main():
         to_dump['branch_commits'] = branch_commits_to_dump
         with open(export_json_file, 'w') as f:
             json.dump(to_dump, f, indent=4)
+
+    save_patches = args.save_patches
+    if save_patches is not None:
+        for branch, commits in branch_commits.items():
+            patches_queue.make_patches_series(
+                    series_file=os.path.join(
+                        save_patches, '%s.series' % branch),
+                    repo=linux_dir,
+                    commits_range=None, commits_list=[c.hash for c in commits])
 
     pr_stat(baseline, branches, branch_commits, subsystems, filters,
             full_commits_list, review_scores, review_score_to_print_commits)
