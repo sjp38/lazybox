@@ -43,6 +43,8 @@ def set_get_args(skip_branches_args):
                         help='save commits as patches under given dir')
     parser.add_argument('--diff_from', metavar='<file>',
                         help='show diff of commits info')
+    parser.add_argument('--list_changed_commits', action='store_true',
+                        help='Show list of changed commits form --diff_from')
     return parser.parse_args()
 
 def args_to_filters(args):
@@ -441,8 +443,8 @@ def find_matcing_commit_branch(commit, other_branch_commits):
                 continue
             if commit.author != other_commit.author:
                 continue
-            return branch
-    return 'nowhere'
+            return other_commit, branch
+    return None, 'nowhere'
 
 def pr_full_commits_list(commits, old_branch_commits):
     for c in commits:
@@ -456,17 +458,32 @@ def pr_full_commits_list(commits, old_branch_commits):
             print('      - %s' %
                   review_score_status_map[c.review_score()])
             if old_branch_commits is not None:
-                old_branch = find_matcing_commit_branch(c, old_branch_commits)
+                _, old_branch = find_matcing_commit_branch(
+                        c, old_branch_commits)
                 print('      - was in %s' % old_branch)
         else:
             print('  - %s %s' % (c.hash[:12], c.subject))
             print('    - review score: %d' % c.review_score())
             if old_branch_commits is not None:
-                old_branch = find_matcing_commit_branch(c, old_branch_commits)
+                _, old_branch = find_matcing_commit_branch(
+                        c, old_branch_commits)
                 print('    - was in %s' % old_branch)
 
+def pr_changed_commits(branch_name, commits, old_commits, branch_commits,
+                       old_branch_commits):
+    new_commits = []
+    for commit in commits:
+        old_commit, old_branch = find_matcing_commit_branch(
+                commit, old_branch_commits)
+        if old_commit is None:
+            new_commits.append(commit)
+    print('- new commits')
+    for c in new_commits:
+        print('  - %s %s' % (c.hash[:12], c.subject))
+
 def pr_branch_stat(branch_name, commits, subsystem, filters,
-                   full_commits_list, old_branch_commits):
+                   full_commits_list, old_branch_commits, list_changed_commits,
+                   branch_commits):
     filtered_commits = filter_commits(commits, subsystem, filters)
     review_score_commits = get_review_score_commits(filtered_commits)
     series_counts = get_series_counts(filtered_commits)
@@ -490,9 +507,12 @@ def pr_branch_stat(branch_name, commits, subsystem, filters,
     pr_review_stat(review_score_commits, old_review_score_commits, do_diff)
     if full_commits_list:
         pr_full_commits_list(filtered_commits, old_branch_commits)
+    if list_changed_commits:
+        pr_changed_commits(branch_name, filtered_commits, old_filtered_commits,
+                           branch_commits, old_branch_commits)
 
 def pr_stat(baseline, branches, branch_commits, subsystems, filters,
-            full_commits_list, diff_from):
+            full_commits_list, diff_from, list_changed_commits):
     old_branch_commits, old_baseline = diff_from
     if diff_from is None:
         print('baseline: %s' % baseline)
@@ -504,7 +524,8 @@ def pr_stat(baseline, branches, branch_commits, subsystems, filters,
             print('# %s' % subsys)
         for branch in branches:
             pr_branch_stat(branch, branch_commits[branch], subsys, filters,
-                           full_commits_list, old_branch_commits)
+                           full_commits_list, old_branch_commits,
+                           list_changed_commits, branch_commits)
 
 def summary_trees(args):
     filters = args_to_filters(args.filter)
@@ -530,6 +551,9 @@ def summary_trees(args):
         diff_from = import_json_branch_commits( args.diff_from)
     else:
         diff_from = [None, None]
+    if args.list_changed_commits is True and args.diff_from is None:
+        print('--diff_from is not passed')
+        exit(1)
 
     if export_json_file is not None:
         to_dump = {'baseline': baseline}
@@ -554,7 +578,7 @@ def summary_trees(args):
                     commits_range=None, commits_list=[c.hash for c in commits])
 
     pr_stat(baseline, branches, branch_commits, subsystems, filters,
-            full_commits_list, diff_from)
+            full_commits_list, diff_from, args.list_changed_commits)
 
 def main():
     args = set_get_args(skip_branches_args=False)
