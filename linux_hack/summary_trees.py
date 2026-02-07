@@ -447,6 +447,7 @@ def find_matcing_commit_branch(commit, other_branch_commits):
     return None, 'nowhere'
 
 def pr_full_commits_list(commits, old_branch_commits):
+    print('- full commits list')
     for c in commits:
         if c.patch_series is not None:
             if c.patch_series_idx == 0:
