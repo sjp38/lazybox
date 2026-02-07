@@ -398,21 +398,23 @@ def get_review_score_commits(commits):
         review_score_commits[review_score].append(commit)
     return review_score_commits
 
+def get_series_counts(commits):
+    nr_series = len([c for c in commits if c.patch_series is not None
+                      and c.patch_series_idx in [None, 0]])
+    nr_series_patches = len(
+            [c for c in commits if c.patch_series is not None])
+    nr_non_series_patches = len(commits) - nr_series_patches
+    return nr_series, nr_series_patches, nr_non_series_patches
+
 def pr_branch_stat(branch_name, commits, subsystem, filters,
                    full_commits_list):
     filtered_commits = filter_commits(commits, subsystem, filters)
     review_score_commits = get_review_score_commits(filtered_commits)
-    nr_series_patches = len(
-            [c for c in filtered_commits if c.patch_series is not None])
-    nr_patch_series = len(
-            [c for c in filtered_commits
-             if c.patch_series is not None and
-             c.patch_series_idx in [None, 0]])
-    nr_non_series_patches = len(filtered_commits) - nr_series_patches
+    series_counts = get_series_counts(filtered_commits)
 
     print('%s: %d total, %d (%d) series, %d non-series commits' %
-          (branch_name, len(filtered_commits), nr_patch_series,
-           nr_series_patches, nr_non_series_patches))
+          (branch_name, len(filtered_commits), series_counts[0],
+           series_counts[1], series_counts[2]))
     print('- author/reviewer role stat')
     for score in sorted(review_score_commits.keys()):
         print('  - %s: %d commits' %
