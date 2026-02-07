@@ -10,9 +10,16 @@ fi
 bindir=$(dirname "$0")
 mm_tree_summary_py="$bindir/mm_tree_summary.py"
 linux_dir=$1
-snapshot_dir=$2
+snapshot_dir=$(realpath $2)
 summary_dir=${snapshot_dir}/summary
 patches_dir=${snapshot_dir}/patches
+
+if [ -d "${snapshot_dir}/.git" ]
+then
+	is_git="true"
+else
+	is_git="false"
+fi
 
 if [ ! -d "$summary_dir" ]
 then
@@ -32,6 +39,11 @@ then
 	cp "$exported_commits_info" "$old_info"
 else
 	old_info=""
+fi
+
+if [ "$is_git" = "true" ]
+then
+	git -C "$snapshot_dir" rm -r "$patches_dir" "$summary_dir"
 fi
 
 mm_tree_summary_py="$bindir/mm_tree_summary.py"
@@ -102,3 +114,13 @@ do
 			> "${subsys_dir}/changes_from_last_update"
 	fi
 done
+
+if [ "$is_git" = "true" ]
+then
+	git -C "$snapshot_dir" add "$patches_dir" "$summary_dir"
+	git commit -as -m "update
+
+This commit was made via $(basename $0).
+"
+fi
+
