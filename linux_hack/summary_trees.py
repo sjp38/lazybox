@@ -48,13 +48,6 @@ def set_get_args(skip_branches_args):
                         help='<allow|reject> [not] <category> [option]...')
     parser.add_argument('--save_patches', metavar='<dir>',
                         help='save commits as patches under given dir')
-
-    # keywords: nobody, norole, reviewer, maintainer
-    parser.add_argument('--reviewed_by', nargs='+', metavar='<person or role>',
-                        help='filter commits by reviewers')
-    parser.add_argument(
-            '--not_reviewed_by', nargs='+', metavar='<person or role>',
-            help='filter commits by reviewers')
     return parser.parse_args()
 
 def args_to_filters(args):
