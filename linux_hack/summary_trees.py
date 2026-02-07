@@ -39,9 +39,6 @@ def set_get_args(skip_branches_args):
                         metavar='<score>', default=[0, 1, 2, 3, 10, 11, 12, 13,
                                                     20, 21, 22, 23],
                         help='review scores to show stat for')
-    parser.add_argument('--review_score_to_print_commits', nargs='+', type=int,
-                        metavar='<score>',
-                        help='list commits of this review score')
     parser.add_argument('--full_commits_list', action='store_true',
                         help='Show full list of commits')
     parser.add_argument('--filter', nargs='+', action='append',
@@ -387,7 +384,7 @@ def should_filter_out(commit, filters):
     return filters[-1].allow is True
 
 def pr_branch_stat(branch_name, commits, subsystem, filters, full_commits_list,
-                   review_scores, review_score_to_print_commits):
+                   review_scores):
     filtered_commits = []
     review_score_commits = {}
     nr_patch_series = 0
@@ -419,10 +416,6 @@ def pr_branch_stat(branch_name, commits, subsystem, filters, full_commits_list,
         print('  - %s: %d commits' %
               (review_score_author_reviewer_map[score],
                len(review_score_commits[score])))
-        if review_score_to_print_commits is not None and \
-                score in review_score_to_print_commits:
-            for c in review_score_commits[score]:
-                print('    - %s ("%s")' % (c.hash[:12], c.subject))
     if full_commits_list:
         for c in filtered_commits:
             if c.patch_series is not None:
@@ -439,8 +432,7 @@ def pr_branch_stat(branch_name, commits, subsystem, filters, full_commits_list,
                 print('    - review score: %d' % c.review_score())
 
 def pr_stat(baseline, branches, branch_commits, subsystems, filters,
-            full_commits_list, review_scores, review_score_to_print_commits,
-            diff_from):
+            full_commits_list, review_scores, diff_from):
     old_branch_commits, old_baseline = diff_from
     if diff_from is None:
         print('baseline: %s' % baseline)
@@ -452,8 +444,7 @@ def pr_stat(baseline, branches, branch_commits, subsystems, filters,
             print('# %s' % subsys)
         for branch in branches:
             pr_branch_stat(branch, branch_commits[branch], subsys, filters,
-                           full_commits_list, review_scores,
-                           review_score_to_print_commits)
+                           full_commits_list, review_scores)
 
 def summary_trees(args):
     filters = args_to_filters(args.filter)
@@ -465,7 +456,6 @@ def summary_trees(args):
     filters = filters
     full_commits_list = args.full_commits_list
     review_scores = args.review_score
-    review_score_to_print_commits = args.review_score_to_print_commits
 
     # it is unclear what branch is base of what branch.  Just give commit to
     # unique branch, with the priorities.  Hotfixes are always important, and
@@ -505,9 +495,7 @@ def summary_trees(args):
                     commits_range=None, commits_list=[c.hash for c in commits])
 
     pr_stat(baseline, branches, branch_commits, subsystems, filters,
-            full_commits_list, review_scores, review_score_to_print_commits,
-            diff_from)
-
+            full_commits_list, review_scores, diff_from)
 
 def main():
     args = set_get_args(skip_branches_args=False)
