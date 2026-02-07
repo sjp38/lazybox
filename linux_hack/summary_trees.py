@@ -394,20 +394,21 @@ def pr_branch_stat(branch_name, commits, subsystem, filters, full_commits_list,
     nr_series_patches = 0
     nr_non_series_patches = 0
     for commit in commits:
-        if subsystem == 'all' or subsystem in commit.subsys_info_map:
-            if should_filter_out(commit, filters):
-                continue
-            filtered_commits.append(commit)
-            review_score = commit.review_score()
-            if not review_score in review_score_commits:
-                review_score_commits[review_score] = []
-            review_score_commits[review_score].append(commit)
-            if commit.patch_series is not None:
-                nr_series_patches += 1
-                if commit.patch_series_idx in [None, 0]:
-                    nr_patch_series += 1
-            else:
-                nr_non_series_patches += 1
+        if subsystem != 'all' and not subsystem in commit.subsys_info_map:
+            continue
+        if should_filter_out(commit, filters):
+            continue
+        filtered_commits.append(commit)
+        review_score = commit.review_score()
+        if not review_score in review_score_commits:
+            review_score_commits[review_score] = []
+        review_score_commits[review_score].append(commit)
+        if commit.patch_series is not None:
+            nr_series_patches += 1
+            if commit.patch_series_idx in [None, 0]:
+                nr_patch_series += 1
+        else:
+            nr_non_series_patches += 1
     print('%s: %d total, %d (%d) series, %d non-series commits' %
           (branch_name, len(filtered_commits), nr_patch_series,
            nr_series_patches, nr_non_series_patches))
