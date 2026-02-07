@@ -12,10 +12,16 @@ mm_tree_summary_py="$bindir/mm_tree_summary.py"
 linux_dir=$1
 snapshot_dir=$2
 summary_dir=${snapshot_dir}/summary
+patches_dir=${snapshot_dir}/patches
 
 if [ ! -d "$summary_dir" ]
 then
 	mkdir -p "$summary_dir"
+fi
+
+if [ ! -d "$patches_dir" ]
+then
+	mkdir -p "$patches_dir"
 fi
 
 exported_commits_info=${summary_dir}/commits_info.json
@@ -32,7 +38,7 @@ mm_tree_summary_py="$bindir/mm_tree_summary.py"
 
 "$mm_tree_summary_py" --linux_dir "$linux_dir" \
 	--export_info "${summary_dir}/commits_info.json" \
-	--save_patches "$snapshot_dir" > /dev/null
+	--save_patches "$patches_dir" > /dev/null
 
 "$mm_tree_summary_py" --linux_dir "$linux_dir" \
 	--import_info "${summary_dir}/commits_info.json" \
