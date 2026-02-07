@@ -414,8 +414,7 @@ def pr_stat(baseline, branches, branch_commits, subsystems, filters,
                         print('  - %s %s' % (c.hash[:12], c.subject))
                         print('    - review score: %d' % c.review_score())
 
-def main():
-    args = set_get_args(skip_branches_args=False)
+def summary_trees(args):
     filters = args_to_filters(args.filter)
 
     linux_dir = args.linux_dir
@@ -463,6 +462,10 @@ def main():
     pr_stat(baseline, branches, branch_commits, subsystems, filters,
             full_commits_list, review_scores, review_score_to_print_commits)
 
+
+def main():
+    args = set_get_args(skip_branches_args=False)
+    summary_trees(args)
 
 if __name__ == '__main__':
     main()
