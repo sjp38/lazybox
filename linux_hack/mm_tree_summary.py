@@ -262,11 +262,13 @@ def get_mm_branch_commits(linux_dir, branches):
 
 class Filter:
     allow = None
+    matching = None
     category = None
     args = None
 
-    def __init__(self, allow, category, args):
+    def __init__(self, allow, matching, category, args):
         self.allow = allow
+        self.matching = matching
         self.category = category
         self.args = args
 
@@ -285,27 +287,27 @@ class Filter:
         if self.category == 'subsystem':
             for subsys in self.args:
                 if subsys == 'all':
-                    return True
+                    return self.matching
                 if subsys in commit.subsys_info_map:
-                    return True
+                    return self.matching
         elif self.category == 'author':
             for author in self.args:
                 if author == commit.author:
-                    return True
+                    return self.matching
                 if self.role_match(author, commit.author, commit):
-                    return True
+                    return self.matching
         elif self.category == 'reviewer':
             reviewers = commit.tags.get('Reviewed-by:', [])
             reviewers += commit.tags.get('Acked-by:', [])
             for reviewer in self.args:
                 if reviewer == 'nobody' and reviewers == []:
-                    return True
+                    return self.matching
                 if reviewer in reviewers:
-                    return True
+                    return self.matching
                 for r in reviewers:
                     if self.role_match(reviewer, r, commit):
-                        return True
-        return False
+                        return self.matching
+        return not self.matching
 
 def should_filter_out(commit, filters):
     if len(filters) == 0:
@@ -417,7 +419,7 @@ def main():
     parser.add_argument('--full_commits_list', action='store_true',
                         help='Show full list of commits')
     parser.add_argument('--filter', nargs='+', action='append',
-                        help='<allow|reject> <category> [option]...')
+                        help='<allow|reject> [not] <category> [option]...')
 
     # keywords: nobody, norole, reviewer, maintainer
     parser.add_argument('--reviewed_by', nargs='+', metavar='<person or role>',
@@ -437,10 +439,16 @@ def main():
             if not allow_reject in ['allow', 'reject']:
                 print('wrong allow_reject: %s' % filter_fields)
                 exit(1)
-            category = filter_fields[1]
-            filter_args = filter_fields[2:]
+            if filter_fields[1] == 'not':
+                matching = False
+                fields = filter_fields[2:]
+            else:
+                matching = True
+                fields = filter_fields[1:]
+            category = fields[0]
+            filter_args = fields[1:]
             filters.append(Filter(
-                allow_reject == 'allow', category, filter_args))
+                allow_reject == 'allow', matching, category, filter_args))
 
     pr_commits_per_mm_branches(
             args.linux_dir, args.export_info, args.import_info, args.subsystem,
