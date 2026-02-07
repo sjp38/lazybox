@@ -406,6 +406,19 @@ def get_series_counts(commits):
     nr_non_series_patches = len(commits) - nr_series_patches
     return nr_series, nr_series_patches, nr_non_series_patches
 
+def pr_branch_commit_counts(branch_name, commits, series_counts,
+                            old_commits, old_series_counts):
+    if old_commits is None:
+        print('%s: %d total, %d (%d) series, %d non-series commits' %
+              (branch_name, len(commits), series_counts[0],
+               series_counts[1], series_counts[2]))
+    else:
+        print('%s: %d -> %d commits' %
+              (branch_name, len(old_commits), len(commits)))
+        print('- series: %d (%d) -> %d (%d)' %
+              (old_series_counts[0], old_series_counts[1], series_counts[0],
+               series_counts[1]))
+
 def pr_branch_stat(branch_name, commits, subsystem, filters,
                    full_commits_list, old_branch_commits):
     filtered_commits = filter_commits(commits, subsystem, filters)
@@ -420,18 +433,13 @@ def pr_branch_stat(branch_name, commits, subsystem, filters,
         old_series_counts = get_series_counts(old_filtered_commits)
     else:
         old_commits = None
+        old_filtered_commits = None
         old_review_score_commits = {}
+        old_series_counts = []
 
-    if old_commits is None:
-        print('%s: %d total, %d (%d) series, %d non-series commits' %
-              (branch_name, len(filtered_commits), series_counts[0],
-               series_counts[1], series_counts[2]))
-    else:
-        print('%s: %d -> %d commits' %
-              (branch_name, len(old_filtered_commits), len(filtered_commits)))
-        print('- series: %d (%d) -> %d (%d)' %
-              (old_series_counts[0], old_series_counts[1], series_counts[0],
-               series_counts[1]))
+    pr_branch_commit_counts(branch_name, filtered_commits, series_counts,
+                            old_filtered_commits, old_series_counts)
+
     print('- author/reviewer role stat')
     scores = set(list(review_score_commits.keys()) +
                  list(old_review_score_commits.keys()))
