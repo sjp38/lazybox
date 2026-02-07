@@ -294,6 +294,17 @@ class Filter:
                     return True
                 if self.role_match(author, commit.author, commit):
                     return True
+        elif self.category == 'reviewer':
+            reviewers = commit.tags.get('Reviewed-by:', [])
+            reviewers += commit.tags.get('Acked-by:', [])
+            for reviewer in self.args:
+                if reviewer == 'nobody' and reviewers == []:
+                    return True
+                if reviewer in reviewers:
+                    return True
+                for r in reviewers:
+                    if self.role_match(reviewer, r, commit):
+                        return True
         return False
 
 def should_filter_out(commit, filters):
