@@ -28,6 +28,61 @@ os.sys.path.insert(0, os.path.abspath(
 import git_remote_name
 import review_stat
 
+def set_get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--linux_dir', metavar='<dir>', default='./',
+                        help='path to linux local repo')
+    parser.add_argument(
+            '--export_info', metavar='<file>',
+            help='export commits information in json for quick reuse')
+    parser.add_argument('--import_info', metavar='<file>',
+                        help='--export_info generated file to reuse')
+    parser.add_argument('--subsystem', metavar='<subsystem name>', nargs='+',
+                        default=['all'],
+                        help='subsystem to show the summary for')
+    parser.add_argument('--review_score', nargs='+', type=int,
+                        metavar='<score>', default=[0, 1, 2, 3, 10, 11, 12, 13,
+                                                    20, 21, 22, 23],
+                        help='review scores to show stat for')
+    parser.add_argument('--review_score_to_print_commits', nargs='+', type=int,
+                        metavar='<score>',
+                        help='list commits of this review score')
+    parser.add_argument('--full_commits_list', action='store_true',
+                        help='Show full list of commits')
+    parser.add_argument('--filter', nargs='+', action='append',
+                        help='<allow|reject> [not] <category> [option]...')
+
+    # keywords: nobody, norole, reviewer, maintainer
+    parser.add_argument('--reviewed_by', nargs='+', metavar='<person or role>',
+                        help='filter commits by reviewers')
+    parser.add_argument(
+            '--not_reviewed_by', nargs='+', metavar='<person or role>',
+            help='filter commits by reviewers')
+    return parser.parse_args()
+
+def args_to_filters(args):
+    filters = []
+    if args is not None:
+        for filter_fields in args:
+            if len(filter_fields) < 2:
+                print('<2 fields: %s' % filter_fields)
+                exit(1)
+            allow_reject = filter_fields[0]
+            if not allow_reject in ['allow', 'reject']:
+                print('wrong allow_reject: %s' % filter_fields)
+                exit(1)
+            if filter_fields[1] == 'not':
+                matching = False
+                fields = filter_fields[2:]
+            else:
+                matching = True
+                fields = filter_fields[1:]
+            category = fields[0]
+            filter_args = fields[1:]
+            filters.append(Filter(
+                allow_reject == 'allow', matching, category, filter_args))
+    return filters
+
 class Commit:
     hash = None
     author = None
@@ -370,9 +425,19 @@ def pr_stat(baseline, branches, branch_commits, subsystems, filters,
                         print('  - %s %s' % (c.hash[:12], c.subject))
                         print('    - review score: %d' % c.review_score())
 
-def pr_commits_per_mm_branches(
-        linux_dir, export_json_file, import_json_file, subsystems, filters,
-        full_commits_list, review_scores, review_score_to_print_commits):
+def main():
+    args = set_get_args()
+    filters = args_to_filters(args.filter)
+
+    linux_dir = args.linux_dir
+    export_json_file = args.export_info
+    import_json_file = args.import_info
+    subsystems = args.subsystem
+    filters = filters
+    full_commits_list = args.full_commits_list
+    review_scores = args.review_score
+    review_score_to_print_commits = args.review_score_to_print_commits
+
     # it is unclear what branch is base of what branch.  Just give commit to
     # unique branch, with the priorities.  Hotfixes are always important, and
     # mm is more important than nonmm.
@@ -397,67 +462,6 @@ def pr_commits_per_mm_branches(
     pr_stat(baseline, branches, branch_commits, subsystems, filters,
             full_commits_list, review_scores, review_score_to_print_commits)
 
-def args_to_filters(args):
-    filters = []
-    if args is not None:
-        for filter_fields in args:
-            if len(filter_fields) < 2:
-                print('<2 fields: %s' % filter_fields)
-                exit(1)
-            allow_reject = filter_fields[0]
-            if not allow_reject in ['allow', 'reject']:
-                print('wrong allow_reject: %s' % filter_fields)
-                exit(1)
-            if filter_fields[1] == 'not':
-                matching = False
-                fields = filter_fields[2:]
-            else:
-                matching = True
-                fields = filter_fields[1:]
-            category = fields[0]
-            filter_args = fields[1:]
-            filters.append(Filter(
-                allow_reject == 'allow', matching, category, filter_args))
-    return filters
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--linux_dir', metavar='<dir>', default='./',
-                        help='path to linux local repo')
-    parser.add_argument(
-            '--export_info', metavar='<file>',
-            help='export commits information in json for quick reuse')
-    parser.add_argument('--import_info', metavar='<file>',
-                        help='--export_info generated file to reuse')
-    parser.add_argument('--subsystem', metavar='<subsystem name>', nargs='+',
-                        default=['all'],
-                        help='subsystem to show the summary for')
-    parser.add_argument('--review_score', nargs='+', type=int,
-                        metavar='<score>', default=[0, 1, 2, 3, 10, 11, 12, 13,
-                                                    20, 21, 22, 23],
-                        help='review scores to show stat for')
-    parser.add_argument('--review_score_to_print_commits', nargs='+', type=int,
-                        metavar='<score>',
-                        help='list commits of this review score')
-    parser.add_argument('--full_commits_list', action='store_true',
-                        help='Show full list of commits')
-    parser.add_argument('--filter', nargs='+', action='append',
-                        help='<allow|reject> [not] <category> [option]...')
-
-    # keywords: nobody, norole, reviewer, maintainer
-    parser.add_argument('--reviewed_by', nargs='+', metavar='<person or role>',
-                        help='filter commits by reviewers')
-    parser.add_argument(
-            '--not_reviewed_by', nargs='+', metavar='<person or role>',
-            help='filter commits by reviewers')
-    args = parser.parse_args()
-
-    filters = args_to_filters(args.filter)
-
-    pr_commits_per_mm_branches(
-            args.linux_dir, args.export_info, args.import_info, args.subsystem,
-            filters, args.full_commits_list, args.review_score,
-            args.review_score_to_print_commits)
 
 if __name__ == '__main__':
     main()
