@@ -23,16 +23,6 @@ else
 	is_git="false"
 fi
 
-if [ ! -d "$summary_dir" ]
-then
-	mkdir -p "$summary_dir"
-fi
-
-if [ ! -d "$patches_dir" ]
-then
-	mkdir -p "$patches_dir"
-fi
-
 exported_commits_info=${summary_dir}/commits_info.json
 
 if [ -f "$exported_commits_info" ]
@@ -49,6 +39,16 @@ then
 	then
 		echo "initial run?"
 	fi
+fi
+
+if [ ! -d "$summary_dir" ]
+then
+	mkdir -p "$summary_dir"
+fi
+
+if [ ! -d "$patches_dir" ]
+then
+	mkdir -p "$patches_dir"
 fi
 
 mm_tree_summary_py="$bindir/mm_tree_summary.py"
