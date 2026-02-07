@@ -386,6 +386,57 @@ def should_filter_out(commit, filters):
             return not filter.allow
     return filters[-1].allow is True
 
+def pr_branch_stat(branch_name, commits, subsystem, filters, full_commits_list,
+                   review_scores, review_score_to_print_commits):
+    filtered_commits = []
+    review_score_commits = {}
+    nr_patch_series = 0
+    nr_series_patches = 0
+    nr_non_series_patches = 0
+    for commit in commits:
+        if subsystem == 'all' or subsystem in commit.subsys_info_map:
+            if should_filter_out(commit, filters):
+                continue
+            filtered_commits.append(commit)
+            review_score = commit.review_score()
+            if not review_score in review_score_commits:
+                review_score_commits[review_score] = []
+            review_score_commits[review_score].append(commit)
+            if commit.patch_series is not None:
+                nr_series_patches += 1
+                if commit.patch_series_idx in [None, 0]:
+                    nr_patch_series += 1
+            else:
+                nr_non_series_patches += 1
+    print('%s: %d total, %d (%d) series, %d non-series commits' %
+          (branch_name, len(filtered_commits), nr_patch_series,
+           nr_series_patches, nr_non_series_patches))
+    print('- author/reviewer role stat')
+    for score in sorted(review_score_commits.keys()):
+        if not score in review_scores:
+            continue
+        print('  - %s: %d commits' %
+              (review_score_author_reviewer_map[score],
+               len(review_score_commits[score])))
+        if review_score_to_print_commits is not None and \
+                score in review_score_to_print_commits:
+            for c in review_score_commits[score]:
+                print('    - %s ("%s")' % (c.hash[:12], c.subject))
+    if full_commits_list:
+        for c in filtered_commits:
+            if c.patch_series is not None:
+                if c.patch_series_idx == 0:
+                    print('  - sereis %s (%d commits)' %
+                          (c.patch_series, c.patch_series_sz))
+                print('    - %s %s (%s/%s)' %
+                      (c.hash[:12], c.subject, c.patch_series_idx,
+                       c.patch_series_sz))
+                print('      - %s' %
+                      review_score_status_map[c.review_score()])
+            else:
+                print('  - %s %s' % (c.hash[:12], c.subject))
+                print('    - review score: %d' % c.review_score())
+
 def pr_stat(baseline, branches, branch_commits, subsystems, filters,
             full_commits_list, review_scores, review_score_to_print_commits,
             diff_from):
@@ -399,54 +450,9 @@ def pr_stat(baseline, branches, branch_commits, subsystems, filters,
             print()
             print('# %s' % subsys)
         for branch in branches:
-            filtered_commits = []
-            review_score_commits = {}
-            nr_patch_series = 0
-            nr_series_patches = 0
-            nr_non_series_patches = 0
-            for commit in branch_commits[branch]:
-                if subsys == 'all' or subsys in commit.subsys_info_map:
-                    if should_filter_out(commit, filters):
-                        continue
-                    filtered_commits.append(commit)
-                    review_score = commit.review_score()
-                    if not review_score in review_score_commits:
-                        review_score_commits[review_score] = []
-                    review_score_commits[review_score].append(commit)
-                    if commit.patch_series is not None:
-                        nr_series_patches += 1
-                        if commit.patch_series_idx in [None, 0]:
-                            nr_patch_series += 1
-                    else:
-                        nr_non_series_patches += 1
-            print('%s: %d total, %d (%d) series, %d non-series commits' %
-                  (branch, len(filtered_commits), nr_patch_series,
-                   nr_series_patches, nr_non_series_patches))
-            print('- author/reviewer role stat')
-            for score in sorted(review_score_commits.keys()):
-                if not score in review_scores:
-                    continue
-                print('  - %s: %d commits' %
-                      (review_score_author_reviewer_map[score],
-                       len(review_score_commits[score])))
-                if review_score_to_print_commits is not None and \
-                        score in review_score_to_print_commits:
-                    for c in review_score_commits[score]:
-                        print('    - %s ("%s")' % (c.hash[:12], c.subject))
-            if full_commits_list:
-                for c in filtered_commits:
-                    if c.patch_series is not None:
-                        if c.patch_series_idx == 0:
-                            print('  - sereis %s (%d commits)' %
-                                  (c.patch_series, c.patch_series_sz))
-                        print('    - %s %s (%s/%s)' %
-                              (c.hash[:12], c.subject, c.patch_series_idx,
-                               c.patch_series_sz))
-                        print('      - %s' %
-                              review_score_status_map[c.review_score()])
-                    else:
-                        print('  - %s %s' % (c.hash[:12], c.subject))
-                        print('    - review score: %d' % c.review_score())
+            pr_branch_stat(branch, branch_commits[branch], subsys, filters,
+                           full_commits_list, review_scores,
+                           review_score_to_print_commits)
 
 def summary_trees(args):
     filters = args_to_filters(args.filter)
