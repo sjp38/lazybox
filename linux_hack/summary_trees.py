@@ -80,6 +80,21 @@ def args_to_filters(args):
                 allow_reject == 'allow', matching, category, filter_args))
     return filters
 
+review_score_status_map = {
+        0: 'Authored by no role player, reviewed by nobody',
+        1: 'Authored by no role player, reviewed by no role player',
+        2: 'Authored by no role player, reviewed by a reviewer',
+        3: 'Authored by no role player, reviewed by a maintainer',
+        10: 'Authored by a reviewer, reviewed by nobody',
+        11: 'Authored by a reviewer, reviewed by no role player',
+        12: 'Authored by a reviewer, reviewed by a reviewer',
+        13: 'Authored by a reviewer, reviewed by a maintainer',
+        20: 'Authored by a maintainer, reviewed by nobody',
+        21: 'Authored by a maintainer, reviewed by no role player',
+        22: 'Authored by a maintainer, reviewed by a reviewer',
+        23: 'Authored by a maintainer, reviewed by a maintainer',
+        }
+
 class Commit:
     hash = None
     author = None
@@ -395,8 +410,9 @@ def pr_stat(baseline, branches, branch_commits, subsystems, filters,
             for score in sorted(review_score_commits.keys()):
                 if not score in review_scores:
                     continue
-                print('  - review score %d: %d commits' %
-                      (score, len(review_score_commits[score])))
+                print('  - %s: %d commits' %
+                      (review_score_status_map[score],
+                       len(review_score_commits[score])))
                 if review_score_to_print_commits is not None and \
                         score in review_score_to_print_commits:
                     for c in review_score_commits[score]:
@@ -410,7 +426,8 @@ def pr_stat(baseline, branches, branch_commits, subsystems, filters,
                         print('    - %s %s (%s/%s)' %
                               (c.hash[:12], c.subject, c.patch_series_idx,
                                c.patch_series_sz))
-                        print('      - review score: %d' % c.review_score())
+                        print('      - %s' %
+                              review_score_status_map[c.review_score()])
                     else:
                         print('  - %s %s' % (c.hash[:12], c.subject))
                         print('    - review score: %d' % c.review_score())
