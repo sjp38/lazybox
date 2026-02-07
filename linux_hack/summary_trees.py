@@ -422,19 +422,21 @@ def pr_branch_commit_counts(branch_name, commits, series_counts,
                series_counts[1]))
 
 def pr_review_stat(review_score_commits, old_review_score_commits, do_diff):
-    print('- author/reviewer role stat')
+    lines = ['- author/reviewer role stat']
     scores = set(list(review_score_commits.keys()) +
                  list(old_review_score_commits.keys()))
     for score in sorted(scores):
         if not do_diff:
-            print('  - %s: %d commits' %
+            lines.append('  - %s: %d commits' %
                   (review_score_author_reviewer_map[score],
                    len(review_score_commits[score])))
         else:
-            print('  - %s: %d -> %d commits' %
+            lines.append('  - %s: %d -> %d commits' %
                   (review_score_author_reviewer_map[score],
                    len(review_score_commits.get(score, [])),
                    len(old_review_score_commits.get(score, []))))
+    if len(lines) > 1:
+        print('\n'.join(lines))
 
 def find_matcing_commit_branch(commit, other_branch_commits):
     for branch, other_commits in other_branch_commits.items():
@@ -447,6 +449,8 @@ def find_matcing_commit_branch(commit, other_branch_commits):
     return None, 'nowhere'
 
 def pr_full_commits_list(commits, old_branch_commits):
+    if len(commits) == 0:
+        return
     print('- full commits list')
     for c in commits:
         if c.patch_series is not None:
