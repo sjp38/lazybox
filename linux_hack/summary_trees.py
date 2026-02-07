@@ -379,29 +379,37 @@ def should_filter_out(commit, filters):
             return not filter.allow
     return filters[-1].allow is True
 
-def pr_branch_stat(branch_name, commits, subsystem, filters,
-                   full_commits_list):
+def filter_commits(commits, subsystem, filters):
     filtered_commits = []
-    review_score_commits = {}
-    nr_patch_series = 0
-    nr_series_patches = 0
-    nr_non_series_patches = 0
     for commit in commits:
         if subsystem != 'all' and not subsystem in commit.subsys_info_map:
             continue
         if should_filter_out(commit, filters):
             continue
         filtered_commits.append(commit)
+    return filtered_commits
+
+def get_review_score_commits(commits):
+    review_score_commits = {}
+    for commit in commits:
         review_score = commit.review_score()
         if not review_score in review_score_commits:
             review_score_commits[review_score] = []
         review_score_commits[review_score].append(commit)
-        if commit.patch_series is not None:
-            nr_series_patches += 1
-            if commit.patch_series_idx in [None, 0]:
-                nr_patch_series += 1
-        else:
-            nr_non_series_patches += 1
+    return review_score_commits
+
+def pr_branch_stat(branch_name, commits, subsystem, filters,
+                   full_commits_list):
+    filtered_commits = filter_commits(commits, subsystem, filters)
+    review_score_commits = get_review_score_commits(filtered_commits)
+    nr_series_patches = len(
+            [c for c in filtered_commits if c.patch_series is not None])
+    nr_patch_series = len(
+            [c for c in filtered_commits
+             if c.patch_series is not None and
+             c.patch_series_idx in [None, 0]])
+    nr_non_series_patches = len(filtered_commits) - nr_series_patches
+
     print('%s: %d total, %d (%d) series, %d non-series commits' %
           (branch_name, len(filtered_commits), nr_patch_series,
            nr_series_patches, nr_non_series_patches))
