@@ -397,6 +397,29 @@ def pr_commits_per_mm_branches(
     pr_stat(baseline, branches, branch_commits, subsystems, filters,
             full_commits_list, review_scores, review_score_to_print_commits)
 
+def args_to_filters(args):
+    filters = []
+    if args is not None:
+        for filter_fields in args:
+            if len(filter_fields) < 2:
+                print('<2 fields: %s' % filter_fields)
+                exit(1)
+            allow_reject = filter_fields[0]
+            if not allow_reject in ['allow', 'reject']:
+                print('wrong allow_reject: %s' % filter_fields)
+                exit(1)
+            if filter_fields[1] == 'not':
+                matching = False
+                fields = filter_fields[2:]
+            else:
+                matching = True
+                fields = filter_fields[1:]
+            category = fields[0]
+            filter_args = fields[1:]
+            filters.append(Filter(
+                allow_reject == 'allow', matching, category, filter_args))
+    return filters
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--linux_dir', metavar='<dir>', default='./',
@@ -429,26 +452,7 @@ def main():
             help='filter commits by reviewers')
     args = parser.parse_args()
 
-    filters = []
-    if args.filter is not None:
-        for filter_fields in args.filter:
-            if len(filter_fields) < 2:
-                print('<2 fields: %s' % filter_fields)
-                exit(1)
-            allow_reject = filter_fields[0]
-            if not allow_reject in ['allow', 'reject']:
-                print('wrong allow_reject: %s' % filter_fields)
-                exit(1)
-            if filter_fields[1] == 'not':
-                matching = False
-                fields = filter_fields[2:]
-            else:
-                matching = True
-                fields = filter_fields[1:]
-            category = fields[0]
-            filter_args = fields[1:]
-            filters.append(Filter(
-                allow_reject == 'allow', matching, category, filter_args))
+    filters = args_to_filters(args.filter)
 
     pr_commits_per_mm_branches(
             args.linux_dir, args.export_info, args.import_info, args.subsystem,
