@@ -464,6 +464,10 @@ def main():
 
     save_patches = args.save_patches
     if save_patches is not None:
+        if not os.path.isfile(os.path.join(linux_dir, 'MAINTAINERS')):
+            print('--save_patches is given but MAINTAINERS not found')
+            exit(1)
+
         for branch, commits in branch_commits.items():
             patches_queue.make_patches_series(
                     series_file=os.path.join(
