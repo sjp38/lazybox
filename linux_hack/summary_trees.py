@@ -569,7 +569,7 @@ def pr_branch_stat(branch_name, commits, subsystem, filters,
 def pr_stat(baseline, branches, branch_commits, subsystems, filters,
             full_commits_list, diff_old, list_changed_commits):
     old_branch_commits, old_baseline = diff_old
-    if diff_old is [None, None]:
+    if old_branch_commits is None:
         print('baseline: %s' % baseline)
     else:
         print('baseline: %s -> %s' % (old_baseline, baseline))
