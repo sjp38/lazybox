@@ -468,7 +468,7 @@ def pr_full_commits_list(commits, old_branch_commits):
                 print('      - was in %s' % old_branch)
         else:
             print('  - %s %s' % (c.hash[:12], c.subject))
-            print('    - review score: %d' % c.review_score())
+            print('    - %s' % review_score_status_map[c.review_score()])
             if old_branch_commits is not None:
                 _, old_branch = find_matcing_commit_branch(
                         c, old_branch_commits)
