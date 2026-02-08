@@ -455,7 +455,7 @@ def pr_full_commits_list(commits, old_branch_commits):
     for c in commits:
         if c.patch_series is not None:
             if c.patch_series_idx == 0:
-                print('  - sereis %s (%d commits)' %
+                print('  - series %s (%d commits)' %
                       (c.patch_series, c.patch_series_sz))
             print('    - %s %s (%s/%s)' %
                   (c.hash[:12], c.subject, c.patch_series_idx,
