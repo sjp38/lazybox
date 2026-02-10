@@ -433,8 +433,9 @@ def pr_review_stat(review_score_commits, old_review_score_commits, do_diff):
         else:
             lines.append('  - %s: %d -> %d commits' %
                   (review_score_author_reviewer_map[score],
-                   len(review_score_commits.get(score, [])),
-                   len(old_review_score_commits.get(score, []))))
+                   len(old_review_score_commits.get(score, [])),
+                   len(review_score_commits.get(score, []))
+                   ))
     if len(lines) > 1:
         print('\n'.join(lines))
 
