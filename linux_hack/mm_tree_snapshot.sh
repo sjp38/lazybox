@@ -143,6 +143,8 @@ do
 	fi
 done
 
+rm "$old_info"
+
 if [ "$is_git" = "true" ]
 then
 	git -C "$snapshot_dir" add "$patches_dir" "$summary_dir"
