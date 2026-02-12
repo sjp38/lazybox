@@ -119,7 +119,7 @@ for subsystem in DAMON \
 	"ZSWAP COMPRESSED SWAP CACHING" \
 	"ZRAM COMPRESSED RAM BLOCK DEVICE DRVIER"
 do
-	subsys_dir="${summary_dir}/$subsystem"
+	subsys_dir="${summary_dir}/subsystem/$subsystem"
 	mkdir -p "$subsys_dir"
 
 	"$mm_tree_summary_py" --linux_dir "$linux_dir" \
