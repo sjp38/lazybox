@@ -58,6 +58,8 @@ def make_patches_series(series_file, repo, commits_range, commits_list=[]):
                 git_cmd + ['log', '--reverse', '--pretty=%H', commits_range])
         commits = commits.decode().strip().split()
     commits += commits_list
+    if len(commits) == 0:
+        return
     for commit in commits:
         patch = subprocess.check_output(
                 git_cmd + ['format-patch', '%s^..%s' % (commit, commit)])
