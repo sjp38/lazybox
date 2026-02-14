@@ -411,16 +411,16 @@ def get_series_counts(commits):
 def pr_branch_commit_counts(branch_name, commits, series_counts,
                             old_commits, old_series_counts):
     if old_commits is None:
-        print('%s: %d total, %d (%d) series, %d non-series commits' %
+        print('- %s: %d total, %d (%d) series, %d non-series commits' %
               (branch_name, len(commits), series_counts[0],
                series_counts[1], series_counts[2]))
     else:
-        fields = ['%s: %d -> %d commits' %
+        fields = ['- %s: %d -> %d commits' %
                   (branch_name, len(old_commits), len(commits))]
         if len(old_commits) == len(commits):
             fields.append('(no change)')
         print(' '.join(fields))
-        fields = ['- series: %d (%d) -> %d (%d)' %
+        fields = ['  - series: %d (%d) -> %d (%d)' %
                   (old_series_counts[0], old_series_counts[1],
                    series_counts[0], series_counts[1])]
         if old_series_counts[0] == series_counts[0] and \
@@ -429,18 +429,18 @@ def pr_branch_commit_counts(branch_name, commits, series_counts,
         print(' '.join(fields))
 
 def pr_review_stat(review_score_commits, old_review_score_commits, do_diff):
-    lines = ['- author/reviewer role stat']
+    lines = ['  - author/reviewer role stat']
     scores = set(list(review_score_commits.keys()) +
                  list(old_review_score_commits.keys()))
     for score in sorted(scores):
         if not do_diff:
-            lines.append('  - %s: %d commits' %
+            lines.append('    - %s: %d commits' %
                   (review_score_author_reviewer_map[score],
                    len(review_score_commits[score])))
         else:
             old_nr = len(old_review_score_commits.get(score, []))
             new_nr = len(review_score_commits.get(score, []))
-            fields = ['  - %s: %d -> %d commits' %
+            fields = ['    - %s: %d -> %d commits' %
                       (review_score_author_reviewer_map[score],
                        old_nr, new_nr)]
             if old_nr == new_nr:
@@ -462,28 +462,28 @@ def find_matcing_commit_branch(commit, other_branch_commits):
 def pr_full_commits_list(commits, old_branch_commits):
     if len(commits) == 0:
         return
-    print('- full commits list')
+    print('  - full commits list')
     for c in commits:
         if c.patch_series is not None:
             if c.patch_series_idx == 0:
-                print('  - series %s (%d commits)' %
+                print('    - series %s (%d commits)' %
                       (c.patch_series, c.patch_series_sz))
-            print('    - %s %s (%s/%s)' %
+            print('      - %s %s (%s/%s)' %
                   (c.hash[:12], c.subject, c.patch_series_idx,
                    c.patch_series_sz))
-            print('      - %s' %
+            print('        - %s' %
                   review_score_status_map[c.review_score()])
             if old_branch_commits is not None:
                 _, old_branch = find_matcing_commit_branch(
                         c, old_branch_commits)
-                print('      - was in %s' % old_branch)
+                print('        - was in %s' % old_branch)
         else:
-            print('  - %s %s' % (c.hash[:12], c.subject))
-            print('    - %s' % review_score_status_map[c.review_score()])
+            print('    - %s %s' % (c.hash[:12], c.subject))
+            print('      - %s' % review_score_status_map[c.review_score()])
             if old_branch_commits is not None:
                 _, old_branch = find_matcing_commit_branch(
                         c, old_branch_commits)
-                print('    - was in %s' % old_branch)
+                print('      - was in %s' % old_branch)
 
 def commit_changes(old_commit, old_branch, new_commit, new_branch):
     changes = []
@@ -533,19 +533,19 @@ def pr_changed_commits(branch_name, commits, old_commits, branch_commits,
             dropped_commits.append(commit)
 
     if len(new_commits) > 0:
-        print('- new commits')
+        print('  - new commits')
         for c in new_commits:
-            print('  - %s %s' % (c.hash[:12], c.subject))
+            print('    - %s %s' % (c.hash[:12], c.subject))
     if len(changed_commits) > 0:
-        print('- changed commits')
+        print('  - changed commits')
         for c, changes in changed_commits:
-            print('  - %s %s' % (c.hash[:12], c.subject))
+            print('    - %s %s' % (c.hash[:12], c.subject))
             for change in changes:
-                print('    - %s' % change)
+                print('      - %s' % change)
     if len(dropped_commits) > 0:
-        print('- dropped commits')
+        print('  - dropped commits')
         for c in dropped_commits:
-            print('  - %s %s' % (c.hash[:12], c.subject))
+            print('    - %s %s' % (c.hash[:12], c.subject))
 
 def pr_branch_stat(branch_name, commits, subsystem, filters,
                    full_commits_list, old_branch_commits, list_changed_commits,
@@ -581,9 +581,9 @@ def pr_stat(baseline, branches, branch_commits, subsystems, filters,
             full_commits_list, diff_old, list_changed_commits):
     old_branch_commits, old_baseline = diff_old
     if old_branch_commits is None:
-        print('baseline: %s' % baseline)
+        print('- baseline: %s' % baseline)
     else:
-        fields = ['baseline: %s -> %s' % (old_baseline, baseline)]
+        fields = ['- baseline: %s -> %s' % (old_baseline, baseline)]
         if old_baseline == baseline:
             fields.append('(no change)')
         print(' '.join(fields))
