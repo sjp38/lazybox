@@ -3,6 +3,29 @@
 
 '''
 Show and export status of commits in given linux trees.
+
+In the basic form, it prints the counts of patches in each tree, categorized by 
+review status.  The review status is defined by who authored and reviewed the
+patch.  The entities are identified via roles of the subsystem for the patch,
+based on MAINTAINERS file.  Reviewers are identified based on 'Reviewed-by:'
+and 'Acked-by:' tags of the patch.  Hence, below 12 categories exist:
+
+    Author        Reviewer
+    ------------------------
+    no-role       nobody
+    no-role       no-role
+    no-role       reviewer
+    no-role       maintainer
+
+    reviewer      nobody
+    reviewer      no-role
+    reviewer      reviewer
+    reviewer      maintainer
+
+    maintainer    nobody
+    maintainer    no-role
+    maintainer    reviewer
+    maintainer    maintainer
 '''
 
 import argparse
