@@ -59,19 +59,19 @@ mm_tree_summary_py="$bindir/mm_tree_summary.py"
 
 "$mm_tree_summary_py" --linux_dir "$linux_dir" \
 	--import_info "${summary_dir}/commits_info.json" \
-	> "${summary_dir}/summary"
+	> "${summary_dir}/summary.md"
 
 "$mm_tree_summary_py" --linux_dir "$linux_dir" \
 	--import_info "${summary_dir}/commits_info.json" \
 	--full_commits_list \
-	> "${summary_dir}/full_commits_list"
+	> "${summary_dir}/full_commits_list.md"
 
 if [ ! "$old_info" = "" ]
 then
 	"$mm_tree_summary_py" --linux_dir "$linux_dir" \
 		--import_info "${summary_dir}/commits_info.json" \
 		--diff_old "$old_info" --list_changed_commits \
-		> "${summary_dir}/changes_from_last_update"
+		> "${summary_dir}/changes_from_last_update.md"
 fi
 
 for subsystem in DAMON \
@@ -125,13 +125,13 @@ do
 	"$mm_tree_summary_py" --linux_dir "$linux_dir" \
 		--import_info "${summary_dir}/commits_info.json" \
 		--filter allow subsystem "$subsystem" \
-		> "${subsys_dir}/summary"
+		> "${subsys_dir}/summary.md"
 
 	"$mm_tree_summary_py" --linux_dir "$linux_dir" \
 		--import_info "${summary_dir}/commits_info.json" \
 		--filter allow subsystem "$subsystem" \
 		--full_commits_list \
-		> "${subsys_dir}/full_commits_list"
+		> "${subsys_dir}/full_commits_list.md"
 
 	if [ ! "$old_info" = "" ]
 	then
@@ -139,7 +139,7 @@ do
 			--import_info "${summary_dir}/commits_info.json" \
 			--filter allow subsystem "$subsystem" \
 			--diff_old "$old_info" --list_changed_commits \
-			> "${subsys_dir}/changes_from_last_update"
+			> "${subsys_dir}/changes_from_last_update.md"
 	fi
 done
 
