@@ -477,6 +477,8 @@ def pr_full_commits_list(commits, old_branch_commits):
                 _, old_branch = find_matcing_commit_branch(
                         c, old_branch_commits)
                 print('        - was in %s' % old_branch)
+            for link in c.tags.get('Link:', []):
+                print('        - Link: %s' % link)
         else:
             print('    - %s %s' % (c.hash[:12], c.subject))
             print('      - %s' % review_score_status_map[c.review_score()])
@@ -484,6 +486,8 @@ def pr_full_commits_list(commits, old_branch_commits):
                 _, old_branch = find_matcing_commit_branch(
                         c, old_branch_commits)
                 print('      - was in %s' % old_branch)
+            for link in c.tags.get('Link:', []):
+                print('      - Link: %s' % link)
 
 def commit_changes(old_commit, old_branch, new_commit, new_branch):
     changes = []
@@ -536,16 +540,23 @@ def pr_changed_commits(branch_name, commits, old_commits, branch_commits,
         print('  - new commits')
         for c in new_commits:
             print('    - %s %s' % (c.hash[:12], c.subject))
+            for link in c.tags.get('Link:', []):
+                print('      - Link: %s' % link)
     if len(changed_commits) > 0:
         print('  - changed commits')
         for c, changes in changed_commits:
             print('    - %s %s' % (c.hash[:12], c.subject))
             for change in changes:
                 print('      - %s' % change)
+            for link in c.tags.get('Link:', []):
+                print('      - Link: %s' % link)
+
     if len(dropped_commits) > 0:
         print('  - dropped commits')
         for c in dropped_commits:
             print('    - %s %s' % (c.hash[:12], c.subject))
+            for link in c.tags.get('Link:', []):
+                print('      - Link: %s' % link)
 
 def pr_branch_stat(branch_name, commits, subsystem, filters,
                    full_commits_list, old_branch_commits, list_changed_commits,
