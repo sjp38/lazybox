@@ -415,11 +415,18 @@ def pr_branch_commit_counts(branch_name, commits, series_counts,
               (branch_name, len(commits), series_counts[0],
                series_counts[1], series_counts[2]))
     else:
-        print('%s: %d -> %d commits' %
-              (branch_name, len(old_commits), len(commits)))
-        print('- series: %d (%d) -> %d (%d)' %
-              (old_series_counts[0], old_series_counts[1], series_counts[0],
-               series_counts[1]))
+        fields = ['%s: %d -> %d commits' %
+                  (branch_name, len(old_commits), len(commits))]
+        if len(old_commits) == len(commits):
+            fields.append('(no change)')
+        print(' '.join(fields))
+        fields = ['- series: %d (%d) -> %d (%d)' %
+                  (old_series_counts[0], old_series_counts[1],
+                   series_counts[0], series_counts[1])]
+        if old_series_counts[0] == series_counts[0] and \
+                old_series_counts[1] == series_counts[1]:
+            fields.append('(no change)')
+        print(' '.join(fields))
 
 def pr_review_stat(review_score_commits, old_review_score_commits, do_diff):
     lines = ['- author/reviewer role stat']
@@ -431,11 +438,14 @@ def pr_review_stat(review_score_commits, old_review_score_commits, do_diff):
                   (review_score_author_reviewer_map[score],
                    len(review_score_commits[score])))
         else:
-            lines.append('  - %s: %d -> %d commits' %
-                  (review_score_author_reviewer_map[score],
-                   len(old_review_score_commits.get(score, [])),
-                   len(review_score_commits.get(score, []))
-                   ))
+            old_nr = len(old_review_score_commits.get(score, []))
+            new_nr = len(review_score_commits.get(score, []))
+            fields = ['  - %s: %d -> %d commits' %
+                      (review_score_author_reviewer_map[score],
+                       old_nr, new_nr)]
+            if old_nr == new_nr:
+                fields.append('(no change)')
+            print(' '.join(fields))
     if len(lines) > 1:
         print('\n'.join(lines))
 
@@ -573,7 +583,10 @@ def pr_stat(baseline, branches, branch_commits, subsystems, filters,
     if old_branch_commits is None:
         print('baseline: %s' % baseline)
     else:
-        print('baseline: %s -> %s' % (old_baseline, baseline))
+        fields = ['baseline: %s -> %s' % (old_baseline, baseline)]
+        if old_baseline == baseline:
+            fields.append('(no change)')
+        print(' '.join(fields))
     for subsys in subsystems:
         if subsys != 'all':
             print()
