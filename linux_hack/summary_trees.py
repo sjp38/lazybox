@@ -493,7 +493,7 @@ def pr_full_commits_list(commits, old_branch_commits):
             if c.patch_series_idx == 0:
                 print('    - series %s (%d commits)' %
                       (c.patch_series, c.patch_series_sz))
-            print('      - %s %s (%s/%s)' %
+            print('      - %s "%s" (%s/%s)' %
                   (c.hash[:12], c.subject, c.patch_series_idx,
                    c.patch_series_sz))
             print('        - %s' %
@@ -505,7 +505,7 @@ def pr_full_commits_list(commits, old_branch_commits):
             for link in c.tags.get('Link:', []):
                 print('        - Link: %s' % link)
         else:
-            print('    - %s %s' % (c.hash[:12], c.subject))
+            print('    - %s "%s"' % (c.hash[:12], c.subject))
             print('      - %s' % review_score_status_map[c.review_score()])
             if old_branch_commits is not None:
                 _, old_branch = find_matcing_commit_branch(
@@ -564,13 +564,13 @@ def pr_changed_commits(branch_name, commits, old_commits, branch_commits,
     if len(new_commits) > 0:
         print('  - new commits')
         for c in new_commits:
-            print('    - %s %s' % (c.hash[:12], c.subject))
+            print('    - %s "%s"' % (c.hash[:12], c.subject))
             for link in c.tags.get('Link:', []):
                 print('      - Link: %s' % link)
     if len(changed_commits) > 0:
         print('  - changed commits')
         for c, changes in changed_commits:
-            print('    - %s %s' % (c.hash[:12], c.subject))
+            print('    - %s "%s"' % (c.hash[:12], c.subject))
             for change in changes:
                 print('      - %s' % change)
             for link in c.tags.get('Link:', []):
@@ -579,7 +579,7 @@ def pr_changed_commits(branch_name, commits, old_commits, branch_commits,
     if len(dropped_commits) > 0:
         print('  - dropped commits')
         for c in dropped_commits:
-            print('    - %s %s' % (c.hash[:12], c.subject))
+            print('    - %s "%s"' % (c.hash[:12], c.subject))
             for link in c.tags.get('Link:', []):
                 print('      - Link: %s' % link)
 
