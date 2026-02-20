@@ -282,6 +282,8 @@ def commits_in(linux_dir, commits_range):
         lines = commit_output.split('\n')
         if lines[0] == '---':
             lines = lines[1:]
+        if len(lines) < 3:
+            continue
         hash = lines[0]
         author = lines[1]
         subject = lines[2]
