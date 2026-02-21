@@ -541,6 +541,24 @@ def commit_changes(old_commit, old_branch, new_commit, new_branch):
         changes.append('dropped "%s"' % dropped_tag)
     return changes
 
+def pr_changed_commit(c, idx, commits, changes):
+    if c.patch_series is None:
+        print('    - %s "%s"' % (c.hash[:12], c.subject))
+        for change in changes:
+            print('      - %s' % change)
+        for link in c.tags.get('Link:', []):
+            print('      - Link: %s' % link)
+        return
+
+    if not c.patch_series in [cm.patch_series for cm in commits[:idx]]:
+        print('    - series %s (%d)' % (c.patch_series, c.patch_series_sz))
+    print('      - %s "%s (%d/%d)"' %
+          (c.hash[:12], c.subject, c.patch_series_idx, c.patch_series_sz))
+    for change in changes:
+        print('        - %s' % change)
+    for link in c.tags.get('Link:', []):
+        print('        - Link: %s' % link)
+
 def pr_changed_commits(branch_name, commits, old_commits, branch_commits,
                        old_branch_commits):
     new_commits = []
@@ -563,25 +581,19 @@ def pr_changed_commits(branch_name, commits, old_commits, branch_commits,
 
     if len(new_commits) > 0:
         print('  - new commits')
-        for c in new_commits:
-            print('    - %s "%s"' % (c.hash[:12], c.subject))
-            for link in c.tags.get('Link:', []):
-                print('      - Link: %s' % link)
+        for idx, c in enumerate(new_commits):
+            pr_changed_commit(c, idx, new_commits, [])
     if len(changed_commits) > 0:
         print('  - changed commits')
-        for c, changes in changed_commits:
-            print('    - %s "%s"' % (c.hash[:12], c.subject))
-            for change in changes:
-                print('      - %s' % change)
-            for link in c.tags.get('Link:', []):
-                print('      - Link: %s' % link)
-
+        for idx, c_changes in enumerate(changed_commits):
+            c, changes = c_changes
+            pr_changed_commit(
+                    c, idx, [c_changes[0] for c_changes in changed_commits],
+                    changes)
     if len(dropped_commits) > 0:
         print('  - dropped commits')
-        for c in dropped_commits:
-            print('    - %s "%s"' % (c.hash[:12], c.subject))
-            for link in c.tags.get('Link:', []):
-                print('      - Link: %s' % link)
+        for idx, c in enumerate(dropped_commits):
+            pr_changed_commit(c, idx, dropped_commits, [])
 
 def pr_branch_stat(branch_name, commits, subsystem, filters,
                    full_commits_list, old_branch_commits, list_changed_commits,
