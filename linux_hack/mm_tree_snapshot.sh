@@ -143,7 +143,10 @@ do
 	fi
 done
 
-rm "$old_info"
+if [ ! "$old_info" = "" ]
+then
+	rm "$old_info"
+fi
 
 if [ "$is_git" = "true" ]
 then
