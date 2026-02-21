@@ -184,6 +184,8 @@ def main():
             help='since when in YYYY-MM-DD format')
     parser.add_argument('--until', metavar='<date>',
             help='until when in YYYY-MM-DD format')
+    parser.add_argument('--year', metavar='<year>', type=int,
+                        help='set --since and --until for the year')
     parser.add_argument('--interval', metavar='<days>', type=int,
             help='interval days to print output for each')
     parser.add_argument('--exclude', metavar='<author>', nargs='+',
@@ -205,6 +207,10 @@ def main():
     parser.add_argument('--pr_for_plot', action='store_true',
             help='print output for easy plotting')
     args = parser.parse_args()
+
+    if args.year is not None:
+        args.since = '%d-01-01' % args.year
+        args.until = '%d-12-31' % args.year
 
     if args.interval:
         if not args.since:
