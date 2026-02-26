@@ -32,6 +32,7 @@ import argparse
 import json
 import os
 import subprocess
+import sys
 
 os.sys.path.insert(0, os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..', 'version_control')))
@@ -313,6 +314,9 @@ def commits_in(linux_dir, commits_range):
                         patch_series_sz = int(par[len('\nThis patch (of '):-1])
                     patch_series_idx = 0
                     break
+            if patch_series_sz is None:
+                sys.stderr.write('patch_series_sz parsing failed\n')
+                sys.stderr.write('commit message:\n%s\n' % commit_output)
         else:
             if len(commits) > 1:
                 prev_commit = commits[-1]
