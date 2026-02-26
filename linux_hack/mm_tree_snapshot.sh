@@ -150,10 +150,10 @@ fi
 
 if [ "$is_git" = "true" ]
 then
-	git -C "$snapshot_dir" add "$patches_dir" "$summary_dir"
+	git -C "$snapshot_dir" add "$patches_dir" "$summary_dir" > /dev/null
 	git -C "$snapshot_dir" commit -as -m "update
 
 This commit was made via $(basename $0).
-"
+" > /dev/null
 fi
 
