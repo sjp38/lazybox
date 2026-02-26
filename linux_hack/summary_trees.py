@@ -551,8 +551,8 @@ def pr_changed_commit(c, idx, commits, changes):
         return
 
     if not c.patch_series in [cm.patch_series for cm in commits[:idx]]:
-        print('    - series %s (%d)' % (c.patch_series, c.patch_series_sz))
-    print('      - %s "%s (%d/%d)"' %
+        print('    - series %s (%s)' % (c.patch_series, c.patch_series_sz))
+    print('      - %s "%s (%s/%s)"' %
           (c.hash[:12], c.subject, c.patch_series_idx, c.patch_series_sz))
     for change in changes:
         print('        - %s' % change)
