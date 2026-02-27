@@ -548,6 +548,7 @@ def commit_changes(old_commit, old_branch, new_commit, new_branch):
 def pr_changed_commit(c, idx, commits, changes):
     if c.patch_series is None:
         print('    - %s "%s"' % (c.hash[:12], c.subject))
+        print('      - %s' % review_score_status_map[c.review_score()])
         for change in changes:
             print('      - %s' % change)
         for link in c.tags.get('Link:', []):
@@ -558,6 +559,7 @@ def pr_changed_commit(c, idx, commits, changes):
         print('    - series %s (%s)' % (c.patch_series, c.patch_series_sz))
     print('      - %s "%s (%s/%s)"' %
           (c.hash[:12], c.subject, c.patch_series_idx, c.patch_series_sz))
+    print('        - %s' % review_score_status_map[c.review_score()])
     for change in changes:
         print('        - %s' % change)
     for link in c.tags.get('Link:', []):
