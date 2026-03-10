@@ -307,11 +307,12 @@ def commits_in(linux_dir, commits_range):
         if pars[1].startswith('Patch series '):
             patch_series = pars[1][len('Patch series '):].replace('\n', ' ')
             for par in pars[2:]:
-                if par.startswith('\nThis patch (of '):
+                par = par.strip()
+                if par.startswith('This patch (of '):
                     if par.endswith('):'):
-                        patch_series_sz = int(par[len('\nThis patch (of '):-2])
+                        patch_series_sz = int(par[len('This patch (of '):-2])
                     elif par.endswith(')'):
-                        patch_series_sz = int(par[len('\nThis patch (of '):-1])
+                        patch_series_sz = int(par[len('This patch (of '):-1])
                     patch_series_idx = 0
                     break
             if patch_series_sz is None:
