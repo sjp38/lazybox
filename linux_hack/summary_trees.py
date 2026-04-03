@@ -309,7 +309,7 @@ def commits_in(linux_dir, commits_range):
             for par in pars[2:]:
                 par = par.strip()
                 if par.startswith('This patch (of '):
-                    if par.endswith('):'):
+                    if par.endswith('):') or par.endswith(');'):
                         patch_series_sz = int(par[len('This patch (of '):-2])
                     elif par.endswith(')'):
                         patch_series_sz = int(par[len('This patch (of '):-1])
@@ -496,7 +496,7 @@ def pr_full_commits_list(commits, old_branch_commits):
     for c in commits:
         if c.patch_series is not None:
             if c.patch_series_idx == 0:
-                print('    - series %s (%d commits)' %
+                print('    - series %s (%s commits)' %
                       (c.patch_series, c.patch_series_sz))
             print('      - %s "%s" (%s/%s)' %
                   (c.hash[:12], c.subject, c.patch_series_idx,
