@@ -5,7 +5,7 @@ import sys
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--ignore_prefix_len', type=int,
+    parser.add_argument('--ignore_prefix_len', type=int, default=0,
                         help='length of prefixes in input lines to ignore')
     args = parser.parse_args()
 
