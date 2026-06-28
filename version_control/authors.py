@@ -224,6 +224,15 @@ def main():
             help='print output for easy plotting')
     args = parser.parse_args()
 
+    if args.since is not None:
+        args.since, err = parse_time(args.since, args.repo)
+        if err is not None:
+            print('cannot parse --since (%s)' % err)
+    if args.until is not None:
+        args.until, err = parse_time(args.until, args.repo)
+        if err is not None:
+            print('cannot parse --until (%s)' % err)
+
     if args.year is not None:
         args.since = '%d-01-01' % args.year
         args.until = '%d-12-31' % args.year
@@ -235,18 +244,16 @@ def main():
         orig_until = args.until
         if not orig_until:
             orig_until = datetime.date.today().strftime('%Y-%m-%d')
-        args.until = yyyymmdd_to_date(args.since) + datetime.timedelta(
-                args.interval)
+        args.until = args.since + datetime.timedelta(args.interval)
         args.until = args.until.strftime('%Y-%m-%d')
 
         if args.pr_by_authors:
             authors_by_time = []
-            while yyyymmdd_to_date(args.since) < yyyymmdd_to_date(orig_until):
+            while args.since < orig_until:
                 period = '%s to %s' % (args.since, args.until)
                 authors_by_time.append([period, get_authors(args)])
                 args.since = args.until
-                args.until = yyyymmdd_to_date(args.since) + datetime.timedelta(
-                        args.interval)
+                args.until = args.since + datetime.timedelta(args.interval)
                 args.until = args.until.strftime('%Y-%m-%d')
             total_authors = []
             for period, authors in authors_by_time:
@@ -265,13 +272,11 @@ def main():
                 print()
             return
 
-        while yyyymmdd_to_date(args.since) < yyyymmdd_to_date(orig_until):
+        while args.since < orig_until:
             print('\n# %s to %s' % (args.since, args.until))
             get_pr_authors(args)
             args.since = args.until
-            args.until = yyyymmdd_to_date(args.since) + datetime.timedelta(
-                    args.interval)
-            args.until = args.until.strftime('%Y-%m-%d')
+            args.until = args.since + datetime.timedelta(args.interval)
         return
 
     get_pr_authors(args)
