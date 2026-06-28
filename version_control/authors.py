@@ -167,9 +167,6 @@ def get_pr_authors(args):
     pr_authors(*get_authors(args), args.sortby, args.hide_rank,
             args.pr_for_plot)
 
-def yyyymmdd_to_date(yyyymmdd):
-    return datetime.date(*[int(x) for x in yyyymmdd.split('-')])
-
 def parse_time(time_input, repo):
     try:
         return datetime.date(*[int(x) for x in time_input.split('-')]), None
