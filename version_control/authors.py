@@ -194,9 +194,9 @@ def main():
     parser.add_argument('--linux_subsystems', nargs='+', metavar='<subsystem>',
             help='authors for the linux subsystems (in MAINTAINERS file)')
     parser.add_argument('--since', metavar='<date>',
-            help='since when in YYYY-MM-DD format')
+            help='since when in YYYY-MM-DD format or git commit reference')
     parser.add_argument('--until', metavar='<date>',
-            help='until when in YYYY-MM-DD format')
+            help='until when in YYYY-MM-DD format or git commit reference')
     parser.add_argument('--year', metavar='<year>', type=int,
                         help='set --since and --until for the year')
     parser.add_argument('--interval', metavar='<days>', type=int,
