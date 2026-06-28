@@ -170,6 +170,22 @@ def get_pr_authors(args):
 def yyyymmdd_to_date(yyyymmdd):
     return datetime.date(*[int(x) for x in yyyymmdd.split('-')])
 
+def parse_time(time_input, repo):
+    try:
+        return datetime.date(*[int(x) for x in time_input.split('-')]), None
+    except Exception as e:
+        date_parse_err = '%s' % e
+
+    cmd = ['git', '-C', repo, 'log', '-1', '--pretty=%cd', '--date=iso-strict',
+           time_input]
+    try:
+        output = subprocess.check_output(cmd).decode().strip()
+    except Exception as e:
+        git_parse_err = '%s' % e
+        return None, 'not date (%s), not git commit (%s)' % (
+                date_parse_err, git_parse_err)
+    return datetime.datetime.fromisoformat(output).astimezone(), None
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('repo', metavar='<dir>',
