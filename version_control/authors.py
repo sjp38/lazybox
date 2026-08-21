@@ -172,6 +172,10 @@ def parse_time(time_input, repo):
         return datetime.date(*[int(x) for x in time_input.split('-')]), None
     except Exception as e:
         date_parse_err = '%s' % e
+    try:
+        return datetime.datetime.fromisoformat(time_input).astimezone(), None
+    except Exception as e:
+        date_iso_parse_err = '%s' % e
 
     cmd = ['git', '-C', repo, 'log', '-1', '--pretty=%cd', '--date=iso-strict',
            time_input]
@@ -179,8 +183,8 @@ def parse_time(time_input, repo):
         output = subprocess.check_output(cmd).decode().strip()
     except Exception as e:
         git_parse_err = '%s' % e
-        return None, 'not date (%s), not git commit (%s)' % (
-                date_parse_err, git_parse_err)
+        return None, 'not date (%s), iso date (%s), git commit (%s)' % (
+                date_parse_err, date_iso_parse_err, git_parse_err)
     return datetime.datetime.fromisoformat(output).astimezone(), None
 
 def main():
