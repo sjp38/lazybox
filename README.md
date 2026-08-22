@@ -21,6 +21,7 @@ The tools are organized into subdirectories based on their purpose, as below.
 - tune: for tuning and setting system operation knobs.
 - unsorted: as the name says.
 - workloads: for running test or stress workloads.
+- vm: for generating and managing virtual machines.
 
 Stability
 ---------
