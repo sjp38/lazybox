@@ -15,6 +15,8 @@ def main():
                         help='memory size for the VM')
     parser.add_argument('--ssh_port', default=2242,
                         help='SSH port for the VM')
+    parser.add_argument('--numa', action='append', nargs=3,
+                        help='numa id, CPUs, mem size; e.g., 0 0-2 4G')
     args = parser.parse_args()
 
     if args.nr_cores is None:
@@ -41,6 +43,14 @@ def main():
             '-drive', 'file=%s,if=virtio,cache=none' % args.disk,
             '-net', 'user,hostfwd=tcp::%s-:22' % args.ssh_port, '-net', 'nic',
             '-nographic']
+    if args.numa is not None:
+        for id, cpus, mem_size in args.numa:
+            mem_id='mem%s' % id
+            cmd += ['-object',
+                    'memory-backend-ram,id=mem%s,size=%s' % (id, mem_size)]
+            cmd += ['-numa',
+                    'node,nodeid=%s,cpus=%s,memdev=mem%s' % (id, cpus, id)]
+
     os.execlp('sudo', *cmd)
 
 if __name__ == '__main__':
