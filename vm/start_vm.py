@@ -52,8 +52,11 @@ def main():
             mem_id='mem%s' % id
             cmd += ['-object',
                     'memory-backend-ram,id=mem%s,size=%s' % (id, mem_size)]
-            cmd += ['-numa',
-                    'node,nodeid=%s,cpus=%s,memdev=mem%s' % (id, cpus, id)]
+            if cpus is not 'none':
+                cmd += ['-numa',
+                        'node,nodeid=%s,cpus=%s,memdev=mem%s' % (id, cpus, id)]
+            else:
+                cmd += ['-numa', 'node,nodeid=%s,memdev=mem%s' % (id, id)]
     if args.serial_file is not None:
         cmd += ['-serial', 'file:%s'% args.serial_file]
 
