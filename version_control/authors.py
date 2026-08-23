@@ -225,6 +225,10 @@ def main():
             help='print output for easy plotting')
     args = parser.parse_args()
 
+    if args.year is not None:
+        args.since = '%d-01-01' % args.year
+        args.until = '%d-12-31' % args.year
+
     if args.since is not None:
         args.since, err = parse_time(args.since, args.repo)
         if err is not None:
@@ -233,10 +237,6 @@ def main():
         args.until, err = parse_time(args.until, args.repo)
         if err is not None:
             print('cannot parse --until (%s)' % err)
-
-    if args.year is not None:
-        args.since = '%d-01-01' % args.year
-        args.until = '%d-12-31' % args.year
 
     if args.interval:
         if not args.since:
