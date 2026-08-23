@@ -1,7 +1,8 @@
 Getting Started
 ===============
 
-Below commands will generate and start a Debian 13 VM of 8GiB disk size.
+Below commands will generate and start a Debian 13 cloud image based VM of 8GiB
+disk size.
 
 ```
 $ ./_install_deps.sh
