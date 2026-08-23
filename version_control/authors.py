@@ -244,9 +244,8 @@ def main():
             exit(1)
         orig_until = args.until
         if not orig_until:
-            orig_until = datetime.date.today().strftime('%Y-%m-%d')
+            orig_until = datetime.date.today()
         args.until = args.since + datetime.timedelta(args.interval)
-        args.until = args.until.strftime('%Y-%m-%d')
 
         if args.pr_by_authors:
             authors_by_time = []
@@ -255,7 +254,6 @@ def main():
                 authors_by_time.append([period, get_authors(args)])
                 args.since = args.until
                 args.until = args.since + datetime.timedelta(args.interval)
-                args.until = args.until.strftime('%Y-%m-%d')
             total_authors = []
             for period, authors in authors_by_time:
                 authors_sorted = authors[0]
