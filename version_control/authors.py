@@ -148,6 +148,10 @@ def get_authors(args):
         authors_sorted = authors_sorted[:args.max_nr_authors]
     return authors_sorted, authors
 
+def pr_total_line(authors, sortby):
+    print('# %d authors, %d %s in total' % (len(authors),
+        sum(authors.values()), sortby))
+
 def pr_authors(authors_sorted, authors, sortby, hide_rank, pr_for_plot):
     if pr_for_plot:
         print(sortby)
@@ -160,8 +164,7 @@ def pr_authors(authors_sorted, authors, sortby, hide_rank, pr_for_plot):
                 line = '%d. %s' % (idx + 1, line)
         print(line)
 
-    print('# %d authors, %d %s in total' % (len(authors),
-        sum(authors.values()), sortby))
+    pr_total_line(authors, sortby)
 
 def get_pr_authors(args):
     pr_authors(*get_authors(args), args.sortby, args.hide_rank,
