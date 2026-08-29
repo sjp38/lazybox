@@ -167,8 +167,12 @@ def pr_authors(authors_sorted, authors, sortby, hide_rank, pr_for_plot):
     pr_total_line(authors, sortby)
 
 def get_pr_authors(args):
-    pr_authors(*get_authors(args), args.sortby, args.hide_rank,
-            args.pr_for_plot)
+    authors_sorted, authors = get_authors(args)
+    if args.total_only:
+        pr_total_line(authors, args.sortby)
+        return
+    pr_authors(authors_sorted, authors, args.sortby, args.hide_rank,
+               args.pr_for_plot)
 
 def parse_time(time_input, repo):
     try:
@@ -226,6 +230,8 @@ def main():
             help='print output by authors')
     parser.add_argument('--pr_for_plot', action='store_true',
             help='print output for easy plotting')
+    parser.add_argument('--total_only', action='store_true',
+                        help='print only the last total numbers summary line')
     args = parser.parse_args()
 
     if args.year is not None:
