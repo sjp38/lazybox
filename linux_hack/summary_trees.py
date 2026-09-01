@@ -294,6 +294,8 @@ def commits_in(linux_dir, commits_range):
         tags = {}
         for line in tag_lines:
             fields = line.split()
+            if len(fields) == 0:
+                continue
             tag = fields[0]
             if not tag in tags:
                 tags[tag] = []
