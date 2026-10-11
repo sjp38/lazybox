@@ -47,4 +47,4 @@ sudo qemu-system-x86_64 \
 
 echo "Done.  Now you can start your VM using $overlay_disk."
 echo "Remember you should keep base image together."
-echo "seed.img, user-data and meta-data can be removed."
+echo "seed.iso, user-data and meta-data can be removed."
