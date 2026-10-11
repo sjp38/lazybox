@@ -52,7 +52,7 @@ def main():
             mem_id='mem%s' % id
             cmd += ['-object',
                     'memory-backend-ram,id=mem%s,size=%s' % (id, mem_size)]
-            if cpus is not 'none':
+            if cpus != 'none':
                 cmd += ['-numa',
                         'node,nodeid=%s,cpus=%s,memdev=mem%s' % (id, cpus, id)]
             else:
