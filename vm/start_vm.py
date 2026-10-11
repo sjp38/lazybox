@@ -16,7 +16,8 @@ def main():
     parser.add_argument('--ssh_port', default=2242,
                         help='SSH port for the VM')
     parser.add_argument('--numa', action='append', nargs=3,
-                        help='numa id, CPUs, mem size; e.g., 0 0-2 4G')
+                        help='numa id, CPUs, mem size; e.g., "0 0-2 4G" or ' \
+                                '0 none 4G"')
     parser.add_argument('--serial_file', metavar='<file>',
                         help='pipe serial output to a given file')
     parser.add_argument('--show_qemu_cmd', action='store_true',
