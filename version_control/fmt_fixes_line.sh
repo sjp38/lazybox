@@ -16,7 +16,7 @@ if ! grep stable@vger.kernel.org MAINTAINERS --quiet &> /dev/null
 then
 	exit 0
 fi
-version=$(git describe --contains --match "v*" "$broken")
+version=$(git describe --contains --match "v[0-9]*" "$broken")
 # versions is e.g. v5.15-rc1~58^2~54
 version=$(echo "$version" | awk -F'[v-]' '{print $2 ".x"}')
 echo "Cc: <stable@vger.kernel.org> # ${version}"
