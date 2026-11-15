@@ -272,6 +272,29 @@ def get_subsys_info_map(commit, touching_files, linux_dir):
     commit_subsys_info_map[commit] = subsys_info_map
     return subsys_info_map
 
+def text_to_pars(text):
+    pars = []
+    par = None
+    for line in text.split('\n'):
+        if line == '':
+            if par is not None:
+                par = None
+            continue
+        if par is None:
+            par = []
+            pars.append(par)
+        par.append(line)
+    pars = ['\n'.join(par) for par in pars]
+    return pars
+
+def get_tag_lines(pars):
+    for par in reversed(pars):
+        lines = par.split('\n')
+        for line in lines:
+            if line.startswith('Signed-off-by:'):
+                return lines
+    return []
+
 def commits_in(linux_dir, commits_range):
     git_cmd = ['git', '-C', linux_dir]
     output = subprocess.check_output(
@@ -289,8 +312,8 @@ def commits_in(linux_dir, commits_range):
         author = lines[1]
         subject = lines[2]
 
-        pars = commit_output.split('\n\n')
-        tag_lines = pars[-2].strip().splitlines()
+        pars = text_to_pars(commit_output)
+        tag_lines = get_tag_lines(pars)
         tags = {}
         for line in tag_lines:
             fields = line.split()
