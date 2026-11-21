@@ -17,6 +17,9 @@ def main():
                         help='commit to start cherry picking from')
     parser.add_argument('--skip_pick_xs', action='store_true',
                         help='do not use -xs option for cherry-pick')
+    parser.add_argument(
+            '--action', choices=['pick', 'revert'], default='pick',
+            help='action to apply to commits by default')
     args = parser.parse_args()
 
     with open(args.commits_file, 'r') as f:
@@ -27,22 +30,25 @@ def main():
         fields = line.split()
         if len(fields) < 1:
             continue
-        do_revert = False
+        action = None
         if fields[0] == 'revert':
             if len(fields) < 2:
                 print('no commit for revert')
                 exit(1)
+            action = 'revert'
             commit = fields[1]
         elif fields[0] == 'pick':
             if len(fields) < 2:
                 print('no commit for pick')
                 exit(1)
+            action = 'pick'
             commit = fields[1]
         else:
+            action = args.action
             commit = fields[0]
         if args.start_from is not None and commit != args.start_from:
             continue
-        if do_revert is False:
+        if action == 'pick':
             cmd = ['git', 'cherry-pick', commit]
             if not args.skip_pick_xs:
                 cmd.append('-xs')
