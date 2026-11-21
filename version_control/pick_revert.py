@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: GPL-2.0
 
 '''
-Cherry-pick commits in the given file, supporting comments and skipping.
+Cherry-pick or revert commits in the given file, supporting comments and
+skipping.
 '''
 
 import argparse
@@ -24,10 +25,26 @@ def main():
         fields = line.split()
         if len(fields) < 1:
             continue
-        commit = fields[0]
+        do_revert = False
+        if fields[0] == 'revert':
+            if len(fields) < 2:
+                print('no commit for revert')
+                exit(1)
+            commit = fields[1]
+        elif fields[0] == 'pick':
+            if len(fields) < 2:
+                print('no commit for pick')
+                exit(1)
+            commit = fields[1]
+        else:
+            commit = fields[0]
         if args.start_from is not None and commit != args.start_from:
             continue
-        result = subprocess.run(['git', 'cherry-pick', commit])
+        if do_revert is False:
+            result = subprocess.run(['git', 'cherry-pick', commit])
+        else:
+            result = subprocess.run(
+                    ['git', 'revert', '-s', '--no-edit', commit])
         if result.returncode != 0:
             print('cherry-pick %s fail' % commit)
             exit(1)
