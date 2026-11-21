@@ -15,6 +15,8 @@ def main():
                         help='file containing commits to cherry-pick')
     parser.add_argument('--start_from', metavar='<commit>',
                         help='commit to start cherry picking from')
+    parser.add_argument('--skip_pick_xs', action='store_true',
+                        help='do not use -xs option for cherry-pick')
     args = parser.parse_args()
 
     with open(args.commits_file, 'r') as f:
@@ -41,10 +43,12 @@ def main():
         if args.start_from is not None and commit != args.start_from:
             continue
         if do_revert is False:
-            result = subprocess.run(['git', 'cherry-pick', commit])
+            cmd = ['git', 'cherry-pick', commit]
+            if not args.skip_pick_xs:
+                cmd.append('-xs')
         else:
-            result = subprocess.run(
-                    ['git', 'revert', '-s', '--no-edit', commit])
+            cmd = ['git', 'revert', '-s', '--no-edit', commit]
+        result = subprocess.run(cmd)
         if result.returncode != 0:
             print('cherry-pick %s fail' % commit)
             exit(1)
