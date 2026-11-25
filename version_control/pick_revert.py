@@ -48,6 +48,7 @@ def main():
             commit = fields[0]
         if args.start_from is not None and commit != args.start_from:
             continue
+        args.start_from = None
         if action == 'pick':
             cmd = ['git', 'cherry-pick', commit]
             if not args.skip_pick_xs:
