@@ -143,7 +143,7 @@ def gitcmd_str_output(cmd):
 def version_commit_date(v):
     date = gitcmd_str_output(['log', '%s^..%s' % (v, v), '--pretty=%cd',
         '--date=unix']).split('\n')[0]
-    return datetime.datetime.utcfromtimestamp(int(date))
+    return datetime.datetime.fromtimestamp(int(date), datetime.UTC)
 
 def is_valid_version(v):
     try:
