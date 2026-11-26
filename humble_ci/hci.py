@@ -153,8 +153,14 @@ class HciTasks:
             task_env["HUMBLE_CI_URL"] = self.tree[1]
             task_env["HUMBLE_CI_BRANCH"] = self.tree[2]
 
+            print('# set REPO %s' % task_env['HUMBLE_CI_REPO'])
+            print('# set REMOTE %s' % task_env['HUMBLE_CI_REMOTE'])
+            print('# set URL %s' % task_env['HUMBLE_CI_URL'])
+            print('# set BRANCH %s' % task_env['HUMBLE_CI_BRANCH'])
+
             for cmd in self.cmds[self.nr_complete_cmds:]:
                 try:
+                    print('# exec "%s"' % cmd)
                     output = subprocess.check_output(cmd, env=task_env,
                             shell=True)
                     if pr_cmd_output:
