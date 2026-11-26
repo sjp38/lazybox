@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import os
-import sys
 import subprocess
 
 class Patch:
@@ -39,7 +38,7 @@ class Commit:
     def author(self):
         return self.git_log('%an <%ae>')
 
-    def author_date(self):
+    def get_author_date(self):
         return self.git_log('%ad')
 
     def description(self):
@@ -125,7 +124,7 @@ class Change:
         self.description = commit.description()
         if set_diff:
             self.diff = commit.diff()
-        commit.author_date = commit.author_date()
+        commit.author_date = commit.get_author_date()
         self.commit = commit
 
     def __init__(self, subject=None, author=None, patch_file=None,

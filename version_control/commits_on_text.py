@@ -22,7 +22,6 @@ E.g.,
 
 import argparse
 import sys
-import subprocess
 
 import _git
 

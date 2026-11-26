@@ -2,7 +2,6 @@
 
 import argparse
 import os
-import subprocess
 
 import _git
 

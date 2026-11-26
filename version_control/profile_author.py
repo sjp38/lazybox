@@ -41,7 +41,6 @@ def changes_made(author, since, until, repo, branch, max_depth):
         cmd.append(branch)
     output = subprocess.check_output(cmd).decode()
     changes = {}
-    nr_commits = 0
     authors = {}
     commits = []
     for line in output.split('\n'):
