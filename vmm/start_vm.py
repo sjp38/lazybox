@@ -50,7 +50,6 @@ def main():
             '-nographic']
     if args.numa is not None:
         for id, cpus, mem_size in args.numa:
-            mem_id='mem%s' % id
             cmd += ['-object',
                     'memory-backend-ram,id=mem%s,size=%s' % (id, mem_size)]
             if cpus != 'none':
