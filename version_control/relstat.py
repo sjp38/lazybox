@@ -329,6 +329,8 @@ def main():
             before = datetime.datetime.strptime(args.before, '%Y-%m-%d')
         else:
             before = datetime.datetime.now()
+        since = since.astimezone()
+        before = before.astimezone()
 
         if args.stables:
             versions = get_stable_versions(args.stables, since, before)
