@@ -21,7 +21,6 @@ anti-fragmentation." Ottawa Linux Symposium. Vol. 1. 2006.
 """
 
 import argparse
-import sys
 
 class Zone:
     name = None
@@ -75,7 +74,6 @@ def main():
     """
 
     zones = []
-    free_bdpages = []
     for line in binfo.strip('\n').split('\n'):
         fields = line.split()
         zone = Zone(' '.join(fields[:4]), [int(x) for x in fields[4:]])
