@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import datetime
 import os
 import subprocess
 import time
@@ -249,7 +250,8 @@ def main():
         if nr_repeats >= 1:
             if uncond_single_run:
                 break
-            print('# wait %d seconds' % args.delay)
+            print('# %s: wait %d seconds' %
+                  (datetime.datetime.now(), args.delay))
             time.sleep(args.delay)
             tasks = []
             for tree in args.tree_to_track:
