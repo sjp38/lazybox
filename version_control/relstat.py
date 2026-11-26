@@ -76,7 +76,6 @@ import argparse
 import datetime
 import os
 import subprocess
-import sys
 
 class VersionStat:
     version = None
@@ -148,7 +147,7 @@ def version_commit_date(v):
 
 def is_valid_version(v):
     try:
-        date = gitcmd_str_output(['log', '%s^..%s' % (v, v), '--pretty=%cd',
+        _ = gitcmd_str_output(['log', '%s^..%s' % (v, v), '--pretty=%cd',
             '--date=unix']).split('\n')[0]
     except subprocess.CalledProcessError:
         return False
@@ -163,7 +162,7 @@ def get_stable_versions(major_version, since, before):
         if not version.startswith(major_version + '.'):
             continue
         try:
-            stable_version_number = int(version[len(major_version) + 1:])
+            _ = int(version[len(major_version) + 1:])
         except:
             continue
         cdate = version_commit_date(version)
@@ -183,18 +182,18 @@ def get_versions(since, before, no_extra_version):
         if len(version_numbers) != 2:
             continue
         try:
-            major_version = int(version_numbers[0], 10)
+            _ = int(version_numbers[0], 10)
         except:
             continue
         minors = version_numbers[1].split('-rc')
         if len(minors) > 2:
             continue
         try:
-            minor_version = int(minors[0], 10)
+            _ = int(minors[0], 10)
             if len(minors) == 2:
                 if no_extra_version:
                     continue
-                rc = int(minors[1], 10)
+                _ = int(minors[1], 10)
             cdate = version_commit_date(version)
             if cdate > since and cdate < before:
                 versions.append(version)
