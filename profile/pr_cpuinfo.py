@@ -62,7 +62,7 @@ def pr_topology(cpus):
     for c in cpus:
         try:
             sockets[int(c["physical id"])].append(c)
-        except KeyError as e:
+        except KeyError:
             sockets[int(c["physical id"])] = [c]
     for sk in sorted(sockets.keys()):
         print("[socket %s]" % sk)
@@ -70,7 +70,7 @@ def pr_topology(cpus):
         for c in sockets[sk]:
             try:
                 pcores[int(c["core id"])].append(c)
-            except KeyError as e:
+            except KeyError:
                 pcores[int(c["core id"])] = [c]
         output = "\t"
         for idx, pk in enumerate(sorted(pcores.keys())):
