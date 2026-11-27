@@ -8,11 +8,16 @@ def get_remote_name_for(repo, url):
     output_lines = subprocess.check_output(
             ['git', '-C', repo, 'remote', '-v']
             ).decode().strip().splitlines()
+    urls = [url]
+    if url.startswith('git://git.kernel.org'):
+        urls.append(url.replace('git://', 'https://'))
+    elif url.startswith('https://git.kernel.org'):
+        urls.append(url.replace('https://', 'git://'))
     for line in output_lines:
         fields = line.split()
         if len(fields) != 3:
             continue
-        if fields[1] == url:
+        if fields[1] in urls:
             return fields[0]
     return None
 
